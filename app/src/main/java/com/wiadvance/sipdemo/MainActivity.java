@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.net.sip.SipManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,12 +15,17 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_PERMISSION = 1001;
 
+    private SipManager mSipManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         checkPermission();
+
+        if(mSipManager == null){
+            mSipManager = SipManager.newInstance(this);
+        }
     }
 
     private boolean checkPermission() {
