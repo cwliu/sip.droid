@@ -21,9 +21,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.Button;
 
 import java.text.ParseException;
+import java.util.Date;
 
 public class SIPFragment extends Fragment {
 
@@ -32,7 +33,11 @@ public class SIPFragment extends Fragment {
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 2;
 
     private SipManager mSipManager;
-    private SipProfile mSipProfile;
+    private Button callButton;
+    private Button endButton;
+    private SipProfile mCallerProfile;
+    private Button registerButton;
+    private Button callButton2;
 
     public static SIPFragment newInstance() {
 
@@ -55,64 +60,52 @@ public class SIPFragment extends Fragment {
         if (mSipManager == null) {
             mSipManager = SipManager.newInstance(getContext());
         }
-
-        String username = "0702552500";
-        String domain = "210.202.37.33";
-        String password = "123456789";
-
-        try {
-            SipProfile.Builder sipBuilder = new SipProfile.Builder(username, domain);
-            sipBuilder.setPassword(password);
-            mSipProfile = sipBuilder.build();
-
-            Intent intent = new Intent();
-            intent.setAction("android.SipDemo.INCOMING_CALL");
-
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                    getContext(), 0, intent, Intent.FILL_IN_DATA
-            );
-
-            mSipManager.open(mSipProfile, pendingIntent, null);
-
-            mSipManager.setRegistrationListener(mSipProfile.getUriString(), new SipRegistrationListener() {
-
-                public void onRegistering(String localProfileUri) {
-                    updateStatus("Registering with SIP Server...");
-                }
-
-                public void onRegistrationDone(String localProfileUri, long expiryTime) {
-                    updateStatus("Ready");
-                }
-
-                public void onRegistrationFailed(String localProfileUri, int errorCode,
-                                                 String errorMessage) {
-                    updateStatus("Registration failed.  Please check settings.");
-                }
-            });
-
-            SipAudioCall.Listener audioListener = new SipAudioCall.Listener() {
-                @Override
-                public void onCallEstablished(SipAudioCall call) {
-                    super.onCallEstablished(call);
-                    call.startAudio();
-                }
-            };
-
-        } catch (ParseException | SipException e) {
-            Log.e(TAG, "onCreate: ", e);
-            updateStatus("Error: " + e.toString());
-        }
     }
 
     private void updateStatus(String s) {
         Log.d(TAG, "updateStatus: " + s);
-        Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_sip, container, false);
+
+        registerButton = (Button) rootView.findViewById(R.id.register_button);
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    register();
+                } catch (ParseException e) {
+                    Log.e(TAG, "onClick: ", e);
+                }
+            }
+        });
+
+        callButton = (Button) rootView.findViewById(R.id.call_button_1);
+        callButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makeCall("0702555000");
+            }
+        });
+
+        callButton2 = (Button) rootView.findViewById(R.id.call_button_2);
+        callButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makeCall("0702552501");
+            }
+        });
+
+        endButton = (Button) rootView.findViewById(R.id.end_button);
+        endButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeLocalProfile(mCallerProfile);
+            }
+        });
         return rootView;
     }
 
@@ -128,7 +121,6 @@ public class SIPFragment extends Fragment {
                     requestCode = REQUEST_RECORD_AUDIO_PERMISSION;
                 }
                 if (context.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
-                    Log.d(TAG, "checkPermissions: requestCode " + requestCode);
                     requestPermissions(new String[]{permission}, requestCode);
                 }
             }
@@ -179,6 +171,136 @@ public class SIPFragment extends Fragment {
                     builder.show();
                 }
             }
+        }
+    }
+    private void register() throws ParseException {
+        String username = "0702552500";
+        String domain = "210.202.37.33";
+        String password = "123456789";
+        SipProfile.Builder sipBuilder = null;
+        sipBuilder = new SipProfile.Builder(username, domain);
+
+        sipBuilder.setPassword(password);
+        mCallerProfile = sipBuilder.build();
+        Log.d(TAG, "Caller uri: " + mCallerProfile.getUriString());
+
+        Intent intent = new Intent();
+        intent.setAction("android.SipDemo.INCOMING_CALL");
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                getContext(), 0, intent, Intent.FILL_IN_DATA
+        );
+
+        try {
+            mSipManager.open(mCallerProfile, pendingIntent, new SipRegistrationListener() {
+
+                public void onRegistering(String localProfileUri) {
+                    updateStatus("Registering with SIP Server...");
+                }
+
+                public void onRegistrationDone(String localProfileUri, long expiryTime) {
+                    updateStatus("Ready, expiryTime: " + new Date(expiryTime));
+                }
+
+                public void onRegistrationFailed(String localProfileUri, int errorCode,
+                                                 String errorMessage) {
+                    updateStatus("Registration failed. " +
+                            "errorCode: " + errorCode + ", errorMessage: " + errorMessage);
+                }
+            });
+        } catch (SipException e) {
+            Log.e(TAG, "register: ", e);
+        }
+    }
+
+    private void makeCall(String account) {
+
+        try {
+
+            SipAudioCall.Listener audioListener = new SipAudioCall.Listener() {
+                @Override
+                public void onCalling(SipAudioCall call) {
+                    Log.d(TAG, "onCalling() called with: " + "call = [" + call + "]");
+                    super.onCalling(call);
+                }
+
+                @Override
+                public void onChanged(SipAudioCall call) {
+                    Log.d(TAG, "onChanged() called with: " + "call = [" + call + "]");
+                    super.onChanged(call);
+                }
+
+                @Override
+                public void onRingingBack(SipAudioCall call) {
+                    Log.d(TAG, "onRingingBack() called with: " + "call = [" + call + "]");
+                    super.onRingingBack(call);
+                }
+
+                @Override
+                public void onCallEstablished(SipAudioCall call) {
+                    super.onCallEstablished(call);
+                    Log.d(TAG, "onCallEstablished() called with: " + "call = [" + call + "]");
+                    call.startAudio();
+                    call.setSpeakerMode(true);
+                }
+
+                @Override
+                public void onError(SipAudioCall call, int errorCode, String errorMessage) {
+                    super.onError(call, errorCode, errorMessage);
+                    Log.d(TAG, "onError() called with: " + "call = [" + call + "], errorCode = [" + errorCode + "], errorMessage = [" + errorMessage + "]");
+                }
+
+                @Override
+                public void onCallBusy(SipAudioCall call) {
+                    super.onCallBusy(call);
+                    Log.d(TAG, "onCallBusy() called with: " + "call = [" + call + "]");
+                }
+
+                @Override
+                public void onCallEnded(SipAudioCall call) {
+                    Log.d(TAG, "onCallEnded() called with: " + "call = [" + call + "]");
+                    super.onCallEnded(call);
+                }
+
+                @Override
+                public void onCallHeld(SipAudioCall call) {
+                    Log.d(TAG, "onCallHeld() called with: " + "call = [" + call + "]");
+                    super.onCallHeld(call);
+                }
+
+                @Override
+                public void onReadyToCall(SipAudioCall call) {
+                    Log.d(TAG, "onReadyToCall() called with: " + "call = [" + call + "]");
+                    super.onReadyToCall(call);
+                }
+
+                @Override
+                public void onRinging(SipAudioCall call, SipProfile caller) {
+                    Log.d(TAG, "onRinging() called with: " + "call = [" + call + "], caller = [" + caller + "]");
+                    super.onRinging(call, caller);
+                }
+
+            };
+
+            String peerProfileUri = "sip:"+ account +"@210.202.37.33";
+            final SipAudioCall call = mSipManager.makeAudioCall(mCallerProfile.getUriString(), peerProfileUri, audioListener, 30);
+
+        } catch (SipException e) {
+            Log.e(TAG, "onCreate: ", e);
+            updateStatus("Error: " + e.toString());
+        }
+    }
+
+    public void closeLocalProfile(SipProfile sipProfile) {
+        if (mSipManager == null) {
+            return;
+        }
+        try {
+            if (sipProfile != null) {
+                mSipManager.close(sipProfile.getUriString());
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Failed to close local profile.", e);
         }
     }
 }

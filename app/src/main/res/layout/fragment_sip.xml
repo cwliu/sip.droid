@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,10 +8,38 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
     tools:context="com.wiadvance.sipdemo.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello SIP!"/>
-</RelativeLayout>
+    <Button
+        android:id="@+id/register_button"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="Register"/>
+
+    <Button
+        android:id="@+id/call_button_1"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="Call 0702555000(中華國際通訊)"/>
+
+    <Button
+        android:id="@+id/call_button_2"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="Call 0702552501(Test Account 2)"/>
+
+
+    <EditText
+        android:id="@+id/number_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
+
+    <Button
+        android:id="@+id/end_button"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="End"
+        />
+
+</LinearLayout>
