@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,6 +32,9 @@ public class SIPFragment extends Fragment {
     private static final String TAG = "SIPFragment";
     private static final int REQUEST_SIP_PERMISSION = 1;
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 2;
+
+    public static String ACTION_NOTIFICATION = "com.wiadvance.sipdemo.notification";
+    public static final String NOTIFY_MESSAGE = "notify_message";
 
     private SipManager mSipManager;
     private Button callButton;
@@ -64,6 +68,9 @@ public class SIPFragment extends Fragment {
 
     private void updateStatus(String s) {
         Log.d(TAG, "updateStatus: " + s);
+        Intent intent = new Intent(ACTION_NOTIFICATION);
+        intent.putExtra(NOTIFY_MESSAGE, s);
+        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
     }
 
     @Nullable
@@ -217,22 +224,30 @@ public class SIPFragment extends Fragment {
 
         try {
 
+            if(mCallerProfile == null){
+                updateStatus("Please register first!");
+                return;
+            }
+
             SipAudioCall.Listener audioListener = new SipAudioCall.Listener() {
                 @Override
                 public void onCalling(SipAudioCall call) {
                     Log.d(TAG, "onCalling() called with: " + "call = [" + call + "]");
+                    updateStatus("onCalling");
                     super.onCalling(call);
                 }
 
                 @Override
                 public void onChanged(SipAudioCall call) {
                     Log.d(TAG, "onChanged() called with: " + "call = [" + call + "]");
+                    updateStatus("onChanged");
                     super.onChanged(call);
                 }
 
                 @Override
                 public void onRingingBack(SipAudioCall call) {
                     Log.d(TAG, "onRingingBack() called with: " + "call = [" + call + "]");
+                    updateStatus("onRingingBack");
                     super.onRingingBack(call);
                 }
 
@@ -240,6 +255,7 @@ public class SIPFragment extends Fragment {
                 public void onCallEstablished(SipAudioCall call) {
                     super.onCallEstablished(call);
                     Log.d(TAG, "onCallEstablished() called with: " + "call = [" + call + "]");
+                    updateStatus("onCallEstablished");
                     call.startAudio();
                     call.setSpeakerMode(true);
                 }
@@ -248,6 +264,8 @@ public class SIPFragment extends Fragment {
                 public void onError(SipAudioCall call, int errorCode, String errorMessage) {
                     super.onError(call, errorCode, errorMessage);
                     Log.d(TAG, "onError() called with: " + "call = [" + call + "], errorCode = [" + errorCode + "], errorMessage = [" + errorMessage + "]");
+                    updateStatus("onError: errorCode = [" + errorCode + "], errorMessage = [" + errorMessage + "]");
+
                 }
 
                 @Override
@@ -283,7 +301,7 @@ public class SIPFragment extends Fragment {
             };
 
             String peerProfileUri = "sip:"+ account +"@210.202.37.33";
-            final SipAudioCall call = mSipManager.makeAudioCall(mCallerProfile.getUriString(), peerProfileUri, audioListener, 30);
+            mSipManager.makeAudioCall(mCallerProfile.getUriString(), peerProfileUri, audioListener, 30);
 
         } catch (SipException e) {
             Log.e(TAG, "onCreate: ", e);
@@ -298,6 +316,7 @@ public class SIPFragment extends Fragment {
         try {
             if (sipProfile != null) {
                 mSipManager.close(sipProfile.getUriString());
+                updateStatus("Call end");
             }
         } catch (Exception e) {
             Log.d(TAG, "Failed to close local profile.", e);
