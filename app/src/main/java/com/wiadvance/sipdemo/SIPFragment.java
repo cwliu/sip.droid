@@ -36,12 +36,14 @@ public class SIPFragment extends Fragment {
 
 
     private SipManager mSipManager;
-    private Button callButton1;
-    private Button endButton;
     private SipProfile mCallerProfile;
+
     private Button registerButton1;
     private Button registerButton2;
+    private Button callButton0;
+    private Button callButton1;
     private Button callButton2;
+    private Button endButton;
 
     public static SIPFragment newInstance() {
 
@@ -95,11 +97,19 @@ public class SIPFragment extends Fragment {
             }
         });
 
+        callButton0 = (Button) rootView.findViewById(R.id.call_button_0);
+        callButton0.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makeCall("0702555000");
+            }
+        });
+
         callButton1 = (Button) rootView.findViewById(R.id.call_button_1);
         callButton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                makeCall("0702555000");
+                makeCall("0702552500");
             }
         });
 

@@ -13,6 +13,7 @@ import android.util.Log;
 public class IncomingCallReceiver extends BroadcastReceiver {
 
     private static final String TAG = "IncomingCallReceiver";
+    private SipAudioCall mIncomingCall;
 
     /**
      * Processes the incoming call, answers it, and hands it over to the SipActivity.
@@ -21,8 +22,10 @@ public class IncomingCallReceiver extends BroadcastReceiver {
      */
     @Override
     public void onReceive(final Context context, Intent intent) {
-        SipAudioCall incomingCall = null;
+        mIncomingCall = null;
         Log.d(TAG, "onReceive() called with: " + "context = [" + context + "], intent = [" + intent + "]");
+        Notification.updateStatus(context, "Incomming call");
+
         try {
             SipActivity activity = (SipActivity) context;
             SIPFragment fragment = activity.getSipFragment();
@@ -32,7 +35,7 @@ public class IncomingCallReceiver extends BroadcastReceiver {
             SipAudioCall.Listener listener = new SipAudioCall.Listener() {
                 @Override
                 public void onRinging(SipAudioCall call, SipProfile caller) {
-                    Notification.updateStatus(context, "Receive call onRinging");
+                    Notification.updateStatus(context, "Receive call onRinging()");
                     try {
                         Log.d(TAG, "onRinging() called with: " + "call = [" + call + "], caller = [" + caller + "]");
                         call.answerCall(30);
@@ -44,22 +47,29 @@ public class IncomingCallReceiver extends BroadcastReceiver {
                 @Override
                 public void onCallEnded(SipAudioCall call) {
                     super.onCallEnded(call);
-                    Notification.updateStatus(context, "Receive call end");
+                    Notification.updateStatus(context, "Receive call onCallEnded()");
+                }
+
+                @Override
+                public void onCallEstablished(SipAudioCall call) {
+                    super.onCallEstablished(call);
+                    Notification.updateStatus(context, "Receive call onCallEstablished()");
+
+                    call.startAudio();
+                    call.setSpeakerMode(true);
+                    if(call.isMuted()) {
+                        call.toggleMute();
+                    }
                 }
             };
 
-            incomingCall = manager.takeAudioCall(intent, listener);
-            incomingCall.answerCall(30);
-            incomingCall.startAudio();
-            incomingCall.setSpeakerMode(true);
-            if(incomingCall.isMuted()) {
-                incomingCall.toggleMute();
-            }
+            mIncomingCall = manager.takeAudioCall(intent, listener);
+            mIncomingCall.answerCall(30);
 
         } catch (Exception e) {
             Log.e(TAG, "onReceive() exception",e);
-            if (incomingCall != null) {
-                incomingCall.close();
+            if (mIncomingCall != null) {
+                mIncomingCall.close();
             }
         }
     }
