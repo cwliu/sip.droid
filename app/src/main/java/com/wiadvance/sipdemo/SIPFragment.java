@@ -16,7 +16,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,14 +32,15 @@ public class SIPFragment extends Fragment {
     private static final int REQUEST_SIP_PERMISSION = 1;
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 2;
 
-    public static String ACTION_NOTIFICATION = "com.wiadvance.sipdemo.notification";
-    public static final String NOTIFY_MESSAGE = "notify_message";
+    public static String ACTION_INCOMING_CALL = "com.wiadvance.sipdemo.incoming_call";
+
 
     private SipManager mSipManager;
-    private Button callButton;
+    private Button callButton1;
     private Button endButton;
     private SipProfile mCallerProfile;
-    private Button registerButton;
+    private Button registerButton1;
+    private Button registerButton2;
     private Button callButton2;
 
     public static SIPFragment newInstance() {
@@ -66,32 +66,37 @@ public class SIPFragment extends Fragment {
         }
     }
 
-    private void updateStatus(String s) {
-        Log.d(TAG, "updateStatus: " + s);
-        Intent intent = new Intent(ACTION_NOTIFICATION);
-        intent.putExtra(NOTIFY_MESSAGE, s);
-        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_sip, container, false);
 
-        registerButton = (Button) rootView.findViewById(R.id.register_button);
-        registerButton.setOnClickListener(new View.OnClickListener() {
+        registerButton1 = (Button) rootView.findViewById(R.id.register_button_1);
+        registerButton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
-                    register();
+                    register("0702552500");
                 } catch (ParseException e) {
                     Log.e(TAG, "onClick: ", e);
                 }
             }
         });
 
-        callButton = (Button) rootView.findViewById(R.id.call_button_1);
-        callButton.setOnClickListener(new View.OnClickListener() {
+        registerButton2 = (Button) rootView.findViewById(R.id.register_button_2);
+        registerButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    register("0702552501");
+                } catch (ParseException e) {
+                    Log.e(TAG, "onClick: ", e);
+                }
+            }
+        });
+
+        callButton1 = (Button) rootView.findViewById(R.id.call_button_1);
+        callButton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 makeCall("0702555000");
@@ -180,11 +185,12 @@ public class SIPFragment extends Fragment {
             }
         }
     }
-    private void register() throws ParseException {
-        String username = "0702552500";
+    private void register(String account) throws ParseException {
+        String username = account;
         String domain = "210.202.37.33";
         String password = "123456789";
-        SipProfile.Builder sipBuilder = null;
+
+        SipProfile.Builder sipBuilder;
         sipBuilder = new SipProfile.Builder(username, domain);
 
         sipBuilder.setPassword(password);
@@ -192,7 +198,7 @@ public class SIPFragment extends Fragment {
         Log.d(TAG, "Caller uri: " + mCallerProfile.getUriString());
 
         Intent intent = new Intent();
-        intent.setAction("android.SipDemo.INCOMING_CALL");
+        intent.setAction(ACTION_INCOMING_CALL);
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 getContext(), 0, intent, Intent.FILL_IN_DATA
@@ -202,16 +208,16 @@ public class SIPFragment extends Fragment {
             mSipManager.open(mCallerProfile, pendingIntent, new SipRegistrationListener() {
 
                 public void onRegistering(String localProfileUri) {
-                    updateStatus("Registering with SIP Server...");
+                    Notification.updateStatus(getContext(), "Registering with SIP Server...");
                 }
 
                 public void onRegistrationDone(String localProfileUri, long expiryTime) {
-                    updateStatus("Ready, expiryTime: " + new Date(expiryTime));
+                    Notification.updateStatus(getContext(), "Ready, expiryTime: " + new Date(expiryTime));
                 }
 
                 public void onRegistrationFailed(String localProfileUri, int errorCode,
                                                  String errorMessage) {
-                    updateStatus("Registration failed. " +
+                    Notification.updateStatus(getContext(), "Registration failed. " +
                             "errorCode: " + errorCode + ", errorMessage: " + errorMessage);
                 }
             });
@@ -225,7 +231,7 @@ public class SIPFragment extends Fragment {
         try {
 
             if(mCallerProfile == null){
-                updateStatus("Please register first!");
+                Notification.updateStatus(getContext(), "Please register first!");
                 return;
             }
 
@@ -233,21 +239,21 @@ public class SIPFragment extends Fragment {
                 @Override
                 public void onCalling(SipAudioCall call) {
                     Log.d(TAG, "onCalling() called with: " + "call = [" + call + "]");
-                    updateStatus("onCalling");
+                    Notification.updateStatus(getContext(), "onCalling");
                     super.onCalling(call);
                 }
 
                 @Override
                 public void onChanged(SipAudioCall call) {
                     Log.d(TAG, "onChanged() called with: " + "call = [" + call + "]");
-                    updateStatus("onChanged");
+                    Notification.updateStatus(getContext(), "onChanged");
                     super.onChanged(call);
                 }
 
                 @Override
                 public void onRingingBack(SipAudioCall call) {
                     Log.d(TAG, "onRingingBack() called with: " + "call = [" + call + "]");
-                    updateStatus("onRingingBack");
+                    Notification.updateStatus(getContext(), "onRingingBack");
                     super.onRingingBack(call);
                 }
 
@@ -255,7 +261,7 @@ public class SIPFragment extends Fragment {
                 public void onCallEstablished(SipAudioCall call) {
                     super.onCallEstablished(call);
                     Log.d(TAG, "onCallEstablished() called with: " + "call = [" + call + "]");
-                    updateStatus("onCallEstablished");
+                    Notification.updateStatus(getContext(), "onCallEstablished");
                     call.startAudio();
                     call.setSpeakerMode(true);
                 }
@@ -264,7 +270,7 @@ public class SIPFragment extends Fragment {
                 public void onError(SipAudioCall call, int errorCode, String errorMessage) {
                     super.onError(call, errorCode, errorMessage);
                     Log.d(TAG, "onError() called with: " + "call = [" + call + "], errorCode = [" + errorCode + "], errorMessage = [" + errorMessage + "]");
-                    updateStatus("onError: errorCode = [" + errorCode + "], errorMessage = [" + errorMessage + "]");
+                    Notification.updateStatus(getContext(), "onError: errorCode = [" + errorCode + "], errorMessage = [" + errorMessage + "]");
 
                 }
 
@@ -305,7 +311,7 @@ public class SIPFragment extends Fragment {
 
         } catch (SipException e) {
             Log.e(TAG, "onCreate: ", e);
-            updateStatus("Error: " + e.toString());
+            Notification.updateStatus(getContext(), "Error: " + e.toString());
         }
     }
 
@@ -316,10 +322,14 @@ public class SIPFragment extends Fragment {
         try {
             if (sipProfile != null) {
                 mSipManager.close(sipProfile.getUriString());
-                updateStatus("Call end");
+                Notification.updateStatus(getContext(), "Call end");
             }
         } catch (Exception e) {
             Log.d(TAG, "Failed to close local profile.", e);
         }
+    }
+
+    public SipManager getSipManager() {
+        return mSipManager;
     }
 }
