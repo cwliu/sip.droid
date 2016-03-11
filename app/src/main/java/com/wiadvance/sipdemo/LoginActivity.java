@@ -23,6 +23,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
     private Button mLoginButton;
+    private Button mLogoutButton;
     private ProgressBar mLoginProgressBar;
 
     @Override
@@ -35,16 +36,19 @@ public class LoginActivity extends AppCompatActivity {
 
     private void initializeViews() {
         mLoginButton = (Button) findViewById(R.id.login_button);
+        mLogoutButton = (Button) findViewById(R.id.logout_button);
         mLoginProgressBar = (ProgressBar) findViewById(R.id.login_progress_bar);
     }
 
     private void showConnectingInProgressUI() {
         mLoginButton.setVisibility(View.GONE);
+        mLogoutButton.setVisibility(View.GONE);
         mLoginProgressBar.setVisibility(View.VISIBLE);
     }
 
     private void resetUI() {
         mLoginButton.setVisibility(View.VISIBLE);
+        mLogoutButton.setVisibility(View.VISIBLE);
         mLoginProgressBar.setVisibility(View.GONE);
     }
 
@@ -56,7 +60,6 @@ public class LoginActivity extends AppCompatActivity {
         checkO365Config();
 
         AuthenticationManager.getInstance().setContextActivity(this);
-        AuthenticationManager.getInstance().getAccessToken();
         AuthenticationManager.getInstance().connect(
                 new AuthenticationCallback<AuthenticationResult>() {
                     @Override
@@ -87,6 +90,11 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                 });
+    }
+
+    public void onLogoutButtonClick(View view) {
+        AuthenticationManager.getInstance().setContextActivity(this);
+        AuthenticationManager.getInstance().disconnect();
     }
 
     private void showConnectErrorUI(String errorMessage) {

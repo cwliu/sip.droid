@@ -19,6 +19,17 @@
         android:onClick="onLoginButtonClick"
         />
 
+    <Button
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/login_button"
+        android:id="@+id/logout_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Logout"
+        android:layout_centerInParent="true"
+        android:onClick="onLogoutButtonClick"
+        />
+
     <ProgressBar
         android:id="@+id/login_progress_bar"
         android:layout_width="wrap_content"
