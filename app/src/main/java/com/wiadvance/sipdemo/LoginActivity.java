@@ -38,6 +38,16 @@ public class LoginActivity extends AppCompatActivity {
         mLoginProgressBar = (ProgressBar) findViewById(R.id.login_progress_bar);
     }
 
+    private void showConnectingInProgressUI() {
+        mLoginButton.setVisibility(View.GONE);
+        mLoginProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void resetUI() {
+        mLoginButton.setVisibility(View.VISIBLE);
+        mLoginProgressBar.setVisibility(View.GONE);
+    }
+
     public void onLoginButtonClick(View view) {
         Log.d(TAG, "onLoginButtonClick() called with: " + "view = [" + view + "]");
 
@@ -45,20 +55,23 @@ public class LoginActivity extends AppCompatActivity {
 
         checkO365Config();
 
-        final Intent sipIntent = new Intent(this, SipActivity.class);
         AuthenticationManager.getInstance().setContextActivity(this);
+        AuthenticationManager.getInstance().getAccessToken();
         AuthenticationManager.getInstance().connect(
                 new AuthenticationCallback<AuthenticationResult>() {
                     @Override
                     public void onSuccess(AuthenticationResult result) {
-
                         //Need to get the new access token to the RESTHelper instance
                         Log.i(TAG, "onConnectButtonClick onSuccess() - Successfully connected to Office 365");
 
                         UserInfo info = result.getUserInfo();
-                        sipIntent.putExtra("givenName", info.getGivenName());
-                        sipIntent.putExtra("displayableId", info.getDisplayableId());
-                        startActivity(sipIntent);
+                        Intent intent = SipActivity.newIntent(
+                                LoginActivity.this,
+                                info.getGivenName(),
+                                info.getDisplayableId(),
+                                "0702552501"
+                        );
+                        startActivity(intent);
 
                         resetUI();
                     }
@@ -74,32 +87,6 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                 });
-    }
-
-    private void showConnectingInProgressUI() {
-        mLoginButton.setVisibility(View.GONE);
-        mLoginProgressBar.setVisibility(View.VISIBLE);
-    }
-
-    private void resetUI() {
-        mLoginButton.setVisibility(View.GONE);
-        mLoginProgressBar.setVisibility(View.VISIBLE);
-    }
-
-    private void checkO365Config() {
-        //check that client id and redirect have been set correctly
-        try {
-            UUID.fromString(Constants.CLIENT_ID);
-            URI.create(Constants.REDIRECT_URI);
-        } catch (IllegalArgumentException e) {
-            Toast.makeText(
-                    this
-                    , getString(R.string.warning_clientid_redirecturi_incorrect)
-                    , Toast.LENGTH_LONG).show();
-
-            resetUI();
-            return;
-        }
     }
 
     private void showConnectErrorUI(String errorMessage) {
@@ -119,5 +106,28 @@ public class LoginActivity extends AppCompatActivity {
                 .getInstance()
                 .getAuthenticationContext()
                 .onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void checkO365Config() {
+        //check that client id and redirect have been set correctly
+        try {
+            UUID.fromString(Constants.CLIENT_ID);
+            URI.create(Constants.REDIRECT_URI);
+        } catch (IllegalArgumentException e) {
+            Toast.makeText(
+                    this
+                    , getString(R.string.warning_clientid_redirecturi_incorrect)
+                    , Toast.LENGTH_LONG).show();
+
+            resetUI();
+            return;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        resetUI();
     }
 }

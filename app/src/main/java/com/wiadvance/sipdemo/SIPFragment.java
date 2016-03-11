@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -31,9 +32,11 @@ public class SIPFragment extends Fragment {
     private static final String TAG = "SIPFragment";
     private static final int REQUEST_SIP_PERMISSION = 1;
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 2;
+    private static final String ARG_NAME = "name";
+    private static final String ARG_EMAIL = "email";
+    private static final String ARG_SIP = "sip";
 
     public static String ACTION_INCOMING_CALL = "com.wiadvance.sipdemo.incoming_call";
-
 
     private SipManager mSipManager;
     private SipProfile mCallerProfile;
@@ -44,10 +47,16 @@ public class SIPFragment extends Fragment {
     private Button callButton1;
     private Button callButton2;
     private Button endButton;
+    private String mName;
+    private String mEmail;
+    private String mSipNumber;
 
-    public static SIPFragment newInstance() {
+    public static SIPFragment newInstance(String name, String email, String sipNumber) {
 
         Bundle args = new Bundle();
+        args.putString(ARG_NAME, name);
+        args.putString(ARG_EMAIL, email);
+        args.putString(ARG_SIP, sipNumber);
 
         SIPFragment fragment = new SIPFragment();
         fragment.setArguments(args);
@@ -66,12 +75,24 @@ public class SIPFragment extends Fragment {
         if (mSipManager == null) {
             mSipManager = SipManager.newInstance(getContext());
         }
+
+        mName = getArguments().getString(ARG_NAME);
+        mEmail = getArguments().getString(ARG_EMAIL);
+        mSipNumber = getArguments().getString(ARG_SIP);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_sip, container, false);
+
+        TextView nameTextView = (TextView)  rootView.findViewById(R.id.name);
+        TextView emailTextView = (TextView) rootView.findViewById(R.id.email);
+        TextView sipNumberTextView = (TextView) rootView.findViewById(R.id.sip_number);
+
+        nameTextView.setText(mName);
+        emailTextView.setText(mEmail);
+        sipNumberTextView.setText(mSipNumber);
 
         registerButton1 = (Button) rootView.findViewById(R.id.register_button_1);
         registerButton1.setOnClickListener(new View.OnClickListener() {

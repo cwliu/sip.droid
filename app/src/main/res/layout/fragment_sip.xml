@@ -11,6 +11,27 @@
     android:orientation="vertical"
     tools:context=".SipActivity">
 
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="David Wang"
+        />
+
+    <TextView
+        android:id="@+id/email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="mgr@wiadvance.net"
+        />
+
+    <TextView
+        android:id="@+id/sip_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="0702552500"
+        />
+
     <Button
         android:id="@+id/register_button_1"
         android:layout_width="match_parent"
