@@ -109,54 +109,6 @@ public class SIPFragment extends Fragment {
         emailTextView.setText(mEmail);
         sipNumberTextView.setText(mSipNumber);
 
-        registerButton1 = (Button) rootView.findViewById(R.id.register_button_1);
-        registerButton1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    register("0702552500");
-                } catch (ParseException e) {
-                    Log.e(TAG, "onClick: ", e);
-                }
-            }
-        });
-
-        registerButton2 = (Button) rootView.findViewById(R.id.register_button_2);
-        registerButton2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    register("0702552501");
-                } catch (ParseException e) {
-                    Log.e(TAG, "onClick: ", e);
-                }
-            }
-        });
-
-        callButton0 = (Button) rootView.findViewById(R.id.call_button_0);
-        callButton0.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                makeCall("0702555000");
-            }
-        });
-
-        callButton1 = (Button) rootView.findViewById(R.id.call_button_1);
-        callButton1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                makeCall("0702552500");
-            }
-        });
-
-        callButton2 = (Button) rootView.findViewById(R.id.call_button_2);
-        callButton2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                makeCall("0702552501");
-            }
-        });
-
         endButton = (Button) rootView.findViewById(R.id.end_button);
         endButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -477,5 +429,11 @@ public class SIPFragment extends Fragment {
                 showLoading(false);
             }
         });
+
+        try {
+            register(mSipNumber);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 }
