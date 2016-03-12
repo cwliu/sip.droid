@@ -17,15 +17,25 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import retrofit.mime.TypedByteArray;
 
 public class SIPFragment extends Fragment {
 
@@ -50,6 +60,10 @@ public class SIPFragment extends Fragment {
     private String mName;
     private String mEmail;
     private String mSipNumber;
+
+    private RecyclerView mRecyclerView;
+    private List<Contact> mContactList = new ArrayList<>();
+    private ProgressBar mLoadingProgress;
 
     public static SIPFragment newInstance(String name, String email, String sipNumber) {
 
@@ -79,6 +93,7 @@ public class SIPFragment extends Fragment {
         mName = getArguments().getString(ARG_NAME);
         mEmail = getArguments().getString(ARG_EMAIL);
         mSipNumber = getArguments().getString(ARG_SIP);
+
     }
 
     @Nullable
@@ -149,6 +164,11 @@ public class SIPFragment extends Fragment {
                 closeLocalProfile(mCallerProfile);
             }
         });
+
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.contacts_recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        mLoadingProgress = (ProgressBar) rootView.findViewById(R.id.loading_progress_bar);
         return rootView;
     }
 
@@ -362,5 +382,90 @@ public class SIPFragment extends Fragment {
 
     public SipManager getSipManager() {
         return mSipManager;
+    }
+
+    public class ContactHolder extends RecyclerView.ViewHolder{
+
+        private final TextView mNameTextView;
+        private final TextView mSipTextView;
+
+        public ContactHolder(View itemView) {
+            super(itemView);
+            mNameTextView = (TextView) itemView.findViewById(R.id.contact_name_text_view);
+            mSipTextView = (TextView) itemView.findViewById(R.id.contact_sip_text_view);
+        }
+
+        public void bindViewHolder(Contact contact){
+            mNameTextView.setText(contact.getName());
+            mSipTextView.setText(contact.getSip());
+        }
+    }
+
+    public class ContactAdapter extends  RecyclerView.Adapter<ContactHolder>{
+
+        @Override
+        public ContactHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View inflate = LayoutInflater.from(getContext()).inflate(R.layout.list_item_contact, parent, false);
+            return new ContactHolder(inflate);
+        }
+
+        @Override
+        public void onBindViewHolder(ContactHolder holder, int position) {
+            holder.bindViewHolder(mContactList.get(position));
+
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return mContactList.size();
+        }
+    }
+
+    private void showLoading(boolean on){
+        if(on){
+            mLoadingProgress.setVisibility(View.VISIBLE);
+        }else{
+            mLoadingProgress.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        showLoading(true);
+        MSGraphAPIController.getInstance().showContacts(new Callback<ContactRaw>() {
+            @Override
+            public void success(ContactRaw contactRaw, Response response) {
+                Log.d(TAG, "success() called with: " + "contactRaw = [" + contactRaw + "], response = [" + response + "]");
+                Log.d(TAG, "response.getStatus()" + response.getStatus());
+
+                String s = new String(((TypedByteArray) response.getBody()).getBytes());
+                Log.d(TAG, "response: " + s);
+                Log.d(TAG, "contactRaw.data: " + contactRaw.data);
+                Log.d(TAG, "contactRaw.value: " + contactRaw.value);
+                mContactList.clear();
+                for(ContactRaw.InnerDict person: contactRaw.value){
+
+                    Log.d(TAG, "person: " + person.displayName);
+                    for(String phone: person.businessPhones){
+                        Contact contact = new Contact(person.displayName, phone);
+                        mContactList.add(contact);
+                        Log.d(TAG, "phone: " + phone);
+                    }
+                }
+
+                mRecyclerView.setAdapter(new ContactAdapter());
+                mRecyclerView.getAdapter().notifyDataSetChanged();
+
+                showLoading(false);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                showLoading(false);
+            }
+        });
     }
 }
