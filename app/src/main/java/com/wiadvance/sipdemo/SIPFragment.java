@@ -65,6 +65,8 @@ public class SIPFragment extends Fragment {
     private List<Contact> mContactList = new ArrayList<>();
     private ProgressBar mLoadingProgress;
 
+    private SipAudioCall mCall;
+
     public static SIPFragment newInstance(String name, String email, String sipNumber) {
 
         Bundle args = new Bundle();
@@ -113,7 +115,13 @@ public class SIPFragment extends Fragment {
         endButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                closeLocalProfile(mCallerProfile);
+                if(mCall != null){
+                    try {
+                        mCall.endCall();
+                    } catch (SipException e) {
+                        Log.e(TAG, "SipException", e);
+                    }
+                }
             }
         });
 
@@ -215,7 +223,7 @@ public class SIPFragment extends Fragment {
                 }
 
                 public void onRegistrationDone(String localProfileUri, long expiryTime) {
-                    Notification.updateStatus(getContext(), "Ready, expiryTime: " + new Date(expiryTime));
+                    Notification.updateStatus(getContext(), "Ready to have a call, expiryTime: " + new Date(expiryTime));
                 }
 
                 public void onRegistrationFailed(String localProfileUri, int errorCode,
@@ -242,6 +250,7 @@ public class SIPFragment extends Fragment {
                 @Override
                 public void onCalling(SipAudioCall call) {
                     Log.d(TAG, "onCalling() called with: " + "call = [" + call + "]");
+                    mCall = call;
                     Notification.updateStatus(getContext(), "onCalling");
                     super.onCalling(call);
                 }
@@ -254,9 +263,9 @@ public class SIPFragment extends Fragment {
 
                 @Override
                 public void onRingingBack(SipAudioCall call) {
+                    super.onRingingBack(call);
                     Log.d(TAG, "onRingingBack() called with: " + "call = [" + call + "]");
                     Notification.updateStatus(getContext(), "onRingingBack");
-                    super.onRingingBack(call);
                 }
 
                 @Override
