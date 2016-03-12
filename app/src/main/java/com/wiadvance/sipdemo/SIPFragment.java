@@ -249,7 +249,6 @@ public class SIPFragment extends Fragment {
                 @Override
                 public void onChanged(SipAudioCall call) {
                     Log.d(TAG, "onChanged() called with: " + "call = [" + call + "]");
-                    Notification.updateStatus(getContext(), "onChanged");
                     super.onChanged(call);
                 }
 

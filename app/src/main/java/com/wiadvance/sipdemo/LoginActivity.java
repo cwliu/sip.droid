@@ -68,11 +68,17 @@ public class LoginActivity extends AppCompatActivity {
                         Log.i(TAG, "onConnectButtonClick onSuccess() - Successfully connected to Office 365");
 
                         UserInfo info = result.getUserInfo();
+                        String sip;
+                        if(info.getDisplayableId().equals("mgr@wiadvance.net")){
+                            sip = "0702552501";
+                        }else{
+                            sip = "0702552500";
+                        }
                         Intent intent = SipActivity.newIntent(
                                 LoginActivity.this,
                                 info.getGivenName(),
                                 info.getDisplayableId(),
-                                "0702552501"
+                                sip
                         );
                         startActivity(intent);
 
