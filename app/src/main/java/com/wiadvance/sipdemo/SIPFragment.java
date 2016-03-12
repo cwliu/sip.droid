@@ -388,16 +388,26 @@ public class SIPFragment extends Fragment {
 
         private final TextView mNameTextView;
         private final TextView mSipTextView;
+        private final View mItemView;
 
         public ContactHolder(View itemView) {
             super(itemView);
+            mItemView = itemView;
             mNameTextView = (TextView) itemView.findViewById(R.id.contact_name_text_view);
             mSipTextView = (TextView) itemView.findViewById(R.id.contact_sip_text_view);
         }
 
-        public void bindViewHolder(Contact contact){
+        public void bindViewHolder(final Contact contact){
             mNameTextView.setText(contact.getName());
             mSipTextView.setText(contact.getSip());
+
+            mItemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    makeCall(contact.getSip());
+                }
+            });
+
         }
     }
 
