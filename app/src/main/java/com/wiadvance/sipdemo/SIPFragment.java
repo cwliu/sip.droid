@@ -51,11 +51,6 @@ public class SIPFragment extends Fragment {
     private SipManager mSipManager;
     private SipProfile mCallerProfile;
 
-    private Button registerButton1;
-    private Button registerButton2;
-    private Button callButton0;
-    private Button callButton1;
-    private Button callButton2;
     private Button endButton;
     private String mName;
     private String mEmail;
