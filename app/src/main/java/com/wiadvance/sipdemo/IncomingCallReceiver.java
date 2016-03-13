@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.sip.SipAudioCall;
 import android.net.sip.SipManager;
-import android.net.sip.SipProfile;
 import android.util.Log;
 
 /*** Listens for incoming SIP calls, intercepts and hands them off to SipActivity.
@@ -24,36 +23,27 @@ public class IncomingCallReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
         mIncomingCall = null;
         Log.d(TAG, "onReceive() called with: " + "context = [" + context + "], intent = [" + intent + "]");
-        Notification.updateStatus(context, "Incomming call");
+        Notification.updateStatus(context, "Incoming call !");
 
         try {
             SipActivity activity = (SipActivity) context;
-            SIPFragment fragment = activity.getSipFragment();
+            final SIPFragment fragment = activity.getSipFragment();
             SipManager manager = fragment.getSipManager();
 
 
             SipAudioCall.Listener listener = new SipAudioCall.Listener() {
-                @Override
-                public void onRinging(SipAudioCall call, SipProfile caller) {
-                    Notification.updateStatus(context, "Receive call onRinging()");
-                    try {
-                        Log.d(TAG, "onRinging() called with: " + "call = [" + call + "], caller = [" + caller + "]");
-                        call.answerCall(30);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
 
                 @Override
                 public void onCallEnded(SipAudioCall call) {
                     super.onCallEnded(call);
-                    Notification.updateStatus(context, "Receive call onCallEnded()");
+                    Notification.updateStatus(context, "Call ended");
                 }
 
                 @Override
                 public void onCallEstablished(SipAudioCall call) {
                     super.onCallEstablished(call);
-                    Notification.updateStatus(context, "Receive call onCallEstablished()");
+                    Notification.updateStatus(context, "Connected");
+                    fragment.setCall(call);
 
                     call.startAudio();
                     call.setSpeakerMode(true);

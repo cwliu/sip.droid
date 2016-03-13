@@ -242,8 +242,10 @@ public class SIPFragment extends Fragment {
 
                 public void onRegistrationFailed(String localProfileUri, int errorCode,
                                                  String errorMessage) {
-                    if(errorCode == -10 && mConnected){
-                        Notification.updateStatus(getContext(), "Disconnected from SIP Server" );
+                    if(errorCode == -10){
+                        if(mConnected){
+                            Notification.updateStatus(getContext(), "Disconnected from SIP Server" );
+                        }
                     }else{
                         Notification.updateStatus(getContext(), "Registration failed.\n" +
                                 "ErrorCode: " + errorCode + "\nErrorMessage: " + errorMessage);
@@ -268,8 +270,9 @@ public class SIPFragment extends Fragment {
             SipAudioCall.Listener audioListener = new SipAudioCall.Listener() {
                 @Override
                 public void onCalling(SipAudioCall call) {
+                    setCall(call);
                     Log.d(TAG, "onCalling() called with: " + "call = [" + call + "]");
-                    mCall = call;
+                    setCall(call);
                     Notification.updateStatus(getContext(), "onCalling");
                     super.onCalling(call);
                 }
@@ -345,18 +348,12 @@ public class SIPFragment extends Fragment {
         }
     }
 
-    public void closeLocalProfile(SipProfile sipProfile) {
-        if (mSipManager == null) {
-            return;
-        }
-        try {
-            if (sipProfile != null) {
-                mSipManager.close(sipProfile.getUriString());
-                Notification.updateStatus(getContext(), "Call end");
-            }
-        } catch (Exception e) {
-            Log.d(TAG, "Failed to close local profile.", e);
-        }
+    public SipAudioCall getCall() {
+        return mCall;
+    }
+
+    public void setCall(SipAudioCall call) {
+        mCall = call;
     }
 
     public SipManager getSipManager() {
