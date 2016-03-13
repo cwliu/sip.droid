@@ -1,22 +1,15 @@
 package com.wiadvance.sipdemo;
 
-import android.annotation.TargetApi;
 import android.app.PendingIntent;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.sip.SipAudioCall;
 import android.net.sip.SipException;
 import android.net.sip.SipManager;
 import android.net.sip.SipProfile;
 import android.net.sip.SipRegistrationListener;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -45,8 +38,6 @@ import retrofit.mime.TypedByteArray;
 public class SIPFragment extends Fragment {
 
     private static final String TAG = "SIPFragment";
-    private static final int REQUEST_SIP_PERMISSION = 1;
-    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 2;
     private static final String ARG_NAME = "name";
     private static final String ARG_EMAIL = "email";
     private static final String ARG_SIP = "sip";
@@ -84,11 +75,6 @@ public class SIPFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        checkPermissions(
-                getContext(),
-                android.Manifest.permission.USE_SIP,
-                android.Manifest.permission.RECORD_AUDIO
-        );
 
         if (mSipManager == null) {
             mSipManager = SipManager.newInstance(getContext());
@@ -139,70 +125,6 @@ public class SIPFragment extends Fragment {
         return rootView;
     }
 
-    private boolean checkPermissions(Context context, String... permissions) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null) {
-
-            for (final String permission : permissions) {
-                int requestCode = 0;
-
-                if (permission.equals(android.Manifest.permission.USE_SIP)) {
-                    requestCode = REQUEST_SIP_PERMISSION;
-                } else if (permission.equals(android.Manifest.permission.RECORD_AUDIO)) {
-                    requestCode = REQUEST_RECORD_AUDIO_PERMISSION;
-                }
-                if (context.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{permission}, requestCode);
-                }
-            }
-        }
-
-        return true;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_SIP_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Has permission Todo
-            } else {
-                // No permission
-                final String permission = android.Manifest.permission.USE_SIP;
-                if (shouldShowRequestPermissionRationale(permission)) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setMessage("We need you to grant SIP permission");
-                    builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @TargetApi(Build.VERSION_CODES.M)
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            requestPermissions(new String[]{permission}, REQUEST_SIP_PERMISSION);
-                        }
-                    });
-                    builder.show();
-                }
-            }
-        }
-        if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Has permission Todo
-            } else {
-                // No permission
-                final String permission = android.Manifest.permission.RECORD_AUDIO;
-                if (shouldShowRequestPermissionRationale(permission)) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setMessage("We need you to grant audio record permission");
-                    builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @TargetApi(Build.VERSION_CODES.M)
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            requestPermissions(new String[]{permission}, REQUEST_SIP_PERMISSION);
-                        }
-                    });
-                    builder.show();
-                }
-            }
-        }
-    }
     private void register(String account) {
         String username = account;
         String domain = "210.202.37.33";
