@@ -67,6 +67,8 @@ public class SIPFragment extends Fragment {
 
     private SipAudioCall mCall;
 
+    private boolean mConnected = false;
+
     public static SIPFragment newInstance(String name, String email, String sipNumber) {
 
         Bundle args = new Bundle();
@@ -233,18 +235,20 @@ public class SIPFragment extends Fragment {
                 }
 
                 public void onRegistrationDone(String localProfileUri, long expiryTime) {
+                    mConnected = true;
                     Notification.updateStatus(getContext(), "Ready to have a SIP call !");
                     Log.d(TAG, "onRegistrationDone: Expiry Time: " + new Date(expiryTime));
                 }
 
                 public void onRegistrationFailed(String localProfileUri, int errorCode,
                                                  String errorMessage) {
-                    if(errorCode == -10){
+                    if(errorCode == -10 && mConnected){
                         Notification.updateStatus(getContext(), "Disconnected from SIP Server" );
                     }else{
                         Notification.updateStatus(getContext(), "Registration failed.\n" +
                                 "ErrorCode: " + errorCode + "\nErrorMessage: " + errorMessage);
                     }
+                    mConnected = false;
                 }
             });
         } catch (SipException e) {

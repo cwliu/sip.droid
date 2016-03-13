@@ -3,12 +3,6 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_sip_disconnect"
-        android:title="SIP Disconnect"
-        app:showAsAction="never"
-        />
-
-    <item
         android:id="@+id/action_logout"
         android:title="Logout"
         app:showAsAction="never"
