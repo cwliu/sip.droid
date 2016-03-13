@@ -21,11 +21,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.wiadvance.sipdemo.office365.AuthenticationManager;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -87,10 +92,15 @@ public class SIPFragment extends Fragment {
             mSipManager = SipManager.newInstance(getContext());
         }
 
+        initializeViews();
+
+        setHasOptionsMenu(true);
+    }
+
+    private void initializeViews() {
         mName = getArguments().getString(ARG_NAME);
         mEmail = getArguments().getString(ARG_EMAIL);
         mSipNumber = getArguments().getString(ARG_SIP);
-
     }
 
     @Nullable
@@ -191,13 +201,18 @@ public class SIPFragment extends Fragment {
             }
         }
     }
-    private void register(String account) throws ParseException {
+    private void register(String account) {
         String username = account;
         String domain = "210.202.37.33";
         String password = "123456789";
 
         SipProfile.Builder sipBuilder;
-        sipBuilder = new SipProfile.Builder(username, domain);
+        try {
+            sipBuilder = new SipProfile.Builder(username, domain);
+        } catch (ParseException e) {
+            Log.e(TAG, "ParseException: ", e);
+            return;
+        }
 
         sipBuilder.setPassword(password);
         mCallerProfile = sipBuilder.build();
@@ -218,13 +233,18 @@ public class SIPFragment extends Fragment {
                 }
 
                 public void onRegistrationDone(String localProfileUri, long expiryTime) {
-                    Notification.updateStatus(getContext(), "Ready to have a call, expiryTime: " + new Date(expiryTime));
+                    Notification.updateStatus(getContext(), "Ready to have a SIP call !");
+                    Log.d(TAG, "onRegistrationDone: Expiry Time: " + new Date(expiryTime));
                 }
 
                 public void onRegistrationFailed(String localProfileUri, int errorCode,
                                                  String errorMessage) {
-                    Notification.updateStatus(getContext(), "Registration failed. " +
-                            "errorCode: " + errorCode + ", errorMessage: " + errorMessage);
+                    if(errorCode == -10){
+                        Notification.updateStatus(getContext(), "Disconnected from SIP Server" );
+                    }else{
+                        Notification.updateStatus(getContext(), "Registration failed.\n" +
+                                "ErrorCode: " + errorCode + "\nErrorMessage: " + errorMessage);
+                    }
                 }
             });
         } catch (SipException e) {
@@ -433,10 +453,48 @@ public class SIPFragment extends Fragment {
             }
         });
 
-        try {
-            register(mSipNumber);
-        } catch (ParseException e) {
-            e.printStackTrace();
+        register(mSipNumber);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        inflater.inflate(R.menu.fragment_sip, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch(item.getItemId()){
+            case R.id.action_logout:
+                removeSipAccount();
+                AuthenticationManager.getInstance().setContextActivity(getActivity());
+                AuthenticationManager.getInstance().disconnect();
+                getActivity().finish();
+                return true;
+
+            case R.id.action_manual_register:
+                register(mSipNumber);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
         }
+    }
+
+    private boolean removeSipAccount() {
+        if (mSipManager == null) {
+            return true;
+        }
+        try {
+            if (mCallerProfile != null) {
+                mSipManager.close(mCallerProfile.getUriString());
+                Notification.updateStatus(getContext(), "Unregister device from SIP Server");
+            }
+        } catch (Exception ee) {
+            Log.d(TAG, "Failed to close local profile.", ee);
+        }
+        return false;
     }
 }
