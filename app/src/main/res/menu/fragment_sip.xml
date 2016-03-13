@@ -3,14 +3,17 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_logout"
-        android:title="Logout"
+        android:id="@+id/action_manual_register"
+        android:orderInCategory="100"
+        android:title="Manual SIP Register"
         app:showAsAction="never"
         />
 
     <item
-        android:id="@+id/action_manual_register"
-        android:title="Manual Register"
+        android:id="@+id/action_logout"
+        android:orderInCategory="999"
+        android:title="Logout"
         app:showAsAction="never"
         />
+
 </menu>

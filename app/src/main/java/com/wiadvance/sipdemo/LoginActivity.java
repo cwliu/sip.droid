@@ -55,6 +55,10 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLoginButtonClick(View view) {
         Log.d(TAG, "onLoginButtonClick() called with: " + "view = [" + view + "]");
+        login();
+    }
+
+    private void login() {
         checkO365Config();
 
         showLoading(true);
@@ -94,7 +98,6 @@ public class LoginActivity extends AppCompatActivity {
                             resetUI();
                         }
                     }
-
                 });
     }
 
