@@ -22,6 +22,7 @@ import java.util.UUID;
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
+
     private Button mLoginButton;
     private Button mLogoutButton;
     private ProgressBar mLoginProgressBar;
@@ -40,24 +41,27 @@ public class LoginActivity extends AppCompatActivity {
         mLoginProgressBar = (ProgressBar) findViewById(R.id.login_progress_bar);
     }
 
-    private void showConnectingInProgressUI() {
-        mLoginButton.setVisibility(View.GONE);
-        mLogoutButton.setVisibility(View.GONE);
-        mLoginProgressBar.setVisibility(View.VISIBLE);
+    private void showLoading(boolean on) {
+        if(on){
+            mLoginButton.setVisibility(View.GONE);
+            mLogoutButton.setVisibility(View.GONE);
+            mLoginProgressBar.setVisibility(View.VISIBLE);
+        }else{
+            mLoginButton.setVisibility(View.VISIBLE);
+            mLogoutButton.setVisibility(View.VISIBLE);
+            mLoginProgressBar.setVisibility(View.GONE);
+        }
     }
 
     private void resetUI() {
-        mLoginButton.setVisibility(View.VISIBLE);
-        mLogoutButton.setVisibility(View.VISIBLE);
-        mLoginProgressBar.setVisibility(View.GONE);
+        showLoading(false);
     }
 
     public void onLoginButtonClick(View view) {
         Log.d(TAG, "onLoginButtonClick() called with: " + "view = [" + view + "]");
-
-        showConnectingInProgressUI();
-
         checkO365Config();
+
+        showLoading(true);
 
         AuthenticationManager.getInstance().setContextActivity(this);
         AuthenticationManager.getInstance().connect(
