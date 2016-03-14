@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
-import android.net.Uri;
 import android.net.sip.SipAudioCall;
 import android.net.sip.SipException;
 import android.net.sip.SipManager;
@@ -333,12 +332,14 @@ public class SIPFragment extends Fragment {
         private final TextView mNameTextView;
         private final View mItemView;
         private final ImageView mPhoneImageview;
+        private final ImageView mZoiperImageview;
 
         public ContactHolder(View itemView) {
             super(itemView);
             mItemView = itemView;
             mNameTextView = (TextView) itemView.findViewById(R.id.contact_name_text_view);
             mPhoneImageview = (ImageView) itemView.findViewById(R.id.phone_icon_image_view);
+            mZoiperImageview = (ImageView) itemView.findViewById(R.id.zoiper_image_view);
 
         }
 
@@ -349,6 +350,14 @@ public class SIPFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     makeCall(contact.getSip());
+                }
+            });
+
+            mZoiperImageview.setOnClickListener(new View.OnClickListener(){
+
+                @Override
+                public void onClick(View v) {
+                    // TBD
                 }
             });
 

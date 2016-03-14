@@ -24,6 +24,7 @@
 
 
     <ImageView
+        android:id="@+id/zoiper_image_view"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:src="@drawable/zoiper"
