@@ -10,24 +10,35 @@
         android:id="@+id/contact_name_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20dp"
+        android:textSize="18dp"
         tools:text="David"
         />
 
     <ImageView
+        android:id="@+id/phone_icon_image_view"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:padding="3dp"
         android:src="@drawable/phone"
         android:layout_gravity="center_vertical"
         />
 
+
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/zoiper"
+        android:layout_marginLeft="10dp"
+        android:layout_gravity="center_vertical"
+        />
+
     <TextView
-        android:id="@+id/contact_sip_text_view"
+        android:id="@+id/sip_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="0702552500"
-        android:textSize="20dp"
-        />
+        android:textColor="@android:color/black"
+        android:textColorLink="@android:color/black"
+
+        android:hint="No phone number"
+        android:textSize="18dp" />
 
 </LinearLayout>

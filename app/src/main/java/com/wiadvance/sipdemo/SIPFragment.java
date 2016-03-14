@@ -1,8 +1,11 @@
 package com.wiadvance.sipdemo;
 
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.net.Uri;
 import android.net.sip.SipAudioCall;
 import android.net.sip.SipException;
 import android.net.sip.SipManager;
@@ -14,6 +17,12 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.Spannable;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.URLSpan;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,6 +31,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -61,6 +71,7 @@ public class SIPFragment extends Fragment {
     private SipAudioCall mCall;
 
     private boolean mConnected = false;
+    public static final String SIP_DOMAIN = "210.202.37.33";
 
     public static SIPFragment newInstance(String name, String email, String sipNumber) {
 
@@ -133,12 +144,11 @@ public class SIPFragment extends Fragment {
         }
 
         String username = account;
-        String domain = "210.202.37.33";
         String password = "123456789";
 
         SipProfile.Builder sipBuilder;
         try {
-            sipBuilder = new SipProfile.Builder(username, domain);
+            sipBuilder = new SipProfile.Builder(username, SIP_DOMAIN);
         } catch (ParseException e) {
             Log.e(TAG, "ParseException: ", e);
             return;
@@ -244,7 +254,10 @@ public class SIPFragment extends Fragment {
                     Log.d(TAG, "onCallEstablished() called with: " + "call = [" + call + "]");
                     Notification.updateStatus(getContext(), "onCallEstablished");
                     call.startAudio();
-                    call.setSpeakerMode(true);
+                    call.setSpeakerMode(false);
+
+                    setAudioVolume();
+
                 }
 
                 @Override
@@ -296,6 +309,13 @@ public class SIPFragment extends Fragment {
         }
     }
 
+    private void setAudioVolume() {
+        AudioManager audioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
+
+        Log.d(TAG, "Max volume: " + audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL));
+        audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, 4, 0);
+    }
+
     public SipAudioCall getCall() {
         return mCall;
     }
@@ -311,26 +331,44 @@ public class SIPFragment extends Fragment {
     public class ContactHolder extends RecyclerView.ViewHolder{
 
         private final TextView mNameTextView;
-        private final TextView mSipTextView;
         private final View mItemView;
+        private final ImageView mPhoneImageview;
 
         public ContactHolder(View itemView) {
             super(itemView);
             mItemView = itemView;
             mNameTextView = (TextView) itemView.findViewById(R.id.contact_name_text_view);
-            mSipTextView = (TextView) itemView.findViewById(R.id.contact_sip_text_view);
+            mPhoneImageview = (ImageView) itemView.findViewById(R.id.phone_icon_image_view);
+
         }
 
         public void bindViewHolder(final Contact contact){
             mNameTextView.setText(contact.getName());
-            mSipTextView.setText(contact.getSip());
 
-            mItemView.setOnClickListener(new View.OnClickListener() {
+            mPhoneImageview.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     makeCall(contact.getSip());
                 }
             });
+
+            TextView numberField = (TextView) mItemView.findViewById(R.id.sip_text_view);
+            numberField.setMovementMethod(LinkMovementMethod.getInstance());
+
+            String htmlText = "<a href=tel:"+contact.getSip()+">"+contact.getSip()+"</a>";
+
+            Spannable s = (Spannable) Html.fromHtml(htmlText);
+            for (URLSpan u: s.getSpans(0, s.length(), URLSpan.class))
+            {
+                s.setSpan(new UnderlineSpan()
+                {
+                    public void updateDrawState(TextPaint tp)
+                    {
+                        tp.setUnderlineText(false);
+                    }
+                }, s.getSpanStart(u), s.getSpanEnd(u), 0);
+            }
+            numberField.setText(s);
 
         }
     }
