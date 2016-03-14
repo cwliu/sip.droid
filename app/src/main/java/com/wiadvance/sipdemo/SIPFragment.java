@@ -2,7 +2,6 @@ package com.wiadvance.sipdemo;
 
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.net.sip.SipAudioCall;
@@ -13,7 +12,6 @@ import android.net.sip.SipRegistrationListener;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -71,6 +69,7 @@ public class SIPFragment extends Fragment {
 
     private boolean mConnected = false;
     public static final String SIP_DOMAIN = "210.202.37.33";
+    public static final String SIP_PASSWORD = "123456789";
 
     public static SIPFragment newInstance(String name, String email, String sipNumber) {
 
@@ -138,12 +137,11 @@ public class SIPFragment extends Fragment {
     }
 
     private void register(String account) {
-        if(!checkSipSupport()){
+        if(!isSipSupported()){
             return;
         }
 
         String username = account;
-        String password = "123456789";
 
         SipProfile.Builder sipBuilder;
         try {
@@ -153,7 +151,7 @@ public class SIPFragment extends Fragment {
             return;
         }
 
-        sipBuilder.setPassword(password);
+        sipBuilder.setPassword(SIP_PASSWORD);
         mCallerProfile = sipBuilder.build();
         Log.d(TAG, "Caller uri: " + mCallerProfile.getUriString());
 
@@ -195,27 +193,14 @@ public class SIPFragment extends Fragment {
         }
     }
 
-    private boolean checkSipSupport() {
-        if(!SipManager.isVoipSupported(getContext())) {
-            // This device doesn't support SIP
-            new AlertDialog.Builder(getContext())
-                    .setTitle("Error")
-                    .setMessage("Sorry ~ your device doesn't support SIP")
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // continue with delete
-                            getActivity().finish();
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-            return false;
-        }else{
-            return true;
-        }
+    private boolean isSipSupported() {
+        return SipManager.isVoipSupported(getContext());
     }
 
     private void makeCall(String account) {
+        if(!isSipSupported()){
+            return;
+        }
 
         try {
 
@@ -346,12 +331,16 @@ public class SIPFragment extends Fragment {
         public void bindViewHolder(final Contact contact){
             mNameTextView.setText(contact.getName());
 
-            mPhoneImageview.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    makeCall(contact.getSip());
-                }
-            });
+            if(isSipSupported()) {
+                mPhoneImageview.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        makeCall(contact.getSip());
+                    }
+                });
+            }else{
+                mPhoneImageview.setVisibility(View.GONE);
+            }
 
             mZoiperImageview.setOnClickListener(new View.OnClickListener(){
 
@@ -480,11 +469,10 @@ public class SIPFragment extends Fragment {
     }
 
     private boolean removeSipAccount() {
-        checkSipSupport();
-
-        if (mSipManager == null) {
-            return true;
+        if(!isSipSupported()){
+            return false;
         }
+
         try {
             if (mCallerProfile != null) {
                 mSipManager.close(mCallerProfile.getUriString());

@@ -55,6 +55,7 @@ public class LoginActivity extends AppCompatActivity {
                 android.Manifest.permission.RECORD_AUDIO
         );
 
+        checkNativeSipSupport();
     }
 
     private void initializeViews() {
@@ -237,5 +238,17 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }
-
+    private boolean checkNativeSipSupport() {
+        if(!SipManager.isVoipSupported(this)) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Sorry")
+                    .setMessage("Your device doesn't support SIP. \nPlease use Zoiper call instead.")
+                    .setPositiveButton(android.R.string.ok, null)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+            return false;
+        }else{
+            return true;
+        }
+    }
 }
