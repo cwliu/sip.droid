@@ -26,21 +26,11 @@
 
     <ImageView
         android:id="@+id/zoiper_image_view"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:src="@drawable/zoiper"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="20dp"
         android:layout_gravity="center_vertical"
         />
-
-    <TextView
-        android:id="@+id/sip_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
-        android:textColorLink="@android:color/black"
-
-        android:hint="No phone number"
-        android:textSize="18dp" />
-
+    
 </LinearLayout>

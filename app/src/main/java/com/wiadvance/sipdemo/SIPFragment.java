@@ -4,6 +4,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.net.sip.SipAudioCall;
 import android.net.sip.SipException;
 import android.net.sip.SipManager;
@@ -14,12 +15,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
-import android.text.Spannable;
-import android.text.TextPaint;
-import android.text.method.LinkMovementMethod;
-import android.text.style.URLSpan;
-import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -346,28 +341,13 @@ public class SIPFragment extends Fragment {
 
                 @Override
                 public void onClick(View v) {
-                    // TBD
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_VIEW);
+                    intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                    intent.setData(Uri.parse("tel://" + contact.getSip()));
+                    startActivity(intent);
                 }
             });
-
-            TextView numberField = (TextView) mItemView.findViewById(R.id.sip_text_view);
-            numberField.setMovementMethod(LinkMovementMethod.getInstance());
-
-            String htmlText = "<a href=tel:"+contact.getSip()+">"+contact.getSip()+"</a>";
-
-            Spannable s = (Spannable) Html.fromHtml(htmlText);
-            for (URLSpan u: s.getSpans(0, s.length(), URLSpan.class))
-            {
-                s.setSpan(new UnderlineSpan()
-                {
-                    public void updateDrawState(TextPaint tp)
-                    {
-                        tp.setUnderlineText(false);
-                    }
-                }, s.getSpanStart(u), s.getSpanEnd(u), 0);
-            }
-            numberField.setText(s);
-
         }
     }
 
