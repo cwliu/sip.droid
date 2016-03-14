@@ -1,6 +1,7 @@
 package com.wiadvance.sipdemo;
 
 import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.sip.SipAudioCall;
 import android.net.sip.SipException;
@@ -10,6 +11,7 @@ import android.net.sip.SipRegistrationListener;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -78,11 +80,11 @@ public class SIPFragment extends Fragment {
 
         if (mSipManager == null) {
             mSipManager = SipManager.newInstance(getContext());
+
+            initializeViews();
+
+            setHasOptionsMenu(true);
         }
-
-        initializeViews();
-
-        setHasOptionsMenu(true);
     }
 
     private void initializeViews() {
@@ -126,6 +128,10 @@ public class SIPFragment extends Fragment {
     }
 
     private void register(String account) {
+        if(!checkSipSupport()){
+            return;
+        }
+
         String username = account;
         String domain = "210.202.37.33";
         String password = "123456789";
@@ -177,6 +183,26 @@ public class SIPFragment extends Fragment {
             });
         } catch (SipException e) {
             Log.e(TAG, "register: ", e);
+        }
+    }
+
+    private boolean checkSipSupport() {
+        if(!SipManager.isVoipSupported(getContext())) {
+            // This device doesn't support SIP
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Error")
+                    .setMessage("Sorry ~ your device doesn't support SIP")
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // continue with delete
+                            getActivity().finish();
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+            return false;
+        }else{
+            return true;
         }
     }
 
@@ -407,6 +433,8 @@ public class SIPFragment extends Fragment {
     }
 
     private boolean removeSipAccount() {
+        checkSipSupport();
+
         if (mSipManager == null) {
             return true;
         }

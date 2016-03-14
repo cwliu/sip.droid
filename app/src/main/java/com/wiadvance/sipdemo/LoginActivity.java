@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.sip.SipManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -25,9 +26,10 @@ import com.microsoft.aad.adal.UserInfo;
 import com.wiadvance.sipdemo.office365.AuthenticationManager;
 import com.wiadvance.sipdemo.office365.Constants;
 
-import io.fabric.sdk.android.Fabric;
 import java.net.URI;
 import java.util.UUID;
+
+import io.fabric.sdk.android.Fabric;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -101,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                         Intent intent = SipActivity.newIntent(
                                 LoginActivity.this,
-                                info.getGivenName(),
+                               info.getGivenName(),
                                 info.getDisplayableId(),
                                 sip
                         );
