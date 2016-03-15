@@ -166,7 +166,7 @@ public class SIPFragment extends Fragment {
 
                 public void onRegistrationDone(String localProfileUri, long expiryTime) {
                     mConnected = true;
-                    NotificationUtil.updateStatus(getContext(), "Ready to have a SIP call !");
+                    NotificationUtil.updateStatus(getContext(), "Ready to make or receive a SIP call !");
                     Log.d(TAG, "onRegistrationDone: Expiry Time: " + new Date(expiryTime));
                 }
 

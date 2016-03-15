@@ -1,5 +1,6 @@
 package com.wiadvance.sipdemo;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -66,8 +67,8 @@ public class IncomingCallReceiver extends BroadcastReceiver {
         builder.addAction(new NotificationCompat.Action(
                 R.drawable.decline, "Decline", declinePendingIntent));
 
-        mNotificationManager.notify(
-                CallReceiverActivity.INCOMING_CALL_NOTIFICATION_ID, builder.build()
-        );
+        Notification notif = builder.build();
+        notif.defaults |= Notification.DEFAULT_VIBRATE;
+        mNotificationManager.notify(CallReceiverActivity.INCOMING_CALL_NOTIFICATION_ID, notif);
     }
 }
