@@ -33,6 +33,8 @@ public class CallReceiverActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_call_receiver);
 
+        Log.d(TAG, "onCreate() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
+
 
         cancelNotification();
 
@@ -87,8 +89,10 @@ public class CallReceiverActivity extends AppCompatActivity {
 
             mIncomingCall = sipManager.takeAudioCall(sipIntent, listener);
             if(answerCall){
+                Log.d(TAG, "takeAudioCall() answer call");
                 mIncomingCall.answerCall(30);
             }else{
+                Log.d(TAG, "takeAudioCall() decline call");
                 mIncomingCall.endCall();
             }
 

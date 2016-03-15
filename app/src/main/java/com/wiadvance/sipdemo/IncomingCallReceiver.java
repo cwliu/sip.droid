@@ -16,6 +16,8 @@ import android.util.Log;
 public class IncomingCallReceiver extends BroadcastReceiver {
 
     private static final String TAG = "IncomingCallReceiver";
+    private static final int ANSWER_REQUEST_CODE = 1;
+    private static final int DECLINE_REQUEST_CODE = 2;
 
     /**
      * Processes the incoming call, answers it, and hands it over to the SipActivity.
@@ -42,8 +44,8 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 
         Intent answerIntent = CallReceiverActivity.newIntent(context, sipIntnet, true);
         Intent declineIntent = CallReceiverActivity.newIntent(context, sipIntnet, false);
-        PendingIntent answerPendingIntent = createPendingIntent(context, answerIntent);
-        PendingIntent declinePendingIntent = createPendingIntent(context, declineIntent);
+        PendingIntent answerPendingIntent = createPendingIntent(context, ANSWER_REQUEST_CODE, answerIntent);
+        PendingIntent declinePendingIntent = createPendingIntent(context, DECLINE_REQUEST_CODE, declineIntent);
 
         builder.setContentIntent(answerPendingIntent);
 
@@ -60,13 +62,13 @@ public class IncomingCallReceiver extends BroadcastReceiver {
         mNotificationManager.notify(CallReceiverActivity.INCOMING_CALL_NOTIFICATION_ID, notif);
     }
 
-    private PendingIntent createPendingIntent(Context context, Intent nextIntent) {
+    private PendingIntent createPendingIntent(Context context, int requestCode, Intent nextIntent) {
         nextIntent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(CallReceiverActivity.class);
         stackBuilder.addNextIntent(nextIntent);
 
-        return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        return stackBuilder.getPendingIntent(requestCode, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }
