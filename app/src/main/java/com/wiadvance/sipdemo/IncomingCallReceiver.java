@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 /***
@@ -41,21 +42,8 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 
         Intent answerIntent = CallReceiverActivity.newIntent(context, sipIntnet, true);
         Intent declineIntent = CallReceiverActivity.newIntent(context, sipIntnet, false);
-
-//        // The stack builder object will contain an artificial back stack for the
-//        // started Activity.
-//        // This ensures that navigating backward from the Activity leads out of
-//        // your application to the Home screen.
-//        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-//        // Adds the back stack for the Intent (but not the Intent itself)
-//        stackBuilder.addParentStack(LoginActivity.class);
-//        // Adds the Intent that starts the Activity to the top of the stack
-//        stackBuilder.addNextIntent(resultIntent);
-//        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        PendingIntent answerPendingIntent = PendingIntent.getActivity(context, 0, answerIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        PendingIntent declinePendingIntent = PendingIntent.getActivity(context, 1, declineIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
+        PendingIntent answerPendingIntent = createPendingIntent(context, answerIntent);
+        PendingIntent declinePendingIntent = createPendingIntent(context, declineIntent);
 
         builder.setContentIntent(answerPendingIntent);
 
@@ -70,5 +58,15 @@ public class IncomingCallReceiver extends BroadcastReceiver {
         Notification notif = builder.build();
         notif.defaults |= Notification.DEFAULT_VIBRATE;
         mNotificationManager.notify(CallReceiverActivity.INCOMING_CALL_NOTIFICATION_ID, notif);
+    }
+
+    private PendingIntent createPendingIntent(Context context, Intent nextIntent) {
+        nextIntent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        stackBuilder.addParentStack(CallReceiverActivity.class);
+        stackBuilder.addNextIntent(nextIntent);
+
+        return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }
