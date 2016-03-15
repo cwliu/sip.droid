@@ -161,12 +161,12 @@ public class SIPFragment extends Fragment {
             mSipManager.open(mCallerProfile, pendingIntent, new SipRegistrationListener() {
 
                 public void onRegistering(String localProfileUri) {
-                    Notification.updateStatus(getContext(), "Registering with SIP Server...");
+                    NotificationUtil.updateStatus(getContext(), "Registering with SIP Server...");
                 }
 
                 public void onRegistrationDone(String localProfileUri, long expiryTime) {
                     mConnected = true;
-                    Notification.updateStatus(getContext(), "Ready to have a SIP call !");
+                    NotificationUtil.updateStatus(getContext(), "Ready to have a SIP call !");
                     Log.d(TAG, "onRegistrationDone: Expiry Time: " + new Date(expiryTime));
                 }
 
@@ -174,10 +174,10 @@ public class SIPFragment extends Fragment {
                                                  String errorMessage) {
                     if(errorCode == -10){
                         if(mConnected){
-                            Notification.updateStatus(getContext(), "Disconnected from SIP Server" );
+                            NotificationUtil.updateStatus(getContext(), "Disconnected from SIP Server" );
                         }
                     }else{
-                        Notification.updateStatus(getContext(), "Registration failed.\n" +
+                        NotificationUtil.updateStatus(getContext(), "Registration failed.\n" +
                                 "ErrorCode: " + errorCode + "\nErrorMessage: " + errorMessage);
                     }
                     mConnected = false;
@@ -200,7 +200,7 @@ public class SIPFragment extends Fragment {
         try {
 
             if(mCallerProfile == null){
-                Notification.updateStatus(getContext(), "Please register first!");
+                NotificationUtil.updateStatus(getContext(), "Please register first!");
                 return;
             }
 
@@ -210,7 +210,7 @@ public class SIPFragment extends Fragment {
                     setCall(call);
                     Log.d(TAG, "onCalling() called with: " + "call = [" + call + "]");
                     setCall(call);
-                    Notification.updateStatus(getContext(), "onCalling");
+                    NotificationUtil.updateStatus(getContext(), "onCalling");
                     super.onCalling(call);
                 }
 
@@ -224,14 +224,14 @@ public class SIPFragment extends Fragment {
                 public void onRingingBack(SipAudioCall call) {
                     super.onRingingBack(call);
                     Log.d(TAG, "onRingingBack() called with: " + "call = [" + call + "]");
-                    Notification.updateStatus(getContext(), "onRingingBack");
+                    NotificationUtil.updateStatus(getContext(), "onRingingBack");
                 }
 
                 @Override
                 public void onCallEstablished(SipAudioCall call) {
                     super.onCallEstablished(call);
                     Log.d(TAG, "onCallEstablished() called with: " + "call = [" + call + "]");
-                    Notification.updateStatus(getContext(), "onCallEstablished");
+                    NotificationUtil.updateStatus(getContext(), "onCallEstablished");
                     call.startAudio();
                     call.setSpeakerMode(false);
 
@@ -243,7 +243,7 @@ public class SIPFragment extends Fragment {
                 public void onError(SipAudioCall call, int errorCode, String errorMessage) {
                     super.onError(call, errorCode, errorMessage);
                     Log.d(TAG, "onError() called with: " + "call = [" + call + "], errorCode = [" + errorCode + "], errorMessage = [" + errorMessage + "]");
-                    Notification.updateStatus(getContext(), "onError: errorCode = [" + errorCode + "], errorMessage = [" + errorMessage + "]");
+                    NotificationUtil.updateStatus(getContext(), "onError: errorCode = [" + errorCode + "], errorMessage = [" + errorMessage + "]");
 
                 }
 
@@ -284,7 +284,7 @@ public class SIPFragment extends Fragment {
 
         } catch (SipException e) {
             Log.e(TAG, "onCreate: ", e);
-            Notification.updateStatus(getContext(), "Error: " + e.toString());
+            NotificationUtil.updateStatus(getContext(), "Error: " + e.toString());
         }
     }
 
@@ -456,7 +456,7 @@ public class SIPFragment extends Fragment {
         try {
             if (mCallerProfile != null) {
                 mSipManager.close(mCallerProfile.getUriString());
-                Notification.updateStatus(getContext(), "Unregister device from SIP Server");
+                NotificationUtil.updateStatus(getContext(), "Unregister device from SIP Server");
             }
         } catch (Exception ee) {
             Log.d(TAG, "Failed to close local profile.", ee);

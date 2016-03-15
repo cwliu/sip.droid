@@ -50,7 +50,7 @@ public class SipActivity extends SingleFragmentActivity {
         mNotificationReceiver = new NotificationReceiver();
         LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
 
-        IntentFilter notify_filter = new IntentFilter(Notification.ACTION_NOTIFICATION);
+        IntentFilter notify_filter = new IntentFilter(NotificationUtil.ACTION_NOTIFICATION);
         manager.registerReceiver(mNotificationReceiver, notify_filter);
 
         // Set up the intent filter.  This will be used to fire an
@@ -79,7 +79,7 @@ public class SipActivity extends SingleFragmentActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "NotificationReceiver, onReceive()");
-            String message = intent.getStringExtra(Notification.NOTIFY_MESSAGE);
+            String message = intent.getStringExtra(NotificationUtil.NOTIFY_MESSAGE);
             Toast.makeText(SipActivity.this, message, Toast.LENGTH_SHORT).show();
         }
     }
