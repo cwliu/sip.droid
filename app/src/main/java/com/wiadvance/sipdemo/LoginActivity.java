@@ -102,12 +102,12 @@ public class LoginActivity extends AppCompatActivity {
                         }else{
                             sip = "0702552500";
                         }
-                        Intent intent = SipActivity.newIntent(
-                                LoginActivity.this,
-                               info.getGivenName(),
-                                info.getDisplayableId(),
-                                sip
-                        );
+
+                        UserPreference.setName(LoginActivity.this, info.getGivenName());
+                        UserPreference.setEmail(LoginActivity.this, info.getDisplayableId());
+                        UserPreference.setSip(LoginActivity.this, sip);
+
+                        Intent intent = SipActivity.newIntent(LoginActivity.this);
                         startActivity(intent);
 
                         resetUI();

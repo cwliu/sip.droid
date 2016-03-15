@@ -17,28 +17,29 @@ public class SipActivity extends SingleFragmentActivity {
     private SIPFragment mSipFragment;
     private IncomingCallReceiver callReceiver;
 
-    private static String EXTRA_NAME = "name";
-    private static String EXTRA_EMAIL = "email";
-    private static String EXTRA_SIP_NUMBER = "sip_number";
-
+//    private static String EXTRA_NAME = "name";
+//    private static String EXTRA_EMAIL = "email";
+//    private static String EXTRA_SIP_NUMBER = "sip_number";
+//
     public SIPFragment getSipFragment() {
         return mSipFragment;
     }
 
-    public static Intent newIntent(Context context, String name, String email, String sipNumber){
+    public static Intent newIntent(Context context){
         Intent intent = new Intent(context, SipActivity.class);
-        intent.putExtra(EXTRA_NAME, name);
-        intent.putExtra(EXTRA_EMAIL, email);
-        intent.putExtra(EXTRA_SIP_NUMBER, sipNumber);
+//        intent.putExtra(EXTRA_NAME, name);
+//        intent.putExtra(EXTRA_EMAIL, email);
+//        intent.putExtra(EXTRA_SIP_NUMBER, sipNumber);
         return intent;
     }
 
     @Override
     protected Fragment createFragment() {
 
-        String name = getIntent().getStringExtra(EXTRA_NAME);
-        String email = getIntent().getStringExtra(EXTRA_EMAIL);
-        String sipNumber = getIntent().getStringExtra(EXTRA_SIP_NUMBER);
+        String name = UserPreference.getName(getApplicationContext());
+        String email = UserPreference.getEmail(getApplicationContext());
+        String sipNumber = UserPreference.getSip(getApplicationContext());
+
         mSipFragment = SIPFragment.newInstance(name, email, sipNumber);
         return mSipFragment;
     }
