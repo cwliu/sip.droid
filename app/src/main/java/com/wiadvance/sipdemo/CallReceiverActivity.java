@@ -94,6 +94,7 @@ public class CallReceiverActivity extends AppCompatActivity {
             }else{
                 Log.d(TAG, "takeAudioCall() decline call");
                 mIncomingCall.endCall();
+                finish();
             }
 
         } catch (Exception e) {
