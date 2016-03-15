@@ -27,6 +27,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.microsoft.aad.adal.AuthenticationCallback;
+import com.microsoft.aad.adal.AuthenticationResult;
 import com.wiadvance.sipdemo.office365.AuthenticationManager;
 
 import java.text.ParseException;
@@ -89,6 +91,8 @@ public class SIPFragment extends Fragment {
 
             setHasOptionsMenu(true);
         }
+
+        setRetainInstance(true);
     }
 
     private void initializeViews() {
@@ -385,38 +389,59 @@ public class SIPFragment extends Fragment {
         super.onResume();
 
         showLoading(true);
-        MSGraphAPIController.getInstance().showContacts(new Callback<ContactRaw>() {
-            @Override
-            public void success(ContactRaw contactRaw, Response response) {
-                Log.d(TAG, "success() called with: " + "contactRaw = [" + contactRaw + "], response = [" + response + "]");
-                Log.d(TAG, "response.getStatus()" + response.getStatus());
 
-                String s = new String(((TypedByteArray) response.getBody()).getBytes());
-                Log.d(TAG, "response: " + s);
-                Log.d(TAG, "contactRaw.data: " + contactRaw.data);
-                Log.d(TAG, "contactRaw.value: " + contactRaw.value);
-                mContactList.clear();
-                for(ContactRaw.InnerDict person: contactRaw.value){
+        AuthenticationManager.getInstance().setContextActivity(getActivity());
+        AuthenticationManager.getInstance().connect(
+                new AuthenticationCallback<AuthenticationResult>() {
+                    @Override
+                    public void onSuccess(AuthenticationResult result) {
+                        //Need to get the new access token to the RESTHelper instance
+                        Log.i(TAG, "onConnectButtonClick onSuccess() - Successfully connected to Office 365");
 
-                    Log.d(TAG, "person: " + person.displayName);
-                    for(String phone: person.businessPhones){
-                        Contact contact = new Contact(person.displayName, phone);
-                        mContactList.add(contact);
-                        Log.d(TAG, "phone: " + phone);
+                        MSGraphAPIController.getInstance().showContacts(new Callback<ContactRaw>() {
+                            @Override
+                            public void success(ContactRaw contactRaw, Response response) {
+                                Log.d(TAG, "success() called with: " + "contactRaw = [" + contactRaw + "], response = [" + response + "]");
+                                Log.d(TAG, "response.getStatus()" + response.getStatus());
+
+                                String s = new String(((TypedByteArray) response.getBody()).getBytes());
+                                Log.d(TAG, "response: " + s);
+                                Log.d(TAG, "contactRaw.data: " + contactRaw.data);
+                                Log.d(TAG, "contactRaw.value: " + contactRaw.value);
+                                mContactList.clear();
+                                for(ContactRaw.InnerDict person: contactRaw.value){
+
+                                    Log.d(TAG, "person: " + person.displayName);
+                                    for(String phone: person.businessPhones){
+                                        Contact contact = new Contact(person.displayName, phone);
+                                        mContactList.add(contact);
+                                        Log.d(TAG, "phone: " + phone);
+                                    }
+                                }
+
+                                mRecyclerView.setAdapter(new ContactAdapter());
+                                mRecyclerView.getAdapter().notifyDataSetChanged();
+
+                                showLoading(false);
+                            }
+
+                            @Override
+                            public void failure(RetrofitError error) {
+                                showLoading(false);
+
+                                NotificationUtil.updateStatus(getContext(), "Please re-login.\nDownload contact failed: " + error.toString());
+
+                                getActivity().finish();
+                            }
+                        });
                     }
-                }
 
-                mRecyclerView.setAdapter(new ContactAdapter());
-                mRecyclerView.getAdapter().notifyDataSetChanged();
+                    @Override
+                    public void onError(final Exception e) {
+                        Log.e(TAG, "onConnectButtonClick onError() - " + e.getMessage());
+                    };
+                });
 
-                showLoading(false);
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                showLoading(false);
-            }
-        });
 
         register(mSipNumber);
     }
