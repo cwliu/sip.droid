@@ -6,6 +6,9 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.sip.SipAudioCall;
+import android.net.sip.SipException;
+import android.net.sip.SipManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
@@ -33,17 +36,30 @@ public class IncomingCallReceiver extends BroadcastReceiver {
         showNotification(context, sipIntent);
     }
 
-    private void showNotification(Context context, Intent sipIntnet) {
+    private void showNotification(Context context, Intent sipIntent) {
+
+        SipAudioCall.Listener listener = new SipAudioCall.Listener() {
+        };
+
+        SipManager sipManager = SipManager.newInstance(context);
+        String name = "N/A";
+        try {
+            SipAudioCall call = sipManager.takeAudioCall(sipIntent, listener);
+            name = call.getPeerProfile().getUserName();
+        } catch (SipException e) {
+            e.printStackTrace();
+        }
+
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setAutoCancel(true)
                 .setSmallIcon(R.mipmap.phone_icon)
                 .setContentTitle("Incoming SIP call")
-                .setContentText("Someone is calling you");
+                .setContentText(name +" is calling you");
 
-        Intent answerIntent = CallReceiverActivity.newIntent(context, sipIntnet, true);
-        Intent declineIntent = CallReceiverActivity.newIntent(context, sipIntnet, false);
+        Intent answerIntent = CallReceiverActivity.newIntent(context, sipIntent, true);
+        Intent declineIntent = CallReceiverActivity.newIntent(context, sipIntent, false);
         PendingIntent answerPendingIntent = createPendingIntent(context, ANSWER_REQUEST_CODE, answerIntent);
         PendingIntent declinePendingIntent = createPendingIntent(context, DECLINE_REQUEST_CODE, declineIntent);
 
