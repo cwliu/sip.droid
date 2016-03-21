@@ -38,7 +38,7 @@ public class LinphoneCoreHelper {
 
             mLinphoneCore.setRing(basePath + "/oldphone_mono.wav");
             mLinphoneCore.setRingback(basePath + "/ringback.wav");
-            mLinphoneCore.setCallErrorTone(Reason.Busy, basePath + "/oldphone_mono.wav");
+            mLinphoneCore.setCallErrorTone(Reason.Busy, basePath + "/laser.wav");
 
             mLinphoneCore.setMaxCalls(5);
 
@@ -81,6 +81,7 @@ public class LinphoneCoreHelper {
             FileUtils.copyIfNotExist(context, R.raw.toy_mono, basePath + "/toy_mono.wav");
             FileUtils.copyIfNotExist(context, R.raw.ringback, basePath + "/ringback.wav");
             FileUtils.copyIfNotExist(context, R.raw.oldphone_mono, basePath + "/oldphone_mono.wav");
+            FileUtils.copyIfNotExist(context, R.raw.laser, basePath + "/laser.wav");
             FileUtils.copyIfNotExist(context, R.raw.linphonerc_default, basePath + "/.linphonerc");
             FileUtils.copyFromPackage(context, R.raw.linphonerc_factory, new File(basePath + "/linphonerc").getName());
 
