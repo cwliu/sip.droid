@@ -25,6 +25,9 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+
+        buildConfigField "String", "SIP_DOMAIN", "\"210.202.37.33\""
+        buildConfigField "String", "SIP_PASSWORD", "\"123456789\""
     }
     buildTypes {
         release {

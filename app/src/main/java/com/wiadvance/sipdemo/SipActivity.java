@@ -17,19 +17,12 @@ public class SipActivity extends SingleFragmentActivity {
     private SIPFragment mSipFragment;
     private IncomingCallReceiver callReceiver;
 
-//    private static String EXTRA_NAME = "name";
-//    private static String EXTRA_EMAIL = "email";
-//    private static String EXTRA_SIP_NUMBER = "sip_number";
-//
     public SIPFragment getSipFragment() {
         return mSipFragment;
     }
 
     public static Intent newIntent(Context context){
         Intent intent = new Intent(context, SipActivity.class);
-//        intent.putExtra(EXTRA_NAME, name);
-//        intent.putExtra(EXTRA_EMAIL, email);
-//        intent.putExtra(EXTRA_SIP_NUMBER, sipNumber);
         return intent;
     }
 
@@ -54,13 +47,6 @@ public class SipActivity extends SingleFragmentActivity {
         IntentFilter notify_filter = new IntentFilter(NotificationUtil.ACTION_NOTIFICATION);
         manager.registerReceiver(mNotificationReceiver, notify_filter);
 
-        // Set up the intent filter.  This will be used to fire an
-        // IncomingCallReceiver when someone calls the SIP address used by this
-        // application.
-        IntentFilter receiver_filter = new IntentFilter();
-        receiver_filter.addAction(SIPFragment.ACTION_INCOMING_CALL);
-        callReceiver = new IncomingCallReceiver();
-        this.registerReceiver(callReceiver, receiver_filter);
     }
 
     @Override
@@ -69,9 +55,6 @@ public class SipActivity extends SingleFragmentActivity {
         if(mNotificationReceiver != null){
             LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
             manager.unregisterReceiver(mNotificationReceiver);
-        }
-        if (callReceiver != null) {
-            this.unregisterReceiver(callReceiver);
         }
     }
 
