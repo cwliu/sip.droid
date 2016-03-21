@@ -231,7 +231,7 @@ public class SIPFragment extends Fragment {
                             public void failure(RetrofitError error) {
                                 showLoading(false);
 
-                                NotificationUtil.updateStatus(getContext(), "Please re-login.\nDownload contact failed: " + error.toString());
+                                NotificationUtil.displayStatus(getContext(), "Please re-login.\nDownload contact failed: " + error.toString());
 
                                 getActivity().finish();
                             }

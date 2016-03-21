@@ -31,6 +31,7 @@
         android:src="@drawable/zoiper"
         android:layout_marginLeft="20dp"
         android:layout_gravity="center_vertical"
+        android:visibility="gone"
         />
     
 </LinearLayout>

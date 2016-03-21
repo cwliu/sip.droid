@@ -1,5 +1,7 @@
 package com.wiadvance.sipdemo.nativesip;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -9,19 +11,23 @@ import android.net.sip.SipException;
 import android.net.sip.SipManager;
 import android.net.sip.SipProfile;
 import android.net.sip.SipRegistrationListener;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.wiadvance.sipdemo.BuildConfig;
+import com.wiadvance.sipdemo.CallReceiverActivity;
 import com.wiadvance.sipdemo.NotificationUtil;
+import com.wiadvance.sipdemo.R;
 import com.wiadvance.sipdemo.Utils;
 import com.wiadvance.sipdemo.WiSipManager;
 
 import java.text.ParseException;
 import java.util.Date;
 
-public class NativeSIPManager extends WiSipManager {
+public class NativeSipManager extends WiSipManager {
 
-    private static final String TAG = "NativeSIPManager";
+    private static final String TAG = "NativeSipManager";
 
     public static String ACTION_INCOMING_CALL = "com.wiadvance.sipdemo.incoming_call";
 
@@ -32,7 +38,10 @@ public class NativeSIPManager extends WiSipManager {
     private SipAudioCall mCall;
     private IncomingCallReceiver callReceiver;
 
-    public NativeSIPManager(Context context) {
+    private static final int ANSWER_REQUEST_CODE = 1;
+    private static final int DECLINE_REQUEST_CODE = 2;
+
+    public NativeSipManager(Context context) {
         mSipManager = SipManager.newInstance(context);
         mContext = context;
     }
@@ -66,12 +75,12 @@ public class NativeSIPManager extends WiSipManager {
             mSipManager.open(mCallerProfile, pendingIntent, new SipRegistrationListener() {
 
                 public void onRegistering(String localProfileUri) {
-                    NotificationUtil.updateStatus(mContext, "Registering with SIP Server...");
+                    NotificationUtil.displayStatus(mContext, "Registering with SIP Server...");
                 }
 
                 public void onRegistrationDone(String localProfileUri, long expiryTime) {
                     mConnected = true;
-                    NotificationUtil.updateStatus(mContext, "Ready to make or receive a SIP call !");
+                    NotificationUtil.displayStatus(mContext, "Ready to make or receive a SIP call !");
                     Log.d(TAG, "onRegistrationDone: Expiry Time: " + new Date(expiryTime));
                 }
 
@@ -79,10 +88,10 @@ public class NativeSIPManager extends WiSipManager {
                                                  String errorMessage) {
                     if (errorCode == -10) {
                         if (mConnected) {
-                            NotificationUtil.updateStatus(mContext, "Disconnected from SIP Server");
+                            NotificationUtil.displayStatus(mContext, "Disconnected from SIP Server");
                         }
                     } else {
-                        NotificationUtil.updateStatus(mContext, "Registration failed.\n" +
+                        NotificationUtil.displayStatus(mContext, "Registration failed.\n" +
                                 "ErrorCode: " + errorCode + "\nErrorMessage: " + errorMessage);
                     }
                     mConnected = false;
@@ -102,7 +111,7 @@ public class NativeSIPManager extends WiSipManager {
         try {
             if (mCallerProfile != null) {
                 mSipManager.close(mCallerProfile.getUriString());
-                NotificationUtil.updateStatus(mContext, "Unregister device from SIP Server");
+                NotificationUtil.displayStatus(mContext, "Unregister device from SIP Server");
             }
         } catch (Exception ee) {
             Log.d(TAG, "Failed to close local profile.", ee);
@@ -122,7 +131,7 @@ public class NativeSIPManager extends WiSipManager {
         try {
 
             if (mCallerProfile == null) {
-                NotificationUtil.updateStatus(mContext, "Please register first!");
+                NotificationUtil.displayStatus(mContext, "Please register first!");
                 return;
             }
 
@@ -132,7 +141,7 @@ public class NativeSIPManager extends WiSipManager {
                     setCall(call);
                     Log.d(TAG, "onCalling() called with: " + "call = [" + call + "]");
                     setCall(call);
-                    NotificationUtil.updateStatus(mContext, "onCalling");
+                    NotificationUtil.displayStatus(mContext, "onCalling");
                     super.onCalling(call);
                 }
 
@@ -146,14 +155,14 @@ public class NativeSIPManager extends WiSipManager {
                 public void onRingingBack(SipAudioCall call) {
                     super.onRingingBack(call);
                     Log.d(TAG, "onRingingBack() called with: " + "call = [" + call + "]");
-                    NotificationUtil.updateStatus(mContext, "onRingingBack");
+                    NotificationUtil.displayStatus(mContext, "onRingingBack");
                 }
 
                 @Override
                 public void onCallEstablished(SipAudioCall call) {
                     super.onCallEstablished(call);
                     Log.d(TAG, "onCallEstablished() called with: " + "call = [" + call + "]");
-                    NotificationUtil.updateStatus(mContext, "onCallEstablished");
+                    NotificationUtil.displayStatus(mContext, "onCallEstablished");
                     call.startAudio();
                     call.setSpeakerMode(false);
 
@@ -165,7 +174,7 @@ public class NativeSIPManager extends WiSipManager {
                 public void onError(SipAudioCall call, int errorCode, String errorMessage) {
                     super.onError(call, errorCode, errorMessage);
                     Log.d(TAG, "onError() called with: " + "call = [" + call + "], errorCode = [" + errorCode + "], errorMessage = [" + errorMessage + "]");
-                    NotificationUtil.updateStatus(mContext, "onError: errorCode = [" + errorCode + "], errorMessage = [" + errorMessage + "]");
+                    NotificationUtil.displayStatus(mContext, "onError: errorCode = [" + errorCode + "], errorMessage = [" + errorMessage + "]");
 
                 }
 
@@ -206,7 +215,7 @@ public class NativeSIPManager extends WiSipManager {
 
         } catch (SipException e) {
             Log.e(TAG, "onCreate: ", e);
-            NotificationUtil.updateStatus(mContext, "Error: " + e.toString());
+            NotificationUtil.displayStatus(mContext, "Error: " + e.toString());
         }
     }
 
@@ -248,4 +257,57 @@ public class NativeSIPManager extends WiSipManager {
         mCall = call;
     }
 
+    public static void showIncomingCallNotification(Context context, Intent sipIntent) {
+
+        String caller = getCallerNameFromSipIntent(context, sipIntent);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setAutoCancel(true)
+                .setSmallIcon(R.mipmap.phone_icon)
+                .setContentTitle("Incoming SIP call")
+                .setContentText(caller + " is calling you");
+
+        Intent answerIntent = CallReceiverActivity.newNativeSipIntent(context, sipIntent, true);
+        Intent declineIntent = CallReceiverActivity.newNativeSipIntent(context, sipIntent, false);
+        PendingIntent answerPendingIntent = createPendingIntent(context, ANSWER_REQUEST_CODE, answerIntent);
+        PendingIntent declinePendingIntent = createPendingIntent(context, DECLINE_REQUEST_CODE, declineIntent);
+
+        builder.setContentIntent(answerPendingIntent);
+
+        NotificationManager mNotificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        builder.addAction(new NotificationCompat.Action(
+                R.drawable.answer, "Answer", answerPendingIntent));
+        builder.addAction(new NotificationCompat.Action(
+                R.drawable.decline, "Decline", declinePendingIntent));
+
+        Notification notif = builder.build();
+        notif.defaults |= Notification.DEFAULT_VIBRATE;
+        mNotificationManager.notify(CallReceiverActivity.INCOMING_CALL_NOTIFICATION_ID, notif);
+    }
+
+    private static String getCallerNameFromSipIntent(Context context, Intent sipIntent) {
+        SipManager sipManager = SipManager.newInstance(context);
+        String caller = "N/A";
+        try {
+            SipAudioCall call = sipManager.takeAudioCall(sipIntent, new SipAudioCall.Listener() {
+            });
+            caller = call.getPeerProfile().getUserName();
+        } catch (SipException e) {
+            e.printStackTrace();
+        }
+        return caller;
+    }
+
+    private static PendingIntent createPendingIntent(Context context, int requestCode, Intent nextIntent) {
+        nextIntent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        stackBuilder.addParentStack(CallReceiverActivity.class);
+        stackBuilder.addNextIntent(nextIntent);
+
+        return stackBuilder.getPendingIntent(requestCode, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
 }

@@ -1,17 +1,31 @@
 package com.wiadvance.sipdemo.linphone;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.wiadvance.sipdemo.BuildConfig;
+import com.wiadvance.sipdemo.CallReceiverActivity;
+import com.wiadvance.sipdemo.R;
 import com.wiadvance.sipdemo.WiSipManager;
 
+import org.linphone.LinphoneUtils;
+import org.linphone.core.LinphoneAddress;
 import org.linphone.core.LinphoneAuthInfo;
 import org.linphone.core.LinphoneCall;
+import org.linphone.core.LinphoneCallParams;
 import org.linphone.core.LinphoneCore;
 import org.linphone.core.LinphoneCoreException;
 import org.linphone.core.LinphoneCoreFactory;
 import org.linphone.core.LinphoneProxyConfig;
+
+import java.util.Iterator;
+import java.util.List;
 
 public class LinphoneSipManager extends WiSipManager {
 
@@ -21,16 +35,18 @@ public class LinphoneSipManager extends WiSipManager {
     private boolean mIsCalling;
     private LinphoneCall call = null;
 
-
     public LinphoneCore mLinphoneCore;
+
+    private static final int ANSWER_REQUEST_CODE = 1;
+    private static final int DECLINE_REQUEST_CODE = 2;
 
     public LinphoneSipManager(Context context) {
 
         mContext = context;
         try {
-            mLinphoneCore = LinphoneCoreHelper.getInstance(context);
+            mLinphoneCore = LinphoneCoreHelper.getLinphoneCoreInstance(context);
         } catch (LinphoneCoreException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Can't init LinphoneCore");
         }
     }
 
@@ -52,7 +68,7 @@ public class LinphoneSipManager extends WiSipManager {
                     account, BuildConfig.SIP_PASSWORD, null, BuildConfig.SIP_DOMAIN);
             mLinphoneCore.addAuthInfo(authInfo);
             mLinphoneCore.setDefaultProxyConfig(proxyConfig);
-            mLinphoneCore.addListener(new WiLinPhoneCoreListener("OnRegister"));
+            mLinphoneCore.addListener(new WiLinPhoneCoreListener(mContext, "OnRegister"));
 
         } catch (LinphoneCoreException e) {
             Log.e(TAG, "register: ", e);
@@ -72,7 +88,7 @@ public class LinphoneSipManager extends WiSipManager {
             @Override
             public void run() {
                 try {
-                    LinphoneCore lc = LinphoneCoreHelper.getInstance(mContext);
+                    LinphoneCore lc = LinphoneCoreHelper.getLinphoneCoreInstance(mContext);
                     call = lc.invite(account);
                     if (call == null) {
                         Log.d(TAG, "Could not place call to");
@@ -118,6 +134,78 @@ public class LinphoneSipManager extends WiSipManager {
 
     @Override
     public void unlistenIncomingCall() {
+
+    }
+
+    public static void showIncomingCallNotification(Context context, String caller) {
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setAutoCancel(true)
+                .setSmallIcon(R.mipmap.phone_icon)
+                .setContentTitle("Incoming SIP call")
+                .setContentText(caller + " is calling you");
+
+        Intent answerIntent = CallReceiverActivity.newLinephoneIntnet(context, true);
+        Intent declineIntent = CallReceiverActivity.newLinephoneIntnet(context, false);
+        PendingIntent answerPendingIntent = createPendingIntent(context, ANSWER_REQUEST_CODE, answerIntent);
+        PendingIntent declinePendingIntent = createPendingIntent(context, DECLINE_REQUEST_CODE, declineIntent);
+
+        builder.setContentIntent(answerPendingIntent);
+
+        NotificationManager mNotificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        builder.addAction(new NotificationCompat.Action(
+                R.drawable.answer, "Answer", answerPendingIntent));
+        builder.addAction(new NotificationCompat.Action(
+                R.drawable.decline, "Decline", declinePendingIntent));
+
+        Notification notif = builder.build();
+        notif.defaults |= Notification.DEFAULT_VIBRATE;
+        mNotificationManager.notify(CallReceiverActivity.INCOMING_CALL_NOTIFICATION_ID, notif);
+    }
+
+    private static PendingIntent createPendingIntent(Context context, int requestCode, Intent nextIntent) {
+        nextIntent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        stackBuilder.addParentStack(CallReceiverActivity.class);
+        stackBuilder.addNextIntent(nextIntent);
+
+        return stackBuilder.getPendingIntent(requestCode, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+
+    public void answerCall() {
+
+        LinphoneCall call = null;
+        List address = LinphoneUtils.getLinphoneCalls(mLinphoneCore);
+        Log.d(TAG, "Number of call: " + address.size());
+        Iterator contact = address.iterator();
+
+        while (contact.hasNext()) {
+            call = (LinphoneCall) contact.next();
+            if (LinphoneCall.State.IncomingReceived == call.getState()) {
+                break;
+            }
+        }
+
+        if (call == null) {
+            Log.e(TAG, "Couldn\'t find incoming call");
+        } else {
+
+            LinphoneCallParams params = mLinphoneCore.createDefaultCallParameters();
+            params.enableLowBandwidth(false);
+            LinphoneAddress address1 = call.getRemoteAddress();
+            Log.d(TAG, "Find a incoming call, number: " + address1.asStringUriOnly());
+            try {
+                mLinphoneCore.acceptCallWithParams(call, params);
+            } catch (LinphoneCoreException e) {
+                Log.e(TAG, "onReceiveButtonClick: ", e);
+                e.printStackTrace();
+            }
+        }
 
     }
 }

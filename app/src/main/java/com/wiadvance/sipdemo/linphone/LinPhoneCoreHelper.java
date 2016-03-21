@@ -27,12 +27,12 @@ public class LinphoneCoreHelper {
     private LinphoneCoreHelper() {
     }
 
-    public synchronized static LinphoneCore getInstance(Context context) throws LinphoneCoreException {
+    public synchronized static LinphoneCore getLinphoneCoreInstance(Context context) throws LinphoneCoreException {
         if (mLinphoneCore == null) {
             LinphoneCoreFactory.instance().setDebugMode(true, "WiAdvance");
 
             mLinphoneCore = LinphoneCoreFactory.instance().createLinphoneCore(
-                    new WiLinPhoneCoreListener("createLinphoneCore"), context
+                    new WiLinPhoneCoreListener(context, "createLinphoneCore"), context
             );
             String basePath = copyResourceFile(context);
 

@@ -1,6 +1,9 @@
 package com.wiadvance.sipdemo.linphone;
 
+import android.content.Context;
 import android.util.Log;
+
+import com.wiadvance.sipdemo.NotificationUtil;
 
 import org.linphone.core.LinphoneAddress;
 import org.linphone.core.LinphoneCall;
@@ -20,10 +23,12 @@ import org.linphone.core.SubscriptionState;
 import java.nio.ByteBuffer;
 
 public class WiLinPhoneCoreListener implements LinphoneCoreListener {
-    private static String TAG = "LinPhoneCoreListener";
+    private String TAG = "LinPhoneCoreListener";
+    private Context mContext;
 
-    public WiLinPhoneCoreListener(String name) {
+    public WiLinPhoneCoreListener(Context context, String name) {
         TAG = TAG + "-" + name;
+        mContext  = context;
     }
 
     @Override
@@ -142,6 +147,13 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
     @Override
     public void callState(LinphoneCore core, LinphoneCall call, LinphoneCall.State state, String s) {
         Log.d(TAG, "callState() called with: " + "core = [" + core + "], call = [" + call + "], state = [" + state + "], s = [" + s + "]");
+
+        if(state.equals(LinphoneCall.State.IncomingReceived)){
+            NotificationUtil.displayStatus(mContext, "Incoming Call");
+            LinphoneSipManager.showIncomingCallNotification(mContext,
+                    call.getRemoteAddress().toString()
+            );
+        }
     }
 
     @Override
