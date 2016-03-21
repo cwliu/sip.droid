@@ -1,4 +1,4 @@
-package com.wiadvance.sipdemo;
+package com.wiadvance.sipdemo.model;
 
 public class Contact {
 

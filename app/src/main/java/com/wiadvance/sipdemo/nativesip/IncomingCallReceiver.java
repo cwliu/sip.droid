@@ -1,4 +1,4 @@
-package com.wiadvance.sipdemo;
+package com.wiadvance.sipdemo.nativesip;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -12,6 +12,10 @@ import android.net.sip.SipManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
+
+import com.wiadvance.sipdemo.CallReceiverActivity;
+import com.wiadvance.sipdemo.NotificationUtil;
+import com.wiadvance.sipdemo.R;
 
 /***
  * Listens for incoming SIP calls, intercepts and hands them off to SipActivity.

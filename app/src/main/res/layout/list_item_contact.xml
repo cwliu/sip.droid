@@ -10,14 +10,14 @@
         android:id="@+id/contact_name_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18dp"
+        android:textSize="28dp"
         tools:text="David"
         />
 
     <ImageView
         android:id="@+id/phone_icon_image_view"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:src="@drawable/phone"
         android:layout_marginLeft="10dp"
         android:layout_gravity="center_vertical"
@@ -26,8 +26,8 @@
 
     <ImageView
         android:id="@+id/zoiper_image_view"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:src="@drawable/zoiper"
         android:layout_marginLeft="20dp"
         android:layout_gravity="center_vertical"

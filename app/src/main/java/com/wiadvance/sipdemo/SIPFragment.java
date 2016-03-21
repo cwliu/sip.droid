@@ -21,7 +21,11 @@ import android.widget.TextView;
 
 import com.microsoft.aad.adal.AuthenticationCallback;
 import com.microsoft.aad.adal.AuthenticationResult;
+import com.wiadvance.sipdemo.linphone.LinphoneSipManager;
+import com.wiadvance.sipdemo.model.Contact;
+import com.wiadvance.sipdemo.model.ContactRaw;
 import com.wiadvance.sipdemo.office365.AuthenticationManager;
+import com.wiadvance.sipdemo.office365.MSGraphAPIController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +70,7 @@ public class SIPFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
 
-        wiSipManager = new NativeSIPManager(getContext());
+        wiSipManager = new LinphoneSipManager(getContext());
 
         initializeViews();
 
@@ -98,7 +102,7 @@ public class SIPFragment extends Fragment {
         endButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            wiSipManager.endCall();
+                wiSipManager.endCall();
             }
         });
 
@@ -189,7 +193,7 @@ public class SIPFragment extends Fragment {
         showLoading(true);
 
         AuthenticationManager.getInstance().setContextActivity(getActivity());
-        AuthenticationManager.getInstance(  ).connect(
+        AuthenticationManager.getInstance().connect(
                 new AuthenticationCallback<AuthenticationResult>() {
                     @Override
                     public void onSuccess(AuthenticationResult result) {
@@ -241,6 +245,7 @@ public class SIPFragment extends Fragment {
 
                     ;
                 });
+
         wiSipManager.register(mSipNumber);
     }
 

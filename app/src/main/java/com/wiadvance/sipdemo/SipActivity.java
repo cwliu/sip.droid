@@ -9,17 +9,13 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+
 public class SipActivity extends SingleFragmentActivity {
 
     private String TAG = "SipActivity";
     private BroadcastReceiver mNotificationReceiver;
 
     private SIPFragment mSipFragment;
-    private IncomingCallReceiver callReceiver;
-
-    public SIPFragment getSipFragment() {
-        return mSipFragment;
-    }
 
     public static Intent newIntent(Context context){
         Intent intent = new Intent(context, SipActivity.class);

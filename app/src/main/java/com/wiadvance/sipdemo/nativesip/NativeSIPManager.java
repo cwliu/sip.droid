@@ -1,4 +1,4 @@
-package com.wiadvance.sipdemo;
+package com.wiadvance.sipdemo.nativesip;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -10,6 +10,11 @@ import android.net.sip.SipManager;
 import android.net.sip.SipProfile;
 import android.net.sip.SipRegistrationListener;
 import android.util.Log;
+
+import com.wiadvance.sipdemo.BuildConfig;
+import com.wiadvance.sipdemo.NotificationUtil;
+import com.wiadvance.sipdemo.Utils;
+import com.wiadvance.sipdemo.WiSipManager;
 
 import java.text.ParseException;
 import java.util.Date;

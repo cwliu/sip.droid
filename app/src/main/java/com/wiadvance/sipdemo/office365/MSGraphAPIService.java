@@ -2,7 +2,9 @@
  *  Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See full license at the bottom of this file.
  */
 
-package com.wiadvance.sipdemo;
+package com.wiadvance.sipdemo.office365;
+
+import com.wiadvance.sipdemo.model.ContactRaw;
 
 import retrofit.Callback;
 import retrofit.http.GET;
