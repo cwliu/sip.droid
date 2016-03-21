@@ -1,10 +1,14 @@
 package com.wiadvance.sipdemo;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -52,6 +56,7 @@ public class SIPFragment extends Fragment {
     private ProgressBar mLoadingProgress;
 
     private WiSipManager wiSipManager;
+    private BroadcastReceiver mCallStatusReceiver;
 
     public static SIPFragment newInstance(String name, String email, String sipNumber) {
 
@@ -267,10 +272,6 @@ public class SIPFragment extends Fragment {
                 getActivity().finish();
                 return true;
 
-            case R.id.action_manual_register:
-                wiSipManager.register(mSipNumber);
-                return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -280,13 +281,31 @@ public class SIPFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        wiSipManager.listenIncomingCall();
+        mCallStatusReceiver = new BroadcastReceiver(){
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                boolean on = intent.getBooleanExtra(NotificationUtil.NOTIFY_CALL_ON, false);
+                if(on){
+                    endButton.setVisibility(View.VISIBLE);
+                }else{
+                    endButton.setVisibility(View.GONE);
+                }
+            }
+        };
+        IntentFilter notify_filter = new IntentFilter(NotificationUtil.ACTION_CALL);
+        LocalBroadcastManager manager = LocalBroadcastManager.getInstance(getContext());
+        manager.registerReceiver(mCallStatusReceiver, notify_filter);
+
     }
 
     @Override
     public void onStop() {
         super.onStop();
 
-        wiSipManager.unlistenIncomingCall();
+        if(mCallStatusReceiver != null){
+            LocalBroadcastManager manager = LocalBroadcastManager.getInstance(getContext());
+            manager.unregisterReceiver(mCallStatusReceiver);
+        }
     }
 }

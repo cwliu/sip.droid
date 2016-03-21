@@ -36,6 +36,7 @@ public class LinphoneSipManager extends WiSipManager {
     private LinphoneCall call = null;
 
     public LinphoneCore mLinphoneCore;
+    private LinphoneProxyConfig mProxyConfig;
 
     private static final int ANSWER_REQUEST_CODE = 1;
     private static final int DECLINE_REQUEST_CODE = 2;
@@ -59,15 +60,14 @@ public class LinphoneSipManager extends WiSipManager {
     public void register(String account) {
 
         String identity = "sip:" + account + "@" + BuildConfig.SIP_DOMAIN;
-        LinphoneProxyConfig proxyConfig;
         try {
-            proxyConfig = mLinphoneCore.createProxyConfig(identity, BuildConfig.SIP_DOMAIN, null, true);
-            mLinphoneCore.addProxyConfig(proxyConfig);
+            mProxyConfig = mLinphoneCore.createProxyConfig(identity, BuildConfig.SIP_DOMAIN, null, true);
+            mLinphoneCore.addProxyConfig(mProxyConfig);
 
             LinphoneAuthInfo authInfo = LinphoneCoreFactory.instance().createAuthInfo(
                     account, BuildConfig.SIP_PASSWORD, null, BuildConfig.SIP_DOMAIN);
             mLinphoneCore.addAuthInfo(authInfo);
-            mLinphoneCore.setDefaultProxyConfig(proxyConfig);
+            mLinphoneCore.setDefaultProxyConfig(mProxyConfig);
             mLinphoneCore.addListener(new WiLinPhoneCoreListener(mContext, "OnRegister"));
 
         } catch (LinphoneCoreException e) {
@@ -77,9 +77,11 @@ public class LinphoneSipManager extends WiSipManager {
 
     @Override
     public boolean unregister(String account) {
-        return false;
+        if(mProxyConfig != null){
+            mLinphoneCore.removeProxyConfig(mProxyConfig);
+        }
+        return true;
     }
-
 
     @Override
     public void makeCall(final String account) {

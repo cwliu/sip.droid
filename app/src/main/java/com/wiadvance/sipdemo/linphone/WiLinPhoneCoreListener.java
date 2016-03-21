@@ -148,11 +148,19 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
     public void callState(LinphoneCore core, LinphoneCall call, LinphoneCall.State state, String s) {
         Log.d(TAG, "callState() called with: " + "core = [" + core + "], call = [" + call + "], state = [" + state + "], s = [" + s + "]");
 
-        if(state.equals(LinphoneCall.State.IncomingReceived)){
+        if(state.equals(LinphoneCall.State.IncomingReceived)) {
             NotificationUtil.displayStatus(mContext, "Incoming Call");
             LinphoneSipManager.showIncomingCallNotification(mContext,
                     call.getRemoteAddress().toString()
             );
+        }
+
+
+        if(state.equals(LinphoneCall.State.CallEnd)){
+            NotificationUtil.notifyCallStatus(mContext, false);
+            NotificationUtil.displayStatus(mContext, state.toString() + ": " + s);
+        }else if(state.equals(LinphoneCall.State.OutgoingInit)){
+            NotificationUtil.notifyCallStatus(mContext, true);
         }
     }
 
