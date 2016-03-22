@@ -58,6 +58,8 @@ public class SIPFragment extends Fragment {
     private WiSipManager wiSipManager;
     private BroadcastReceiver mCallStatusReceiver;
 
+    private boolean mDisplayEndButton = false;
+
     public static SIPFragment newInstance(String name, String email, String sipNumber) {
 
         Bundle args = new Bundle();
@@ -110,6 +112,11 @@ public class SIPFragment extends Fragment {
                 wiSipManager.endCall();
             }
         });
+        if(mDisplayEndButton){
+            endButton.setVisibility(View.VISIBLE);
+        }else{
+            endButton.setVisibility(View.GONE);
+        }
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.contacts_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -287,8 +294,10 @@ public class SIPFragment extends Fragment {
             public void onReceive(Context context, Intent intent) {
                 boolean on = intent.getBooleanExtra(NotificationUtil.NOTIFY_CALL_ON, false);
                 if(on){
+                    mDisplayEndButton = true;
                     endButton.setVisibility(View.VISIBLE);
                 }else{
+                    mDisplayEndButton = false;
                     endButton.setVisibility(View.GONE);
                 }
             }
