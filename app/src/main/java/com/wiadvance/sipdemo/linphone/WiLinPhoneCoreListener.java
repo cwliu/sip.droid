@@ -32,6 +32,31 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
     }
 
     @Override
+    public void displayStatus(LinphoneCore core, String s) {
+        Log.d(TAG, "displayStatus() called with: " + "core = [" + core + "], s = [" + s + "]");
+        NotificationUtil.displayStatus(mContext, "Status: " + s);
+    }
+    
+    @Override
+    public void callState(LinphoneCore core, LinphoneCall call, LinphoneCall.State state, String s) {
+        Log.d(TAG, "callState() called with: " + "core = [" + core + "], call = [" + call + "], state = [" + state + "], s = [" + s + "]");
+
+        if(state.equals(LinphoneCall.State.IncomingReceived)) {
+            LinphoneSipManager.showIncomingCallNotification(mContext,
+                    call.getRemoteAddress().toString()
+            );
+        }
+
+        if(state.equals(LinphoneCall.State.CallEnd)){
+            NotificationUtil.notifyCallStatus(mContext, false);
+        }else if(state.equals(LinphoneCall.State.OutgoingInit)){
+            NotificationUtil.notifyCallStatus(mContext, true);
+        }else if(state.equals(LinphoneCall.State.Connected)){
+            NotificationUtil.notifyCallStatus(mContext, true);
+        }
+    }
+
+    @Override
     public void authInfoRequested(LinphoneCore core, String s, String s1, String s2) {
         Log.d(TAG, "authInfoRequested() called with: " + "core = [" + core + "], s = [" + s + "], s1 = [" + s1 + "], s2 = [" + s2 + "]");
 
@@ -94,11 +119,6 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
     }
 
     @Override
-    public void displayStatus(LinphoneCore core, String s) {
-        Log.d(TAG, "displayStatus() called with: " + "core = [" + core + "], s = [" + s + "]");
-    }
-
-    @Override
     public void displayMessage(LinphoneCore core, String s) {
         Log.d(TAG, "displayMessage() called with: " + "core = [" + core + "], s = [" + s + "]");
     }
@@ -142,30 +162,6 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
     @Override
     public void messageReceived(LinphoneCore core, LinphoneChatRoom room, LinphoneChatMessage message) {
         Log.d(TAG, "messageReceived() called with: " + "core = [" + core + "], room = [" + room + "], message = [" + message + "]");
-    }
-
-    @Override
-    public void callState(LinphoneCore core, LinphoneCall call, LinphoneCall.State state, String s) {
-        Log.d(TAG, "callState() called with: " + "core = [" + core + "], call = [" + call + "], state = [" + state + "], s = [" + s + "]");
-
-        if(state.equals(LinphoneCall.State.IncomingReceived)) {
-            NotificationUtil.displayStatus(mContext, "Incoming Call");
-            LinphoneSipManager.showIncomingCallNotification(mContext,
-                    call.getRemoteAddress().toString()
-            );
-        }
-
-
-        if(state.equals(LinphoneCall.State.CallEnd)){
-            NotificationUtil.notifyCallStatus(mContext, false);
-            NotificationUtil.displayStatus(mContext, state.toString() + ": " + s);
-        }else if(state.equals(LinphoneCall.State.OutgoingInit)){
-            NotificationUtil.displayStatus(mContext, state.toString() + ": " + s);
-            NotificationUtil.notifyCallStatus(mContext, true);
-        }else if(state.equals(LinphoneCall.State.Connected)){
-            NotificationUtil.displayStatus(mContext, state.toString() + ": " + s);
-            NotificationUtil.notifyCallStatus(mContext, true);
-        }
     }
 
     @Override

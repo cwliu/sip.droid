@@ -68,7 +68,6 @@ public class LinphoneSipManager extends WiSipManager {
                     account, BuildConfig.SIP_PASSWORD, null, BuildConfig.SIP_DOMAIN);
             mLinphoneCore.addAuthInfo(authInfo);
             mLinphoneCore.setDefaultProxyConfig(mProxyConfig);
-            mLinphoneCore.addListener(new WiLinPhoneCoreListener(mContext, "OnRegister"));
 
         } catch (LinphoneCoreException e) {
             Log.e(TAG, "register: ", e);
