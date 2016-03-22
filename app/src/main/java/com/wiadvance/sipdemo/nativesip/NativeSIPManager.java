@@ -285,7 +285,7 @@ public class NativeSipManager extends WiSipManager {
 
         Notification notif = builder.build();
         notif.defaults |= Notification.DEFAULT_VIBRATE;
-        mNotificationManager.notify(CallReceiverActivity.INCOMING_CALL_NOTIFICATION_ID, notif);
+        mNotificationManager.notify(NotificationUtil.INCOMING_CALL_NOTIFICATION_ID, notif);
     }
 
     private static String getCallerNameFromSipIntent(Context context, Intent sipIntent) {

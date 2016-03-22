@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.wiadvance.sipdemo.BuildConfig;
 import com.wiadvance.sipdemo.CallReceiverActivity;
+import com.wiadvance.sipdemo.NotificationUtil;
 import com.wiadvance.sipdemo.R;
 import com.wiadvance.sipdemo.WiSipManager;
 
@@ -164,7 +165,7 @@ public class LinphoneSipManager extends WiSipManager {
 
         Notification notif = builder.build();
         notif.defaults |= Notification.DEFAULT_VIBRATE;
-        mNotificationManager.notify(CallReceiverActivity.INCOMING_CALL_NOTIFICATION_ID, notif);
+        mNotificationManager.notify(NotificationUtil.INCOMING_CALL_NOTIFICATION_ID, notif);
     }
 
     private static PendingIntent createPendingIntent(Context context, int requestCode, Intent nextIntent) {
@@ -175,38 +176,5 @@ public class LinphoneSipManager extends WiSipManager {
         stackBuilder.addNextIntent(nextIntent);
 
         return stackBuilder.getPendingIntent(requestCode, PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
-
-    public void answerCall() {
-
-        LinphoneCall call = null;
-        List address = LinphoneUtils.getLinphoneCalls(mLinphoneCore);
-        Log.d(TAG, "Number of call: " + address.size());
-        Iterator contact = address.iterator();
-
-        while (contact.hasNext()) {
-            call = (LinphoneCall) contact.next();
-            if (LinphoneCall.State.IncomingReceived == call.getState()) {
-                break;
-            }
-        }
-
-        if (call == null) {
-            Log.e(TAG, "Couldn\'t find incoming call");
-        } else {
-
-            LinphoneCallParams params = mLinphoneCore.createDefaultCallParameters();
-            params.enableLowBandwidth(false);
-            LinphoneAddress address1 = call.getRemoteAddress();
-            Log.d(TAG, "Find a incoming call, number: " + address1.asStringUriOnly());
-            try {
-                mLinphoneCore.acceptCallWithParams(call, params);
-            } catch (LinphoneCoreException e) {
-                Log.e(TAG, "onReceiveButtonClick: ", e);
-                e.printStackTrace();
-            }
-        }
-
     }
 }

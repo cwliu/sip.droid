@@ -1,12 +1,8 @@
 package com.wiadvance.sipdemo;
 
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.sip.SipAudioCall;
-import android.net.sip.SipException;
-import android.net.sip.SipManager;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -30,11 +26,8 @@ public class CallReceiverActivity extends AppCompatActivity {
 
     public static final String ARG_SIP_INTENT = "SIP_INTENT";
     private static final String ARG_ANSWER_CALL = "ANSWER_CALL";
-    public static final int INCOMING_CALL_NOTIFICATION_ID = 1;
 
     private static String TAG = "CallReceiverActivity";
-
-    private SipAudioCall mIncomingNativeSipCall;
 
     private LinphoneCore mLc;
     private LinphoneCall mLinephoneCall;
@@ -67,10 +60,9 @@ public class CallReceiverActivity extends AppCompatActivity {
             throw new RuntimeException("Can't get linphone core");
         }
 
-        cancelNotification();
+        NotificationUtil.cancelNotification(this);
 
-        takeLinphoneCall();
-
+        answerCall();
     }
 
     @Override
@@ -93,7 +85,7 @@ public class CallReceiverActivity extends AppCompatActivity {
         }
     }
 
-    public void takeLinphoneCall() {
+    public void answerCall() {
 
         List address = LinphoneUtils.getLinphoneCalls(mLc);
         Log.d(TAG, "Number of call: " + address.size());
@@ -132,72 +124,9 @@ public class CallReceiverActivity extends AppCompatActivity {
     }
 
     public void onEndCallButtonClick(View view){
-        if(mIncomingNativeSipCall != null){
-            try {
-                mIncomingNativeSipCall.endCall();
-            } catch (SipException e) {
-                e.printStackTrace();
-            }
-        }
-
         if(mLinephoneCall != null){
             mLc.terminateCall(mLinephoneCall);
-            NotificationUtil.displayStatus(this, "Call ended");
             finish();
-        }
-    }
-
-    private void cancelNotification() {
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(INCOMING_CALL_NOTIFICATION_ID);
-    }
-
-    private void takeNativeSipAudioCall() {
-        try {
-
-            SipAudioCall.Listener listener = new SipAudioCall.Listener() {
-
-                @Override
-                public void onCallEnded(SipAudioCall call) {
-                    super.onCallEnded(call);
-                    NotificationUtil.displayStatus(CallReceiverActivity.this, "Call ended");
-                }
-
-                @Override
-                public void onCallEstablished(SipAudioCall call) {
-                    super.onCallEstablished(call);
-                    NotificationUtil.displayStatus(CallReceiverActivity.this, "Connected");
-
-                    call.startAudio();
-                    call.setSpeakerMode(true);
-                    if (call.isMuted()) {
-                        call.toggleMute();
-                    }
-                }
-            };
-
-            Intent sipIntent = getIntent().getParcelableExtra(ARG_SIP_INTENT);
-            Boolean answerCall = getIntent().getBooleanExtra(ARG_ANSWER_CALL, true);
-
-            // @TODO Check support
-            SipManager sipManager = SipManager.newInstance(this);
-
-            mIncomingNativeSipCall = sipManager.takeAudioCall(sipIntent, listener);
-            if(answerCall){
-                Log.d(TAG, "takeNativeSipAudioCall() answer call");
-                mIncomingNativeSipCall.answerCall(30);
-            }else{
-                Log.d(TAG, "takeNativeSipAudioCall() decline call");
-                mIncomingNativeSipCall.endCall();
-                finish();
-            }
-
-        } catch (Exception e) {
-            Log.e(TAG, "onReceive() exception", e);
-            if (mIncomingNativeSipCall != null) {
-                mIncomingNativeSipCall.close();
-            }
         }
     }
 }
