@@ -50,7 +50,6 @@ public class LoginActivity extends AppCompatActivity {
 
         checkPermissions(
                 this,
-                android.Manifest.permission.USE_SIP,
                 android.Manifest.permission.RECORD_AUDIO
         );
     }
