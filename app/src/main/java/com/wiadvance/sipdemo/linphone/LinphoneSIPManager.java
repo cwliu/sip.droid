@@ -61,8 +61,9 @@ public class LinphoneSipManager extends WiSipManager {
         String identity = "sip:" + account + "@" + domain;
         try {
 
-            // Remove previous config
             mProxyConfig = mLinphoneCore.createProxyConfig(identity, domain, null, true);
+            mProxyConfig.setExpires(60);
+
             mLinphoneCore.addProxyConfig(mProxyConfig);
 
             LinphoneAuthInfo authInfo = LinphoneCoreFactory.instance().createAuthInfo(
