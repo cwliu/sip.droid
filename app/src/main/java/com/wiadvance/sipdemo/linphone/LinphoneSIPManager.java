@@ -9,24 +9,17 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
-import com.wiadvance.sipdemo.BuildConfig;
 import com.wiadvance.sipdemo.CallReceiverActivity;
 import com.wiadvance.sipdemo.NotificationUtil;
 import com.wiadvance.sipdemo.R;
 import com.wiadvance.sipdemo.WiSipManager;
 
-import org.linphone.LinphoneUtils;
-import org.linphone.core.LinphoneAddress;
 import org.linphone.core.LinphoneAuthInfo;
 import org.linphone.core.LinphoneCall;
-import org.linphone.core.LinphoneCallParams;
 import org.linphone.core.LinphoneCore;
 import org.linphone.core.LinphoneCoreException;
 import org.linphone.core.LinphoneCoreFactory;
 import org.linphone.core.LinphoneProxyConfig;
-
-import java.util.Iterator;
-import java.util.List;
 
 public class LinphoneSipManager extends WiSipManager {
 
@@ -58,15 +51,17 @@ public class LinphoneSipManager extends WiSipManager {
     }
 
     @Override
-    public void register(String account) {
+    public void register(String account, String password, String domain) {
 
-        String identity = "sip:" + account + "@" + BuildConfig.SIP_DOMAIN;
+        String identity = "sip:" + account + "@" + domain;
         try {
-            mProxyConfig = mLinphoneCore.createProxyConfig(identity, BuildConfig.SIP_DOMAIN, null, true);
+            // Remove previous config
+
+            mProxyConfig = mLinphoneCore.createProxyConfig(identity, domain, null, true);
             mLinphoneCore.addProxyConfig(mProxyConfig);
 
             LinphoneAuthInfo authInfo = LinphoneCoreFactory.instance().createAuthInfo(
-                    account, BuildConfig.SIP_PASSWORD, null, BuildConfig.SIP_DOMAIN);
+                    account, password, null, domain);
             mLinphoneCore.addAuthInfo(authInfo);
             mLinphoneCore.setDefaultProxyConfig(mProxyConfig);
 
@@ -77,8 +72,12 @@ public class LinphoneSipManager extends WiSipManager {
 
     @Override
     public boolean unregister(String account) {
-        if(mProxyConfig != null){
+        if (mProxyConfig != null) {
             mLinphoneCore.removeProxyConfig(mProxyConfig);
+
+            for(LinphoneProxyConfig config :mLinphoneCore.getProxyConfigList()) {
+                mLinphoneCore.removeProxyConfig(config);
+            }
         }
         return true;
     }

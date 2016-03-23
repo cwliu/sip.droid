@@ -2,7 +2,7 @@ package com.wiadvance.sipdemo;
 
 public abstract class WiSipManager {
 
-    public abstract void register(String account);
+    public abstract void register(String account, String password, String domain);
 
     public abstract boolean unregister(String account);
 

@@ -45,11 +45,15 @@ public class SIPFragment extends Fragment {
     private static final String ARG_NAME = "name";
     private static final String ARG_EMAIL = "email";
     private static final String ARG_SIP = "sip";
+    private static final String ARG_DOMAIN = "domain";
+    private static final String ARG_PASSWORD = "password";
 
     private Button endButton;
     private String mName;
     private String mEmail;
     private String mSipNumber;
+    private String mDomain;
+    private String mPassword;
 
     private RecyclerView mRecyclerView;
     private List<Contact> mContactList = new ArrayList<>();
@@ -60,12 +64,14 @@ public class SIPFragment extends Fragment {
 
     private boolean mDisplayEndButton = false;
 
-    public static SIPFragment newInstance(String name, String email, String sipNumber) {
+    public static SIPFragment newInstance(String name, String email, String sipNumber, String domain, String password) {
 
         Bundle args = new Bundle();
         args.putString(ARG_NAME, name);
         args.putString(ARG_EMAIL, email);
         args.putString(ARG_SIP, sipNumber);
+        args.putString(ARG_DOMAIN, domain);
+        args.putString(ARG_PASSWORD, password);
 
         SIPFragment fragment = new SIPFragment();
         fragment.setArguments(args);
@@ -90,6 +96,8 @@ public class SIPFragment extends Fragment {
         mName = getArguments().getString(ARG_NAME);
         mEmail = getArguments().getString(ARG_EMAIL);
         mSipNumber = getArguments().getString(ARG_SIP);
+        mDomain = getArguments().getString(ARG_DOMAIN);
+        mPassword = getArguments().getString(ARG_PASSWORD);
     }
 
     @Nullable
@@ -227,6 +235,9 @@ public class SIPFragment extends Fragment {
 
                                     Log.d(TAG, "person: " + person.displayName);
                                     for (String phone : person.businessPhones) {
+                                        if(!phone.startsWith("070")){
+                                            continue;
+                                        }
                                         Contact contact = new Contact(person.displayName, phone);
                                         mContactList.add(contact);
                                         Log.d(TAG, "phone: " + phone);
@@ -258,7 +269,7 @@ public class SIPFragment extends Fragment {
                     ;
                 });
 
-        wiSipManager.register(mSipNumber);
+        wiSipManager.register(mSipNumber, mPassword, mDomain);
     }
 
     @Override

@@ -28,8 +28,10 @@ public class SipActivity extends SingleFragmentActivity {
         String name = UserPreference.getName(getApplicationContext());
         String email = UserPreference.getEmail(getApplicationContext());
         String sipNumber = UserPreference.getSip(getApplicationContext());
+        String domain = UserPreference.getDomain(getApplicationContext());
+        String password = UserPreference.getPassword(getApplicationContext());
 
-        mSipFragment = SIPFragment.newInstance(name, email, sipNumber);
+        mSipFragment = SIPFragment.newInstance(name, email, sipNumber, domain, password);
         return mSipFragment;
     }
 

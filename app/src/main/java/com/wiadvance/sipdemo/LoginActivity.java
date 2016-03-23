@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.sip.SipManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -54,8 +53,6 @@ public class LoginActivity extends AppCompatActivity {
                 android.Manifest.permission.USE_SIP,
                 android.Manifest.permission.RECORD_AUDIO
         );
-
-        checkNativeSipSupport();
     }
 
     private void initializeViews() {
@@ -97,15 +94,34 @@ public class LoginActivity extends AppCompatActivity {
 
                         UserInfo info = result.getUserInfo();
                         String sip;
-                        if(info.getDisplayableId().equals("mgr@wiadvance.net")){
+                        String domain;
+                        String password;
+
+                        // FIXME Hardcoded credential
+                        if(info.getDisplayableId().equals("boss@wiadvance.net")){
+                            sip = "0702552502";
+                            domain = "210.202.37.33";
+                            password = "123456789";
+                        }
+                        else if(info.getDisplayableId().equals("mgr@wiadvance.net")){
                             sip = "0702552501";
-                        }else{
+                            domain = "210.202.37.33";
+                            password = "123456789";
+                        }else if(info.getDisplayableId().equals("staff@wiadvance.net")){
                             sip = "0702552500";
+                            domain = "210.202.37.33";
+                            password = "123456789";
+                        }else {
+                            sip = "0702552503";
+                            domain = "210.202.37.33";
+                            password = "123456789";
                         }
 
                         UserPreference.setName(LoginActivity.this, info.getGivenName());
                         UserPreference.setEmail(LoginActivity.this, info.getDisplayableId());
                         UserPreference.setSip(LoginActivity.this, sip);
+                        UserPreference.setDomain(LoginActivity.this, domain);
+                        UserPreference.setPassword(LoginActivity.this, password);
 
                         Intent intent = SipActivity.newIntent(LoginActivity.this);
                         startActivity(intent);
@@ -236,19 +252,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 mLoginButton.setEnabled(false);
             }
-        }
-    }
-    private boolean checkNativeSipSupport() {
-        if(!SipManager.isVoipSupported(this)) {
-            new AlertDialog.Builder(this)
-                    .setTitle("Sorry")
-                    .setMessage("Your device doesn't support SIP. \nPlease use Zoiper call instead.")
-                    .setPositiveButton(android.R.string.ok, null)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
-            return false;
-        }else{
-            return true;
         }
     }
 }
