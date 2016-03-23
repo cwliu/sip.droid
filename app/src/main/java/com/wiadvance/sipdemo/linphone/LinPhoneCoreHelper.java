@@ -23,6 +23,7 @@ public class LinphoneCoreHelper {
     private static final String TAG = "LinphoneCoreHelper";
 
     private static LinphoneCore mLinphoneCore = null;
+    private static Timer sTimer;
 
     private LinphoneCoreHelper() {
     }
@@ -50,16 +51,31 @@ public class LinphoneCoreHelper {
         return mLinphoneCore;
     }
 
+    public static synchronized void destroyLinphoneCore(Context context){
+        try {
+            sTimer.cancel();
+            mLinphoneCore.destroy();
+        }
+        catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+        finally {
+            mLinphoneCore = null;
+        }
+    }
+
     private static void startIterate() {
         TimerTask lTask = new TimerTask() {
             @Override
             public void run() {
-                mLinphoneCore.iterate();
+                if(mLinphoneCore != null){
+                    mLinphoneCore.iterate();
+                }
             }
         };
 
-        Timer timer = new Timer("My scheduler");
-        timer.schedule(lTask, 0, 20);
+        sTimer = new Timer("My scheduler");
+        sTimer.schedule(lTask, 0, 20);
     }
 
     private static void setUserAgent(Context context) {

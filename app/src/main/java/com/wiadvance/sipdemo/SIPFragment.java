@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.microsoft.aad.adal.AuthenticationCallback;
 import com.microsoft.aad.adal.AuthenticationResult;
+import com.wiadvance.sipdemo.linphone.LinphoneCoreHelper;
 import com.wiadvance.sipdemo.linphone.LinphoneSipManager;
 import com.wiadvance.sipdemo.model.Contact;
 import com.wiadvance.sipdemo.model.ContactRaw;
@@ -291,6 +292,8 @@ public class SIPFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.action_logout:
                 mWiSipManager.unregister(mSipNumber);
+                LinphoneCoreHelper.destroyLinphoneCore(getContext());
+
                 AuthenticationManager.getInstance().setContextActivity(getActivity());
                 AuthenticationManager.getInstance().disconnect();
                 getActivity().finish();
