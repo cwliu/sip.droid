@@ -107,11 +107,11 @@ public class LoginActivity extends AppCompatActivity {
                             domain = "210.202.37.33";
                             password = "123456789";
                         }else if(info.getDisplayableId().equals("staff@wiadvance.net")){
-                            sip = "0702552500";
+                            sip = "0702552503";
                             domain = "210.202.37.33";
                             password = "123456789";
                         }else {
-                            sip = "0702552503";
+                            sip = "0702552500";
                             domain = "210.202.37.33";
                             password = "123456789";
                         }

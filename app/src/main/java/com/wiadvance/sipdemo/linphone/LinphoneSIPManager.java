@@ -19,7 +19,12 @@ import org.linphone.core.LinphoneCall;
 import org.linphone.core.LinphoneCore;
 import org.linphone.core.LinphoneCoreException;
 import org.linphone.core.LinphoneCoreFactory;
+import org.linphone.core.LinphoneFriend;
 import org.linphone.core.LinphoneProxyConfig;
+import org.linphone.core.PresenceActivityType;
+import org.linphone.core.PresenceModel;
+
+import java.util.Date;
 
 public class LinphoneSipManager extends WiSipManager {
 
@@ -55,8 +60,8 @@ public class LinphoneSipManager extends WiSipManager {
 
         String identity = "sip:" + account + "@" + domain;
         try {
-            // Remove previous config
 
+            // Remove previous config
             mProxyConfig = mLinphoneCore.createProxyConfig(identity, domain, null, true);
             mLinphoneCore.addProxyConfig(mProxyConfig);
 
@@ -65,9 +70,17 @@ public class LinphoneSipManager extends WiSipManager {
             mLinphoneCore.addAuthInfo(authInfo);
             mLinphoneCore.setDefaultProxyConfig(mProxyConfig);
 
+            setOnlineStatus();
+
         } catch (LinphoneCoreException e) {
             Log.e(TAG, "register: ", e);
         }
+    }
+
+    public void setOnlineStatus() {
+        PresenceModel model = LinphoneCoreFactory.instance().createPresenceModel(PresenceActivityType.Online, null);
+        mLinphoneCore.setPresenceModel(model);
+        Log.d(TAG, "SetOnlineStatus");
     }
 
     @Override
@@ -176,4 +189,43 @@ public class LinphoneSipManager extends WiSipManager {
 
         return stackBuilder.getPendingIntent(requestCode, PendingIntent.FLAG_UPDATE_CURRENT);
     }
+
+    public void addFriend(String sipUri){
+        LinphoneFriend friend = LinphoneCoreFactory.instance().createLinphoneFriend(sipUri);
+        friend.enableSubscribes(true); /*configure this friend to emit SUBSCRIBE message after being added to LinphoneCore*/
+        friend.setIncSubscribePolicy(LinphoneFriend.SubscribePolicy.SPAccept); /* accept Incoming subscription request for this friend*/
+
+        try {
+            LinphoneFriend previous_friend = mLinphoneCore.findFriendByAddress(sipUri);
+            if(previous_friend != null){
+                mLinphoneCore.removeFriend(previous_friend);
+            }
+            mLinphoneCore.addFriend(friend);
+
+        } catch (LinphoneCoreException e) {
+            e.printStackTrace();
+            Log.e(TAG, "addFriend exception ", e);
+        }
+
+    }
+
+    public void displayFriendStatus() {
+        Log.d(TAG, "Number of friend: " + mLinphoneCore.getFriendList().length);
+        for(LinphoneFriend friend: mLinphoneCore.getFriendList()){
+            PresenceModel presenceModel = friend.getPresenceModel();
+            if(presenceModel != null){
+                PresenceActivityType presenceActivity = presenceModel.getActivity().getType();
+                Log.d(TAG, "Friend: "+ friend.getAddress() +", status: " + presenceActivity.toString() + ", time: " + new Date(presenceModel.getTimestamp()));
+            }else{
+                Log.d(TAG, "Friend: "+ friend.getAddress() +", status not available");
+
+            }
+        }
+
+    }
+
+//    private boolean isPresenceModelActivitySet() {
+//        return mLinphoneCore.getPresenceModel() != null && mLinphoneCore.getPresenceModel().getActivity() != null;
+//    }
+
 }

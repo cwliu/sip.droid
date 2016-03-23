@@ -77,7 +77,7 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
     @Override
     public void notifyPresenceReceived(LinphoneCore core, LinphoneFriend friend) {
         Log.d(TAG, "notifyPresenceReceived() called with: " + "core = [" + core + "], friend = [" + friend + "]");
-
+        Log.d(TAG, "notifyPresenceReceived() Friend: " + friend.getAddress() + ", status: " + friend.getPresenceModel().getActivity().getType());
     }
 
     @Override

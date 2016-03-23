@@ -59,7 +59,7 @@ public class SIPFragment extends Fragment {
     private List<Contact> mContactList = new ArrayList<>();
     private ProgressBar mLoadingProgress;
 
-    private WiSipManager wiSipManager;
+    private LinphoneSipManager mWiSipManager;
     private BroadcastReceiver mCallStatusReceiver;
 
     private boolean mDisplayEndButton = false;
@@ -83,7 +83,7 @@ public class SIPFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
 
-        wiSipManager = new LinphoneSipManager(getContext());
+        mWiSipManager = new LinphoneSipManager(getContext());
 
         initializeViews();
 
@@ -117,7 +117,7 @@ public class SIPFragment extends Fragment {
         endButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                wiSipManager.endCall();
+                mWiSipManager.endCall();
             }
         });
         if (mDisplayEndButton) {
@@ -134,7 +134,7 @@ public class SIPFragment extends Fragment {
     }
 
     private void makeCall(String account) {
-        wiSipManager.makeCall(account);
+        mWiSipManager.makeCall(account);
     }
 
     public class ContactHolder extends RecyclerView.ViewHolder {
@@ -154,7 +154,7 @@ public class SIPFragment extends Fragment {
         public void bindViewHolder(final Contact contact) {
             mNameTextView.setText(contact.getName());
 
-            if (wiSipManager.isSupported()) {
+            if (mWiSipManager.isSupported()) {
                 mPhoneImageview.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -244,7 +244,8 @@ public class SIPFragment extends Fragment {
                                         }
                                         Log.d(TAG, "phone: " + phone);
                                     }
-
+                                    String sipUri = "sip:"+ contact.getSip() +"@" + "210.202.37.33";
+                                    mWiSipManager.addFriend(sipUri);
                                     mContactList.add(contact);
                                 }
 
@@ -269,11 +270,12 @@ public class SIPFragment extends Fragment {
                     public void onError(final Exception e) {
                         Log.e(TAG, "onConnectButtonClick onError() - " + e.getMessage());
                     }
-
-                    ;
                 });
 
-        wiSipManager.register(mSipNumber, mPassword, mDomain);
+        mWiSipManager.register(mSipNumber, mPassword, mDomain);
+
+        mWiSipManager.setOnlineStatus();
+        mWiSipManager.displayFriendStatus();
     }
 
     @Override
@@ -288,7 +290,7 @@ public class SIPFragment extends Fragment {
 
         switch (item.getItemId()) {
             case R.id.action_logout:
-                wiSipManager.unregister(mSipNumber);
+                mWiSipManager.unregister(mSipNumber);
                 AuthenticationManager.getInstance().setContextActivity(getActivity());
                 AuthenticationManager.getInstance().disconnect();
                 getActivity().finish();
