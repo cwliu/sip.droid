@@ -4,14 +4,18 @@ public class Contact {
 
     private String mName;
     private String mSip;
+    private String mPhone;
 
-    public Contact(String name, String sip) {
+    public Contact(String name) {
         mName = name;
-        mSip = sip;
     }
 
     public String getName() {
         return mName;
+    }
+
+    public String getPhone() {
+        return mPhone;
     }
 
     public void setName(String name) {
@@ -24,5 +28,9 @@ public class Contact {
 
     public void setSip(String sip) {
         mSip = sip;
+    }
+
+    public void setPhone(String phone){
+        mPhone = phone;
     }
 }

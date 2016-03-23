@@ -120,9 +120,9 @@ public class SIPFragment extends Fragment {
                 wiSipManager.endCall();
             }
         });
-        if(mDisplayEndButton){
+        if (mDisplayEndButton) {
             endButton.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             endButton.setVisibility(View.GONE);
         }
 
@@ -234,14 +234,18 @@ public class SIPFragment extends Fragment {
                                 for (ContactRaw.InnerDict person : contactRaw.value) {
 
                                     Log.d(TAG, "person: " + person.displayName);
+                                    Contact contact = new Contact(person.displayName);
+
                                     for (String phone : person.businessPhones) {
-                                        if(!phone.startsWith("070")){
-                                            continue;
+                                        if (!phone.startsWith("070")) {
+                                            contact.setPhone(phone);
+                                        } else {
+                                            contact.setSip(phone);
                                         }
-                                        Contact contact = new Contact(person.displayName, phone);
-                                        mContactList.add(contact);
                                         Log.d(TAG, "phone: " + phone);
                                     }
+
+                                    mContactList.add(contact);
                                 }
 
                                 mRecyclerView.setAdapter(new ContactAdapter());
@@ -299,15 +303,15 @@ public class SIPFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        mCallStatusReceiver = new BroadcastReceiver(){
+        mCallStatusReceiver = new BroadcastReceiver() {
 
             @Override
             public void onReceive(Context context, Intent intent) {
                 boolean on = intent.getBooleanExtra(NotificationUtil.NOTIFY_CALL_ON, false);
-                if(on){
+                if (on) {
                     mDisplayEndButton = true;
                     endButton.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     mDisplayEndButton = false;
                     endButton.setVisibility(View.GONE);
                 }
@@ -323,7 +327,7 @@ public class SIPFragment extends Fragment {
     public void onStop() {
         super.onStop();
 
-        if(mCallStatusReceiver != null){
+        if (mCallStatusReceiver != null) {
             LocalBroadcastManager manager = LocalBroadcastManager.getInstance(getContext());
             manager.unregisterReceiver(mCallStatusReceiver);
         }
