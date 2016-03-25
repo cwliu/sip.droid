@@ -26,6 +26,9 @@ android {
         versionCode 1
         versionName "1.0"
 
+        buildConfigField "String", "MIXPANL_TOKEN", "\"5984645805656c4310c8a8f45f96cb44\""
+
+
     }
     buildTypes {
         release {
@@ -42,13 +45,15 @@ dependencies {
     // Azure Active Directory Library
     compile 'com.microsoft.aad:adal:1.1.7'
     compile 'com.android.support:recyclerview-v7:23.2.0'
-
     // Retrofit + custom HTTP
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
     compile 'com.squareup.okhttp:okhttp:2.0.0'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'com.google.code.gson:gson:2.6.2'
+    // Crashlytics
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
+    // Mixpanel
+    compile 'com.mixpanel.android:mixpanel-android:4.8.0'
 }

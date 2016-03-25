@@ -22,6 +22,7 @@ import com.microsoft.aad.adal.AuthenticationCallback;
 import com.microsoft.aad.adal.AuthenticationCancelError;
 import com.microsoft.aad.adal.AuthenticationResult;
 import com.microsoft.aad.adal.UserInfo;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.wiadvance.sipdemo.office365.AuthenticationManager;
 import com.wiadvance.sipdemo.office365.Constants;
 
@@ -52,6 +53,9 @@ public class LoginActivity extends AppCompatActivity {
                 this,
                 android.Manifest.permission.RECORD_AUDIO
         );
+
+        MixpanelAPI mixpanel = MixpanelAPI.getInstance(this, BuildConfig.MIXPANL_TOKEN);
+        mixpanel.track(TAG, null);
     }
 
     private void initializeViews() {
@@ -111,7 +115,7 @@ public class LoginActivity extends AppCompatActivity {
                             domain = "210.202.37.33";
                             password = "123456789";
                         }else {
-                            sip = "0702552500";
+                            sip = "0702552503";
                             domain = "210.202.37.33";
                             password = "123456789";
                         }
@@ -122,7 +126,7 @@ public class LoginActivity extends AppCompatActivity {
                         UserPreference.setDomain(LoginActivity.this, domain);
                         UserPreference.setPassword(LoginActivity.this, password);
 
-                        Intent intent = SipActivity.newIntent(LoginActivity.this);
+                        Intent intent = ContactActivity.newIntent(LoginActivity.this);
                         startActivity(intent);
 
                         resetUI();

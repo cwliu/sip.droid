@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.wiadvance.sipdemo.linphone.LinphoneCoreHelper;
 
 import org.linphone.LinphoneUtils;
@@ -63,6 +64,9 @@ public class CallReceiverActivity extends AppCompatActivity {
         NotificationUtil.cancelNotification(this);
 
         answerCall();
+
+        MixpanelAPI mixpanel = MixpanelAPI.getInstance(this, BuildConfig.MIXPANL_TOKEN);
+        mixpanel.track(TAG, null);
     }
 
     @Override

@@ -40,9 +40,9 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 import retrofit.mime.TypedByteArray;
 
-public class SIPFragment extends Fragment {
+public class ContactFragment extends Fragment {
 
-    private static final String TAG = "SIPFragment";
+    private static final String TAG = "ContactFragment";
     private static final String ARG_NAME = "name";
     private static final String ARG_EMAIL = "email";
     private static final String ARG_SIP = "sip";
@@ -65,7 +65,7 @@ public class SIPFragment extends Fragment {
 
     private boolean mDisplayEndButton = false;
 
-    public static SIPFragment newInstance(String name, String email, String sipNumber, String domain, String password) {
+    public static ContactFragment newInstance(String name, String email, String sipNumber, String domain, String password) {
 
         Bundle args = new Bundle();
         args.putString(ARG_NAME, name);
@@ -74,7 +74,7 @@ public class SIPFragment extends Fragment {
         args.putString(ARG_DOMAIN, domain);
         args.putString(ARG_PASSWORD, password);
 
-        SIPFragment fragment = new SIPFragment();
+        ContactFragment fragment = new ContactFragment();
         fragment.setArguments(args);
         return fragment;
     }

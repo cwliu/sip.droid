@@ -9,11 +9,15 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.wiadvance.sipdemo.BuildConfig;
 import com.wiadvance.sipdemo.CallReceiverActivity;
 import com.wiadvance.sipdemo.NotificationUtil;
 import com.wiadvance.sipdemo.R;
 import com.wiadvance.sipdemo.WiSipManager;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.linphone.core.LinphoneAuthInfo;
 import org.linphone.core.LinphoneCall;
 import org.linphone.core.LinphoneCore;
@@ -57,12 +61,13 @@ public class LinphoneSipManager extends WiSipManager {
 
     @Override
     public void register(String account, String password, String domain) {
-
         String identity = "sip:" + account + "@" + domain;
+        LinphoneCoreHelper.setSipNumber(identity);
+
         try {
 
             mProxyConfig = mLinphoneCore.createProxyConfig(identity, domain, null, true);
-            mProxyConfig.setExpires(60);
+            mProxyConfig.setExpires(300);
 
             mLinphoneCore.addProxyConfig(mProxyConfig);
 
@@ -72,6 +77,16 @@ public class LinphoneSipManager extends WiSipManager {
             mLinphoneCore.setDefaultProxyConfig(mProxyConfig);
 
             setOnlineStatus();
+
+            MixpanelAPI mixpanel = MixpanelAPI.getInstance(mContext, BuildConfig.MIXPANL_TOKEN);
+            JSONObject props = new JSONObject();
+            try {
+                props.put("SIP_NUMBER", LinphoneCoreHelper.getSipNumber());
+                props.put("INIT_TIME", LinphoneCoreHelper.getInitTime().toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            mixpanel.track("REGISTER", props);
 
         } catch (LinphoneCoreException e) {
             Log.e(TAG, "register: ", e);

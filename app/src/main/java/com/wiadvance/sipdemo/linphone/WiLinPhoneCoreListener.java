@@ -3,8 +3,12 @@ package com.wiadvance.sipdemo.linphone;
 import android.content.Context;
 import android.util.Log;
 
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.wiadvance.sipdemo.BuildConfig;
 import com.wiadvance.sipdemo.NotificationUtil;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.linphone.core.LinphoneAddress;
 import org.linphone.core.LinphoneCall;
 import org.linphone.core.LinphoneCallStats;
@@ -35,6 +39,24 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
     public void displayStatus(LinphoneCore core, String s) {
         Log.d(TAG, "displayStatus() called with: " + "core = [" + core + "], s = [" + s + "]");
         NotificationUtil.displayStatus(mContext, "Status: " + s);
+
+
+        MixpanelAPI mixpanel = MixpanelAPI.getInstance(mContext, BuildConfig.MIXPANL_TOKEN);
+        JSONObject props = new JSONObject();
+        try {
+            props.put("SIP_NUMBER", LinphoneCoreHelper.getSipNumber());
+            props.put("INIT_TIME", LinphoneCoreHelper.getInitTime());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if(s.contains("Registration") && s.contains("successful")){
+            mixpanel.track("REGISTER-OK", props);
+        }
+
+        if(s.contains("Registration") && !s.contains("successful")){
+            mixpanel.track("REGISTER-FAIL", props);
+        }
     }
     
     @Override

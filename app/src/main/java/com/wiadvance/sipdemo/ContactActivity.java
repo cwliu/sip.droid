@@ -4,22 +4,34 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
-public class SipActivity extends SingleFragmentActivity {
 
-    private String TAG = "SipActivity";
+public class ContactActivity extends SingleFragmentActivity {
+
+    private String TAG = "ContactActivity";
     private BroadcastReceiver mNotificationReceiver;
 
-    private SIPFragment mSipFragment;
+    private ContactFragment mSipFragment;
 
     public static Intent newIntent(Context context){
-        Intent intent = new Intent(context, SipActivity.class);
+        Intent intent = new Intent(context, ContactActivity.class);
         return intent;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
+        super.onCreate(savedInstanceState, persistentState);
+
+        MixpanelAPI mixpanel = MixpanelAPI.getInstance(this, BuildConfig.MIXPANL_TOKEN);
+        mixpanel.track(TAG, null);
     }
 
     @Override
@@ -31,7 +43,7 @@ public class SipActivity extends SingleFragmentActivity {
         String domain = UserPreference.getDomain(getApplicationContext());
         String password = UserPreference.getPassword(getApplicationContext());
 
-        mSipFragment = SIPFragment.newInstance(name, email, sipNumber, domain, password);
+        mSipFragment = ContactFragment.newInstance(name, email, sipNumber, domain, password);
         return mSipFragment;
     }
 
@@ -62,7 +74,7 @@ public class SipActivity extends SingleFragmentActivity {
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "NotificationReceiver, onReceive()");
             String message = intent.getStringExtra(NotificationUtil.NOTIFY_MESSAGE);
-            Toast.makeText(SipActivity.this, message, Toast.LENGTH_SHORT).show();
+            Toast.makeText(ContactActivity.this, message, Toast.LENGTH_SHORT).show();
         }
     }
 }
