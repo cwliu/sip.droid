@@ -47,7 +47,7 @@ public class LinphoneCoreHelper {
 
             initLinephoneResource(context);
 
-            mLinphoneCore.setMaxCalls(1);
+            mLinphoneCore.setMaxCalls(3);
             mLinphoneCore.setNetworkReachable(true);
 
             setUserAgent(context);
