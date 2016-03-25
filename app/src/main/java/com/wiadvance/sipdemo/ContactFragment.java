@@ -25,12 +25,16 @@ import android.widget.TextView;
 
 import com.microsoft.aad.adal.AuthenticationCallback;
 import com.microsoft.aad.adal.AuthenticationResult;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.wiadvance.sipdemo.linphone.LinphoneCoreHelper;
 import com.wiadvance.sipdemo.linphone.LinphoneSipManager;
 import com.wiadvance.sipdemo.model.Contact;
 import com.wiadvance.sipdemo.model.ContactRaw;
 import com.wiadvance.sipdemo.office365.AuthenticationManager;
 import com.wiadvance.sipdemo.office365.MSGraphAPIController;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -293,6 +297,16 @@ public class ContactFragment extends Fragment {
             case R.id.action_logout:
                 mWiSipManager.unregister(mSipNumber);
                 LinphoneCoreHelper.destroyLinphoneCore(getContext());
+
+                MixpanelAPI mixpanel = MixpanelAPI.getInstance(getContext(), BuildConfig.MIXPANL_TOKEN);
+                JSONObject props = new JSONObject();
+                try {
+                    props.put("SIP_NUMBER", LinphoneCoreHelper.getSipNumber());
+                    props.put("INIT_TIME", LinphoneCoreHelper.getInitTime().toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                mixpanel.track("LOGOUT", props);
 
                 AuthenticationManager.getInstance().setContextActivity(getActivity());
                 AuthenticationManager.getInstance().disconnect();

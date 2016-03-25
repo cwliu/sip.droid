@@ -2,7 +2,6 @@ package com.wiadvance.sipdemo.linphone;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -38,60 +37,44 @@ public class LinphoneCoreHelper {
     public synchronized static LinphoneCore getLinphoneCoreInstance(Context context) throws LinphoneCoreException {
         if (mLinphoneCore == null) {
 
-            sInitTime = new Date().toString();
             LinphoneCoreFactory.instance().setDebugMode(true, "WiAdvance");
+
+            sInitTime = new Date().toString();
 
             mLinphoneCore = LinphoneCoreFactory.instance().createLinphoneCore(
                     new WiLinPhoneCoreListener(context, "createLinphoneCore"), context
             );
-            String basePath = copyResourceFile(context);
 
-            mLinphoneCore.setRing(basePath + "/oldphone_mono.wav");
-            mLinphoneCore.setRingback(basePath + "/ringback.wav");
-            mLinphoneCore.setCallErrorTone(Reason.Busy, basePath + "/laser.wav");
+            initLinephoneResource(context);
 
-            mLinphoneCore.setMaxCalls(5);
-
+            mLinphoneCore.setMaxCalls(1);
             mLinphoneCore.setNetworkReachable(true);
+
             setUserAgent(context);
             startIterate(context);
-
         }
         return mLinphoneCore;
     }
 
-    public static synchronized void destroyLinphoneCore(Context context){
+    public static synchronized void destroyLinphoneCore(Context context) {
         try {
             sTimer.cancel();
             mLinphoneCore.destroy();
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             mLinphoneCore = null;
         }
-
-        MixpanelAPI mixpanel = MixpanelAPI.getInstance(context, BuildConfig.MIXPANL_TOKEN);
-        JSONObject props = new JSONObject();
-        try {
-            props.put("SIP_NUMBER", LinphoneCoreHelper.getSipNumber());
-            props.put("INIT_TIME", LinphoneCoreHelper.getInitTime().toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        mixpanel.track("LOGOUT", props);
-
     }
 
     private static void startIterate(final Context context) {
         TimerTask lTask = new TimerTask() {
             @Override
             public void run() {
-                if(mLinphoneCore != null){
+                if (mLinphoneCore != null) {
                     mLinphoneCore.iterate();
 
-                    if(count == 0){
+                    if (count == 0) {
                         MixpanelAPI mixpanel = MixpanelAPI.getInstance(context, BuildConfig.MIXPANL_TOKEN);
 
                         JSONObject props = new JSONObject();
@@ -105,7 +88,7 @@ public class LinphoneCoreHelper {
                     }
 
                     count += 1;
-                    if(count >= 6000){
+                    if (count >= 6000) {
                         count = 0;
                     }
                 }
@@ -116,20 +99,30 @@ public class LinphoneCoreHelper {
         sTimer.schedule(lTask, 0, 20);
     }
 
+    public static void setSipNumber(String sipNumber) {
+        sSipNumber = sipNumber;
+    }
+
+    public static String getInitTime() {
+        return sInitTime;
+    }
+
+    public static String getSipNumber() {
+        return sSipNumber;
+    }
+
     private static void setUserAgent(Context context) {
         try {
             String versionName = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
             if (versionName == null) {
                 versionName = String.valueOf(context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode);
             }
-            mLinphoneCore.setUserAgent("Myphone", versionName);
-        } catch (PackageManager.NameNotFoundException e) {
+            mLinphoneCore.setUserAgent("Wiadvance", versionName);
+        } catch (PackageManager.NameNotFoundException ignored) {
         }
     }
 
-    @NonNull
-    private static String copyResourceFile(Context context) {
-        // Init LinPhoneCore settings
+    private static void initLinephoneResource(Context context) {
         String basePath = context.getFilesDir().getAbsolutePath();
         try {
             FileUtils.copyIfNotExist(context, R.raw.toy_mono, basePath + "/toy_mono.wav");
@@ -143,18 +136,9 @@ public class LinphoneCoreHelper {
             Log.e(TAG, "IOException", e);
             e.printStackTrace();
         }
-        return basePath;
-    }
 
-    public static void setSipNumber(String sipNumber) {
-        sSipNumber = sipNumber;
-    }
-
-    public static String getInitTime() {
-        return sInitTime;
-    }
-
-    public static String getSipNumber() {
-        return sSipNumber;
+        mLinphoneCore.setRing(basePath + "/oldphone_mono.wav");
+        mLinphoneCore.setRingback(basePath + "/ringback.wav");
+        mLinphoneCore.setCallErrorTone(Reason.Busy, basePath + "/laser.wav");
     }
 }
