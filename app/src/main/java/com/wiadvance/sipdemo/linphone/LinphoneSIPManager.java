@@ -15,6 +15,7 @@ import com.wiadvance.sipdemo.CallReceiverActivity;
 import com.wiadvance.sipdemo.NotificationUtil;
 import com.wiadvance.sipdemo.R;
 import com.wiadvance.sipdemo.WiSipManager;
+import com.wiadvance.sipdemo.model.Contact;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,10 +34,10 @@ import java.util.Date;
 public class LinphoneSipManager extends WiSipManager {
 
     private static final String TAG = "LinephoneSIPManager";
+    private static final long MAX_WAIT_TIME_IN_SECONDS = 10 * 1000;
 
     private final Context mContext;
     private boolean mIsCalling;
-    private LinphoneCall call = null;
 
     public LinphoneCore mLinphoneCore;
     private LinphoneProxyConfig mProxyConfig;
@@ -104,7 +105,7 @@ public class LinphoneSipManager extends WiSipManager {
         if (mProxyConfig != null) {
             mLinphoneCore.removeProxyConfig(mProxyConfig);
 
-            for(LinphoneProxyConfig config :mLinphoneCore.getProxyConfigList()) {
+            for (LinphoneProxyConfig config : mLinphoneCore.getProxyConfigList()) {
                 mLinphoneCore.removeProxyConfig(config);
             }
         }
@@ -112,42 +113,97 @@ public class LinphoneSipManager extends WiSipManager {
     }
 
     @Override
-    public void makeCall(final String account) {
+    public void makeCall(final Contact contact) {
         new Thread(new Runnable() {
 
             @Override
             public void run() {
                 try {
-                    LinphoneCore lc = LinphoneCoreHelper.getLinphoneCoreInstance(mContext);
-                    call = lc.invite(account);
-                    if (call == null) {
-                        Log.d(TAG, "Could not place call to");
-                    } else {
-                        Log.d(TAG, "Call to: " + account);
-                        mIsCalling = true;
 
-                        while (mIsCalling) {
-                            lc.iterate();
-                            try {
-                                Thread.sleep(50L);
-                                if (call.getState().toString().equals("CallEnd") || call.getState().toString().equals("Released")) {
-                                    mIsCalling = false;
-                                    Log.d(TAG, "Call end");
-                                }
-
-                            } catch (InterruptedException var8) {
-                                Log.d(TAG, "Interrupted! Aborting");
-                            }
-                        }
-                        if (!LinphoneCall.State.CallEnd.equals(call.getState())) {
-                            Log.d(TAG, "Terminating the call");
-                            lc.terminateCall(call);
-                        }
+                    Boolean isConnected = false;
+                    String sipNumber = contact.getSip();
+                    if (sipNumber == null) {
+                        NotificationUtil.displayStatus(mContext, "This user has no sip number");
+                    }else{
+                        isConnected = call(sipNumber, true);
                     }
+
+                    String phone = contact.getPhone();
+                    if (phone == null) {
+                        NotificationUtil.displayStatus(mContext, "This user has no phone number");
+                    }else if(!isConnected){
+                        NotificationUtil.displayStatus(mContext, "Try to call user phone:" + phone);
+                        call(phone, false);
+                    }
+
                 } catch (LinphoneCoreException e) {
                     e.printStackTrace();
                     Log.e(TAG, "LinphoneCoreException", e);
                 }
+            }
+
+            private boolean call(String account, Boolean hasMaxWaitTime) throws LinphoneCoreException {
+                if (account == null) {
+                    return false;
+                }
+
+                LinphoneCore lc = LinphoneCoreHelper.getLinphoneCoreInstance(mContext);
+                LinphoneCall call = lc.invite(account);
+
+                boolean isConnected = false;
+
+                if (call == null) {
+                    Log.d(TAG, "Could not place call to");
+                } else {
+                    Log.d(TAG, "Call to: " + account);
+                    mIsCalling = true;
+
+                    NotificationUtil.notifyCallStatus(mContext, true);
+
+                    long callingTime = 0;
+                    long iterateInterval = 50L;
+                    boolean hasRinging = false;
+                    while (mIsCalling) {
+                        lc.iterate();
+
+                        try {
+                            Thread.sleep(iterateInterval);
+
+                            if (call.getState().toString().equals("CallEnd") || call.getState().toString().equals("Released")) {
+                                mIsCalling = false;
+                                Log.d(TAG, "Call end");
+                            }
+
+                            if (call.getState().toString().equals("Connected") || call.getState().toString().equals("Connected")) {
+                                isConnected = true;
+                            }
+
+                            if (call.getState().toString().equals("OutgoingRinging")) {
+                                hasRinging = true;
+                            }
+
+
+                        } catch (InterruptedException var8) {
+                            Log.d(TAG, "Interrupted! Aborting");
+                        }
+
+
+                        if (hasRinging) {
+                            callingTime += iterateInterval;
+                        }
+                        Log.d(TAG, "call: callingTime: " + callingTime);
+                        if (hasMaxWaitTime && callingTime >= MAX_WAIT_TIME_IN_SECONDS) {
+                            mIsCalling = false;
+                        }
+                    }
+                    if (!LinphoneCall.State.CallEnd.equals(call.getState())) {
+                        Log.d(TAG, "Terminating the call");
+                        lc.terminateCall(call);
+                    }
+
+                    NotificationUtil.notifyCallStatus(mContext, false);
+                }
+                return isConnected;
             }
         }).start();
     }
@@ -206,14 +262,14 @@ public class LinphoneSipManager extends WiSipManager {
         return stackBuilder.getPendingIntent(requestCode, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    public void addFriend(String sipUri){
+    public void addFriend(String sipUri) {
         LinphoneFriend friend = LinphoneCoreFactory.instance().createLinphoneFriend(sipUri);
         friend.enableSubscribes(true); /*configure this friend to emit SUBSCRIBE message after being added to LinphoneCore*/
         friend.setIncSubscribePolicy(LinphoneFriend.SubscribePolicy.SPAccept); /* accept Incoming subscription request for this friend*/
 
         try {
             LinphoneFriend previous_friend = mLinphoneCore.findFriendByAddress(sipUri);
-            if(previous_friend != null){
+            if (previous_friend != null) {
                 mLinphoneCore.removeFriend(previous_friend);
             }
             mLinphoneCore.addFriend(friend);
@@ -227,13 +283,13 @@ public class LinphoneSipManager extends WiSipManager {
 
     public void displayFriendStatus() {
         Log.d(TAG, "Number of friend: " + mLinphoneCore.getFriendList().length);
-        for(LinphoneFriend friend: mLinphoneCore.getFriendList()){
+        for (LinphoneFriend friend : mLinphoneCore.getFriendList()) {
             PresenceModel presenceModel = friend.getPresenceModel();
-            if(presenceModel != null){
+            if (presenceModel != null) {
                 PresenceActivityType presenceActivity = presenceModel.getActivity().getType();
-                Log.d(TAG, "Friend: "+ friend.getAddress() +", status: " + presenceActivity.toString() + ", time: " + new Date(presenceModel.getTimestamp()));
-            }else{
-                Log.d(TAG, "Friend: "+ friend.getAddress() +", status not available");
+                Log.d(TAG, "Friend: " + friend.getAddress() + ", status: " + presenceActivity.toString() + ", time: " + new Date(presenceModel.getTimestamp()));
+            } else {
+                Log.d(TAG, "Friend: " + friend.getAddress() + ", status not available");
 
             }
         }

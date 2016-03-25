@@ -138,10 +138,6 @@ public class ContactFragment extends Fragment {
         return rootView;
     }
 
-    private void makeCall(String account) {
-        mWiSipManager.makeCall(account);
-    }
-
     public class ContactHolder extends RecyclerView.ViewHolder {
 
         private final TextView mNameTextView;
@@ -163,7 +159,7 @@ public class ContactFragment extends Fragment {
                 mPhoneImageview.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        makeCall(contact.getSip());
+                        mWiSipManager.makeCall(contact);
                     }
                 });
             } else {
