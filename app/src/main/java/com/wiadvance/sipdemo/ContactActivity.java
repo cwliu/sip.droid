@@ -19,11 +19,8 @@ public class ContactActivity extends SingleFragmentActivity {
     private String TAG = "ContactActivity";
     private BroadcastReceiver mNotificationReceiver;
 
-    private ContactFragment mSipFragment;
-
     public static Intent newIntent(Context context){
-        Intent intent = new Intent(context, ContactActivity.class);
-        return intent;
+        return new Intent(context, ContactActivity.class);
     }
 
     @Override
@@ -43,8 +40,8 @@ public class ContactActivity extends SingleFragmentActivity {
         String domain = UserPreference.getDomain(getApplicationContext());
         String password = UserPreference.getPassword(getApplicationContext());
 
-        mSipFragment = ContactFragment.newInstance(name, email, sipNumber, domain, password);
-        return mSipFragment;
+        ContactFragment sipFragment = ContactFragment.newInstance(name, email, sipNumber, domain, password);
+        return sipFragment;
     }
 
     @Override
