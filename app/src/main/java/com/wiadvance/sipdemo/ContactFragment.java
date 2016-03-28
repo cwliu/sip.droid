@@ -115,15 +115,8 @@ public class ContactFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_sip, container, false);
 
-        TextView nameTextView = (TextView) rootView.findViewById(R.id.name);
-        TextView emailTextView = (TextView) rootView.findViewById(R.id.email);
-        TextView sipNumberTextView = (TextView) rootView.findViewById(R.id.sip_number);
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.app_name);
-
-        nameTextView.setText(mName);
-        emailTextView.setText(mEmail);
-        sipNumberTextView.setText(mSipNumber);
 
         endButton = (Button) rootView.findViewById(R.id.end_button);
         endButton.setOnClickListener(new View.OnClickListener() {
