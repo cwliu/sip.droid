@@ -20,7 +20,9 @@ public class ContactActivity extends SingleFragmentActivity {
     private BroadcastReceiver mNotificationReceiver;
 
     public static Intent newIntent(Context context){
-        return new Intent(context, ContactActivity.class);
+        Intent intent = new Intent(context, ContactActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        return intent;
     }
 
     @Override

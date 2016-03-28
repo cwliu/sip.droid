@@ -295,9 +295,4 @@ public class LinphoneSipManager extends WiSipManager {
         }
 
     }
-
-//    private boolean isPresenceModelActivitySet() {
-//        return mLinphoneCore.getPresenceModel() != null && mLinphoneCore.getPresenceModel().getActivity() != null;
-//    }
-
 }
