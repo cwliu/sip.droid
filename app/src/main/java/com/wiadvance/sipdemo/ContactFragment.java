@@ -35,6 +35,7 @@ import com.wiadvance.sipdemo.model.Contact;
 import com.wiadvance.sipdemo.model.ContactRaw;
 import com.wiadvance.sipdemo.office365.AuthenticationManager;
 import com.wiadvance.sipdemo.office365.MSGraphAPIController;
+import com.wiadvance.sipdemo.office365.MakeCallActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -216,7 +217,9 @@ public class ContactFragment extends Fragment {
                 mPhoneImageview.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mWiSipManager.makeCall(contact);
+                        Intent intent = MakeCallActivity.newIntent(getContext(), contact);
+                        startActivity(intent);
+//                        mWiSipManager.makeCall(contact);
                     }
                 });
             } else {
