@@ -17,6 +17,7 @@ public class NotificationUtil {
 
     public static final String NOTIFY_CALL_ON = "notify_call_on";
     public static final String NOTIFY_CALL_STATUS = "notify_call_status";
+    public static final String NOTIFY_CALL_IS_SIP = "is_sip_call";
 
     public static final int INCOMING_CALL_NOTIFICATION_ID = 1;
 
@@ -27,10 +28,11 @@ public class NotificationUtil {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
-    public static void notifyCallStatus(Context context, boolean on, String message){
+    public static void notifyCallStatus(Context context, boolean on, String message, boolean isSip){
         Intent intent = new Intent(ACTION_CALL);
         intent.putExtra(NOTIFY_CALL_ON, on);
         intent.putExtra(NOTIFY_CALL_STATUS, message);
+        intent.putExtra(NOTIFY_CALL_IS_SIP, isSip);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 

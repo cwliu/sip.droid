@@ -78,9 +78,9 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
         if(state.equals(LinphoneCall.State.CallEnd)){
             NotificationUtil.cancelNotification(mContext);
         }else if(state.equals(LinphoneCall.State.OutgoingInit)){
-            NotificationUtil.notifyCallStatus(mContext, true, null);
+//            NotificationUtil.notifyCallStatus(mContext, true, null, );
         }else if(state.equals(LinphoneCall.State.Connected)){
-            NotificationUtil.notifyCallStatus(mContext, true, null);
+//            NotificationUtil.notifyCallStatus(mContext, true, null);
         }
     }
 

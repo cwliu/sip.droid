@@ -37,6 +37,7 @@
         android:layout_marginTop="24dp">
 
         <ImageView
+            android:id="@+id/sip_phone_icon_imageView"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_dialer_sip_white_24dp"

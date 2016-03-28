@@ -80,9 +80,15 @@ public class MakeCallActivity extends AppCompatActivity {
                 boolean on = intent.getBooleanExtra(NotificationUtil.NOTIFY_CALL_ON, false);
                 if (on) {
                     String status = intent.getStringExtra(NotificationUtil.NOTIFY_CALL_STATUS);
-                    if(status != null){
+                    if (status != null) {
                         mCallStatus.setText(status);
                     }
+
+                    boolean isSip = intent.getBooleanExtra(NotificationUtil.NOTIFY_CALL_IS_SIP, true);
+                    if (status != null && !isSip) {
+                        findViewById(R.id.sip_phone_icon_imageView).setVisibility(View.GONE);
+                    }
+
                 } else {
                     finish();
                 }

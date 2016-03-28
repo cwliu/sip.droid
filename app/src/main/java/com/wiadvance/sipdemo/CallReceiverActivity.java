@@ -26,8 +26,6 @@ import java.util.List;
 
 public class CallReceiverActivity extends AppCompatActivity {
 
-    public static final String ARG_SIP_INTENT = "SIP_INTENT";
-    private static final String ARG_ANSWER_CALL = "ANSWER_CALL";
     private static final String ARG_CALLER_NUM = "caller_num";
 
     private static String TAG = "CallReceiverActivity";
@@ -35,12 +33,6 @@ public class CallReceiverActivity extends AppCompatActivity {
     private LinphoneCore mLc;
     private LinphoneCall mLinephoneCall;
     private NotificationReceiver mNotificationReceiver;
-
-//    public static Intent newLinephoneIntnet(Context context, Boolean answerCall) {
-//        Intent intent = new Intent(context, CallReceiverActivity.class);
-//        intent.putExtra(ARG_ANSWER_CALL, answerCall);
-//        return intent;
-//    }
 
     public static Intent newLinephoneIntnet(Context context, String caller) {
         Intent intent = new Intent(context, CallReceiverActivity.class);
@@ -144,7 +136,7 @@ public class CallReceiverActivity extends AppCompatActivity {
 
         if (mLinephoneCall == null) {
             Log.e(TAG, "Couldn\'t find incoming call");
-        }else{
+        } else {
             mLc.declineCall(mLinephoneCall, Reason.Declined);
             finish();
         }

@@ -1,11 +1,8 @@
 package com.wiadvance.sipdemo.linphone;
 
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
@@ -13,7 +10,6 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.wiadvance.sipdemo.BuildConfig;
 import com.wiadvance.sipdemo.CallReceiverActivity;
 import com.wiadvance.sipdemo.NotificationUtil;
-import com.wiadvance.sipdemo.R;
 import com.wiadvance.sipdemo.WiSipManager;
 import com.wiadvance.sipdemo.model.Contact;
 
@@ -126,12 +122,12 @@ public class LinphoneSipManager extends WiSipManager {
                     if (sipNumber == null) {
                         NotificationUtil.displayStatus(mContext, "This user has no sip number");
                     } else {
-                        NotificationUtil.notifyCallStatus(mContext, true, "SIP Dialing...");
+                        NotificationUtil.notifyCallStatus(mContext, true, "SIP Dialing...", true);
                         isConnected = call(sipNumber, true);
                     }
 
                     if (mCancelAllCall) {
-                        NotificationUtil.notifyCallStatus(mContext, false, null);
+                        NotificationUtil.notifyCallStatus(mContext, false, null, false);
                         return;
                     }
 
@@ -139,11 +135,11 @@ public class LinphoneSipManager extends WiSipManager {
                     if (phone == null) {
                         NotificationUtil.displayStatus(mContext, "This user has no phone number");
                     } else if (!isConnected) {
-                        NotificationUtil.notifyCallStatus(mContext, true, "Dialing to: " + phone);
+                        NotificationUtil.notifyCallStatus(mContext, true, "Dialing to: " + phone, false);
                         call(phone, false);
                     }
 
-                    NotificationUtil.notifyCallStatus(mContext, false, null);
+                    NotificationUtil.notifyCallStatus(mContext, false, null, false);
                 } catch (LinphoneCoreException e) {
                     e.printStackTrace();
                     Log.e(TAG, "LinphoneCoreException", e);
