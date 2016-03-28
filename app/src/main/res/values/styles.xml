@@ -21,8 +21,12 @@
         <item name="android:textSize">20pt</item>
     </style>
 
+    <style name="textSubheader" parent="textMedium">
+        <item name="android:textSize">16pt</item>
+    </style>
+
     <style name="textBody2Menu" parent="textMedium">
-        <item name="android:textSize">14pt</item>
+        <item name="android:textSize">14sp</item>
     </style>
 
     <style name="textBody1" parent="textRegular">
@@ -36,7 +40,7 @@
     <style name="button" parent="@style/Widget.AppCompat.Button">
         <item name="android:background">@android:color/white</item>
         <item name="android:textColor">@color/blue</item>
-        <item name="android:textSize">10pt</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
 

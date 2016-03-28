@@ -38,14 +38,24 @@ public class DrawerItemAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        View rootView = LayoutInflater.from(mContext).inflate(
-                R.layout.drawer_list_item, parent, false);
+        if (position == 0) {
+            View rootView = LayoutInflater.from(mContext).inflate(
+                    R.layout.drawer_list_header, parent, false);
 
-        TextView item = (TextView) rootView.findViewById(R.id.drawer_item_text);
-        ImageView icon = (ImageView) rootView.findViewById(R.id.drawer_item_icon);
+            TextView name = (TextView) rootView.findViewById(R.id.drawer_nameTextView);
+            name.setText(UserPreference.getName(mContext));
+            return rootView;
 
-        item.setText(mItems.get(position).getName());
-        icon.setImageResource(mItems.get(position).getIcon());
-        return rootView;
+        } else {
+            View rootView = LayoutInflater.from(mContext).inflate(
+                    R.layout.drawer_list_item, parent, false);
+
+            TextView item = (TextView) rootView.findViewById(R.id.drawer_item_text);
+            ImageView icon = (ImageView) rootView.findViewById(R.id.drawer_item_icon);
+
+            item.setText(mItems.get(position).getName());
+            icon.setImageResource(mItems.get(position).getIcon());
+            return rootView;
+        }
     }
 }

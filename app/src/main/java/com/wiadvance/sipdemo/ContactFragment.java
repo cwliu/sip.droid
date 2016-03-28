@@ -1,5 +1,6 @@
 package com.wiadvance.sipdemo;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,11 +17,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -147,17 +146,38 @@ public class ContactFragment extends Fragment {
         mDrawerLayout = (DrawerLayout) rootView.findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) rootView.findViewById(R.id.left_drawer);
 
-        List<String> sampleMenu = new ArrayList<>();
-        sampleMenu.add("Information");
-        sampleMenu.add("Log out");
-
-        // Set the adapter for the list view
         List<DrawerItem> items = new ArrayList<>();
-        items.add(new DrawerItem("Information", android.R.drawable.ic_dialog_info));
-        items.add(new DrawerItem("Logout", android.R.drawable.ic_menu_mapmode));
+        items.add(new DrawerItem("Header", R.drawable.ic_info_outline_black_24dp));
+        items.add(new DrawerItem("Information", R.drawable.ic_info_outline_black_24dp));
+        items.add(new DrawerItem("Logout", R.drawable.ic_exit_to_app_black_24dp));
         mDrawerList.setAdapter(new DrawerItemAdapter(getContext(), items));
-        // Set the list's click listener
-//        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+
+        mDrawerList.setBackgroundColor(getResources().getColor(R.color.beige));
+        int versionCode = BuildConfig.VERSION_CODE;
+        String versionName = BuildConfig.VERSION_NAME;
+        final String message = "Version: " + versionName + "." + versionCode + "\n"
+                + "Sip Number: " + UserPreference.getSip(getContext()) + "\n"
+                + "Email: " + UserPreference.getEmail(getContext()) + "\n";
+
+        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 1:
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(
+                                getContext()).setTitle("Version")
+                                .setMessage(message)
+                                .setPositiveButton("ok", null);
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                        break;
+                    case 2:
+                        logout();
+                        break;
+                }
+            }
+        });
 
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
                 getActivity(),
@@ -323,39 +343,23 @@ public class ContactFragment extends Fragment {
         mWiSipManager.displayFriendStatus();
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
+    private void logout() {
+        mWiSipManager.unregister(mSipNumber);
+        LinphoneCoreHelper.destroyLinphoneCore(getContext());
 
-        inflater.inflate(R.menu.fragment_sip, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.action_logout:
-                mWiSipManager.unregister(mSipNumber);
-                LinphoneCoreHelper.destroyLinphoneCore(getContext());
-
-                MixpanelAPI mixpanel = MixpanelAPI.getInstance(getContext(), BuildConfig.MIXPANL_TOKEN);
-                JSONObject props = new JSONObject();
-                try {
-                    props.put("SIP_NUMBER", LinphoneCoreHelper.getSipNumber());
-                    props.put("INIT_TIME", LinphoneCoreHelper.getInitTime().toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                mixpanel.track("LOGOUT", props);
-
-                AuthenticationManager.getInstance().setContextActivity(getActivity());
-                AuthenticationManager.getInstance().disconnect();
-                getActivity().finish();
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
+        MixpanelAPI mixpanel = MixpanelAPI.getInstance(getContext(), BuildConfig.MIXPANL_TOKEN);
+        JSONObject props = new JSONObject();
+        try {
+            props.put("SIP_NUMBER", LinphoneCoreHelper.getSipNumber());
+            props.put("INIT_TIME", LinphoneCoreHelper.getInitTime().toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+        mixpanel.track("LOGOUT", props);
+
+        AuthenticationManager.getInstance().setContextActivity(getActivity());
+        AuthenticationManager.getInstance().disconnect();
+        getActivity().finish();
     }
 
     @Override

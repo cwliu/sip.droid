@@ -139,8 +139,6 @@ public class LoginActivity extends AppCompatActivity {
 
                         Intent intent = ContactActivity.newIntent(LoginActivity.this);
                         startActivity(intent);
-
-                        resetUI();
                     }
 
                     @Override
