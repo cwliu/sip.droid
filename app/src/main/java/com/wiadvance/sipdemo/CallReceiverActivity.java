@@ -8,6 +8,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.wiadvance.sipdemo.linphone.LinphoneCoreHelper;
@@ -27,6 +28,7 @@ public class CallReceiverActivity extends AppCompatActivity {
 
     public static final String ARG_SIP_INTENT = "SIP_INTENT";
     private static final String ARG_ANSWER_CALL = "ANSWER_CALL";
+    private static final String ARG_CALLER_NUM = "caller_num";
 
     private static String TAG = "CallReceiverActivity";
 
@@ -34,9 +36,15 @@ public class CallReceiverActivity extends AppCompatActivity {
     private LinphoneCall mLinephoneCall;
     private NotificationReceiver mNotificationReceiver;
 
-    public static Intent newLinephoneIntnet(Context context, Boolean answerCall){
+//    public static Intent newLinephoneIntnet(Context context, Boolean answerCall) {
+//        Intent intent = new Intent(context, CallReceiverActivity.class);
+//        intent.putExtra(ARG_ANSWER_CALL, answerCall);
+//        return intent;
+//    }
+
+    public static Intent newLinephoneIntnet(Context context, String caller) {
         Intent intent = new Intent(context, CallReceiverActivity.class);
-        intent.putExtra(ARG_ANSWER_CALL, answerCall);
+        intent.putExtra(ARG_CALLER_NUM, caller);
         return intent;
     }
 
@@ -53,9 +61,8 @@ public class CallReceiverActivity extends AppCompatActivity {
             throw new RuntimeException("Can't get linphone core");
         }
 
-        NotificationUtil.cancelNotification(this);
-
-        answerCall();
+        String num = getIntent().getStringExtra(ARG_CALLER_NUM);
+        ((TextView) findViewById(R.id.call_receiver_sip)).setText(num);
 
         MixpanelAPI mixpanel = MixpanelAPI.getInstance(this, BuildConfig.MIXPANL_TOKEN);
         mixpanel.track(TAG, null);
@@ -75,14 +82,20 @@ public class CallReceiverActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
 
-        if(mNotificationReceiver != null){
+        if (mNotificationReceiver != null) {
             LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
             manager.unregisterReceiver(mNotificationReceiver);
         }
     }
 
-    public void answerCall() {
+    public void onEndCallButtonClick(View view) {
+        if (mLinephoneCall != null) {
+            mLc.terminateCall(mLinephoneCall);
+            finish();
+        }
+    }
 
+    public void onAnswerButtonClick(View view) {
         List address = LinphoneUtils.getLinphoneCalls(mLc);
         Log.d(TAG, "Number of call: " + address.size());
         Iterator contact = address.iterator();
@@ -98,30 +111,41 @@ public class CallReceiverActivity extends AppCompatActivity {
         if (mLinephoneCall == null) {
             Log.e(TAG, "Couldn\'t find incoming call");
         } else {
-            Boolean answerCall = getIntent().getBooleanExtra(ARG_ANSWER_CALL, true);
             LinphoneCallParams params = mLc.createDefaultCallParameters();
             params.enableLowBandwidth(false);
 
-            if(answerCall){
-                LinphoneAddress address1 = mLinephoneCall.getRemoteAddress();
-                Log.d(TAG, "Find a incoming call, number: " + address1.asStringUriOnly());
-                try {
-                    mLc.acceptCallWithParams(mLinephoneCall, params);
-                    NotificationUtil.displayStatus(this, "Call is established");
-                } catch (LinphoneCoreException e) {
-                    Log.e(TAG, "Accept Call exception: ", e);
-                    NotificationUtil.displayStatus(this, "Failed to accept the call");
-                }
-            }else{
-                mLc.declineCall(mLinephoneCall, Reason.Declined);
-                finish();
+            LinphoneAddress address1 = mLinephoneCall.getRemoteAddress();
+            Log.d(TAG, "Find a incoming call, number: " + address1.asStringUriOnly());
+            try {
+                mLc.acceptCallWithParams(mLinephoneCall, params);
+                NotificationUtil.displayStatus(this, "Call is established");
+            } catch (LinphoneCoreException e) {
+                Log.e(TAG, "Accept Call exception: ", e);
+                NotificationUtil.displayStatus(this, "Failed to accept the call");
             }
         }
+
+        findViewById(R.id.answer_call_button).setVisibility(View.GONE);
+        findViewById(R.id.deny_call_button).setVisibility(View.GONE);
+        findViewById(R.id.end_call_button).setVisibility(View.VISIBLE);
     }
 
-    public void onEndCallButtonClick(View view){
-        if(mLinephoneCall != null){
-            mLc.terminateCall(mLinephoneCall);
+    public void onDenyCallButtonClick(View view) {
+        List address = LinphoneUtils.getLinphoneCalls(mLc);
+        Log.d(TAG, "Number of call: " + address.size());
+        Iterator contact = address.iterator();
+
+        while (contact.hasNext()) {
+            mLinephoneCall = (LinphoneCall) contact.next();
+            if (LinphoneCall.State.IncomingReceived == mLinephoneCall.getState()) {
+                break;
+            }
+        }
+
+        if (mLinephoneCall == null) {
+            Log.e(TAG, "Couldn\'t find incoming call");
+        }else{
+            mLc.declineCall(mLinephoneCall, Reason.Declined);
             finish();
         }
     }

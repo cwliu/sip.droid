@@ -232,35 +232,6 @@ public class LinphoneSipManager extends WiSipManager {
 
     }
 
-    public static void showIncomingCallNotification(Context context, String caller) {
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setAutoCancel(true)
-                .setSmallIcon(R.mipmap.phone_icon)
-                .setContentTitle("Incoming SIP call")
-                .setContentText(caller + " is calling you");
-
-        Intent answerIntent = CallReceiverActivity.newLinephoneIntnet(context, true);
-        Intent declineIntent = CallReceiverActivity.newLinephoneIntnet(context, false);
-        PendingIntent answerPendingIntent = createPendingIntent(context, ANSWER_REQUEST_CODE, answerIntent);
-        PendingIntent declinePendingIntent = createPendingIntent(context, DECLINE_REQUEST_CODE, declineIntent);
-
-        builder.setContentIntent(answerPendingIntent);
-
-        NotificationManager mNotificationManager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        builder.addAction(new NotificationCompat.Action(
-                R.drawable.answer, "Answer", answerPendingIntent));
-        builder.addAction(new NotificationCompat.Action(
-                R.drawable.decline, "Decline", declinePendingIntent));
-
-        Notification notif = builder.build();
-        notif.defaults |= Notification.DEFAULT_VIBRATE;
-        mNotificationManager.notify(NotificationUtil.INCOMING_CALL_NOTIFICATION_ID, notif);
-    }
-
     private static PendingIntent createPendingIntent(Context context, int requestCode, Intent nextIntent) {
         nextIntent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 

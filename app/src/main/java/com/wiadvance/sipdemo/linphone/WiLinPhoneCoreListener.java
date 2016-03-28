@@ -1,10 +1,12 @@
 package com.wiadvance.sipdemo.linphone;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.wiadvance.sipdemo.BuildConfig;
+import com.wiadvance.sipdemo.CallReceiverActivity;
 import com.wiadvance.sipdemo.NotificationUtil;
 
 import org.json.JSONException;
@@ -64,9 +66,13 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
         Log.d(TAG, "callState() called with: " + "core = [" + core + "], call = [" + call + "], state = [" + state + "], s = [" + s + "]");
 
         if(state.equals(LinphoneCall.State.IncomingReceived)) {
-            LinphoneSipManager.showIncomingCallNotification(mContext,
-                    call.getRemoteAddress().toString()
-            );
+//            LinphoneSipManager.showIncomingCallNotification(mContext,
+//                    call.getRemoteAddress().toString()
+//            );
+
+            String caller = call.getRemoteAddress().toString();
+            Intent intent = CallReceiverActivity.newLinephoneIntnet(mContext, caller);
+            mContext.startActivity(intent);
         }
 
         if(state.equals(LinphoneCall.State.CallEnd)){
