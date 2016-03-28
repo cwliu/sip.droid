@@ -178,27 +178,28 @@ public class ContactFragment extends Fragment {
 
         private final TextView mNameTextView;
         private final ImageView mPhoneImageview;
+        private final ImageView mAvatar;
 
         public ContactHolder(View itemView) {
             super(itemView);
             mNameTextView = (TextView) itemView.findViewById(R.id.contact_name_text_view);
             mPhoneImageview = (ImageView) itemView.findViewById(R.id.phone_icon_image_view);
+            mAvatar = (ImageView) itemView.findViewById(R.id.list_item_avatar);
         }
 
-        public void bindViewHolder(final Contact contact) {
+        public void bindViewHolder(final Contact contact, int position) {
             mNameTextView.setText(contact.getName());
 
-            if (mWiSipManager.isSupported()) {
-                mPhoneImageview.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = MakeCallActivity.newIntent(getContext(), contact);
-                        startActivity(intent);
-                    }
-                });
-            } else {
-                mPhoneImageview.setVisibility(View.GONE);
-            }
+            int randomAvatar[] = {R.drawable.avatar_1_120dp, R.drawable.avatar_2_120dp, R.drawable.avatar_3_120dp};
+
+            mAvatar.setImageResource(randomAvatar[position%randomAvatar.length]);
+            mPhoneImageview.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = MakeCallActivity.newIntent(getContext(), contact);
+                    startActivity(intent);
+                }
+            });
         }
     }
 
@@ -212,7 +213,7 @@ public class ContactFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(ContactHolder holder, int position) {
-            holder.bindViewHolder(mContactList.get(position));
+            holder.bindViewHolder(mContactList.get(position), position);
         }
 
         @Override
