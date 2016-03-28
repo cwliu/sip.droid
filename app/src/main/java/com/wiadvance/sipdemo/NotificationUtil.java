@@ -13,21 +13,24 @@ public class NotificationUtil {
     public static String ACTION_NOTIFICATION = "com.wiadvance.sipdemo.notification";
     public static String ACTION_CALL = "com.wiadvance.sipdemo.call";
 
-    public static final String NOTIFY_MESSAGE = "notify_message";
-    public static final String NOTIFY_CALL_ON = "notify_call_online";
+    public static final String GLOBAL_NOTIFY_MESSAGE = "notify_message";
+
+    public static final String NOTIFY_CALL_ON = "notify_call_on";
+    public static final String NOTIFY_CALL_STATUS = "notify_call_status";
 
     public static final int INCOMING_CALL_NOTIFICATION_ID = 1;
 
     public static void displayStatus(Context context, String s) {
         Log.d(TAG, "displayStatus: " + s);
         Intent intent = new Intent(ACTION_NOTIFICATION);
-        intent.putExtra(NOTIFY_MESSAGE, s);
+        intent.putExtra(GLOBAL_NOTIFY_MESSAGE, s);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
-    public static void notifyCallStatus(Context context, boolean on){
+    public static void notifyCallStatus(Context context, boolean on, String message){
         Intent intent = new Intent(ACTION_CALL);
         intent.putExtra(NOTIFY_CALL_ON, on);
+        intent.putExtra(NOTIFY_CALL_STATUS, message);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 

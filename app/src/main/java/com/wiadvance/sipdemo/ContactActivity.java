@@ -72,7 +72,7 @@ public class ContactActivity extends SingleFragmentActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "NotificationReceiver, onReceive()");
-            String message = intent.getStringExtra(NotificationUtil.NOTIFY_MESSAGE);
+            String message = intent.getStringExtra(NotificationUtil.GLOBAL_NOTIFY_MESSAGE);
             Toast.makeText(ContactActivity.this, message, Toast.LENGTH_SHORT).show();
         }
     }

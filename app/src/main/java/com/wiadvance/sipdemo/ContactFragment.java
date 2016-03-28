@@ -1,15 +1,10 @@
 package com.wiadvance.sipdemo;
 
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -58,8 +53,6 @@ public class ContactFragment extends Fragment {
     private static final String ARG_PASSWORD = "password";
 
     private Button endButton;
-    private String mName;
-    private String mEmail;
     private String mSipNumber;
     private String mDomain;
     private String mPassword;
@@ -67,13 +60,7 @@ public class ContactFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private List<Contact> mContactList = new ArrayList<>();
     private ProgressBar mLoadingProgress;
-
-    private LinphoneSipManager mWiSipManager;
-    private BroadcastReceiver mCallStatusReceiver;
-
-    private boolean mDisplayEndButton = false;
-    private ListView mDrawerList;
-    private DrawerLayout mDrawerLayout;
+    private WiSipManager mWiSipManager;
 
     public static ContactFragment newInstance(String name, String email, String sipNumber, String domain, String password) {
 
@@ -94,18 +81,14 @@ public class ContactFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
 
-        mWiSipManager = new LinphoneSipManager(getContext());
-
         initializeViews();
-
-        setHasOptionsMenu(true);
-
         setRetainInstance(true);
+
+        mWiSipManager = new LinphoneSipManager(getContext());
+        mWiSipManager.register(mSipNumber, mPassword, mDomain);
     }
 
     private void initializeViews() {
-        mName = getArguments().getString(ARG_NAME);
-        mEmail = getArguments().getString(ARG_EMAIL);
         mSipNumber = getArguments().getString(ARG_SIP);
         mDomain = getArguments().getString(ARG_DOMAIN);
         mPassword = getArguments().getString(ARG_PASSWORD);
@@ -126,34 +109,29 @@ public class ContactFragment extends Fragment {
                 mWiSipManager.endCall();
             }
         });
-        if (mDisplayEndButton) {
-            endButton.setVisibility(View.VISIBLE);
-        } else {
-            endButton.setVisibility(View.GONE);
-        }
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.contacts_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         mLoadingProgress = (ProgressBar) rootView.findViewById(R.id.loading_progress_bar);
 
-        mDrawerLayout = (DrawerLayout) rootView.findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) rootView.findViewById(R.id.left_drawer);
+        DrawerLayout drawerLayout = (DrawerLayout) rootView.findViewById(R.id.drawer_layout);
+        ListView drawerList = (ListView) rootView.findViewById(R.id.left_drawer);
 
         List<DrawerItem> items = new ArrayList<>();
         items.add(new DrawerItem("Header", R.drawable.ic_info_outline_black_24dp));
         items.add(new DrawerItem("Information", R.drawable.ic_info_outline_black_24dp));
         items.add(new DrawerItem("Logout", R.drawable.ic_exit_to_app_black_24dp));
-        mDrawerList.setAdapter(new DrawerItemAdapter(getContext(), items));
+        drawerList.setAdapter(new DrawerItemAdapter(getContext(), items));
 
-        mDrawerList.setBackgroundColor(getResources().getColor(R.color.beige));
+        drawerList.setBackgroundColor(getResources().getColor(R.color.beige));
         int versionCode = BuildConfig.VERSION_CODE;
         String versionName = BuildConfig.VERSION_NAME;
         final String message = "Version: " + versionName + "." + versionCode + "\n"
                 + "Sip Number: " + UserPreference.getSip(getContext()) + "\n"
                 + "Email: " + UserPreference.getEmail(getContext()) + "\n";
 
-        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
@@ -175,7 +153,7 @@ public class ContactFragment extends Fragment {
 
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
                 getActivity(),
-                mDrawerLayout,
+                drawerLayout,
                 toolbar,
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close
@@ -192,7 +170,7 @@ public class ContactFragment extends Fragment {
         };
 
         drawerToggle.syncState();
-        mDrawerLayout.setDrawerListener(drawerToggle);
+        drawerLayout.setDrawerListener(drawerToggle);
         return rootView;
     }
 
@@ -200,14 +178,11 @@ public class ContactFragment extends Fragment {
 
         private final TextView mNameTextView;
         private final ImageView mPhoneImageview;
-        private final ImageView mZoiperImageview;
 
         public ContactHolder(View itemView) {
             super(itemView);
             mNameTextView = (TextView) itemView.findViewById(R.id.contact_name_text_view);
             mPhoneImageview = (ImageView) itemView.findViewById(R.id.phone_icon_image_view);
-            mZoiperImageview = (ImageView) itemView.findViewById(R.id.zoiper_image_view);
-
         }
 
         public void bindViewHolder(final Contact contact) {
@@ -219,24 +194,11 @@ public class ContactFragment extends Fragment {
                     public void onClick(View v) {
                         Intent intent = MakeCallActivity.newIntent(getContext(), contact);
                         startActivity(intent);
-//                        mWiSipManager.makeCall(contact);
                     }
                 });
             } else {
                 mPhoneImageview.setVisibility(View.GONE);
             }
-
-            mZoiperImageview.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent();
-                    intent.setAction(Intent.ACTION_VIEW);
-                    intent.addCategory(Intent.CATEGORY_BROWSABLE);
-                    intent.setData(Uri.parse("tel://" + contact.getSip()));
-                    startActivity(intent);
-                }
-            });
         }
     }
 
@@ -266,6 +228,7 @@ public class ContactFragment extends Fragment {
         } else {
             mLoadingProgress.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);
+
         }
     }
 
@@ -273,7 +236,9 @@ public class ContactFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        showLoading(true);
+        if (mContactList.size() == 0) {
+            showLoading(true);
+        }
 
         AuthenticationManager.getInstance().setContextActivity(getActivity());
         AuthenticationManager.getInstance().connect(
@@ -307,8 +272,6 @@ public class ContactFragment extends Fragment {
                                         }
                                         Log.d(TAG, "phone: " + phone);
                                     }
-                                    String sipUri = "sip:" + contact.getSip() + "@" + "210.202.37.33";
-                                    mWiSipManager.addFriend(sipUri);
                                     mContactList.add(contact);
                                 }
 
@@ -322,8 +285,7 @@ public class ContactFragment extends Fragment {
                             public void failure(RetrofitError error) {
                                 showLoading(false);
 
-                                NotificationUtil.displayStatus(getContext(), "Please re-login.\nDownload contact failed: " + error.toString());
-
+                                NotificationUtil.displayStatus(getContext(), "Please re-login.\nDownload contact data failed: " + error.toString());
                                 getActivity().finish();
                             }
                         });
@@ -334,11 +296,6 @@ public class ContactFragment extends Fragment {
                         Log.e(TAG, "onConnectButtonClick onError() - " + e.getMessage());
                     }
                 });
-
-        mWiSipManager.register(mSipNumber, mPassword, mDomain);
-
-        mWiSipManager.setOnlineStatus();
-        mWiSipManager.displayFriendStatus();
     }
 
     private void logout() {
@@ -349,7 +306,7 @@ public class ContactFragment extends Fragment {
         JSONObject props = new JSONObject();
         try {
             props.put("SIP_NUMBER", LinphoneCoreHelper.getSipNumber());
-            props.put("INIT_TIME", LinphoneCoreHelper.getInitTime().toString());
+            props.put("INIT_TIME", LinphoneCoreHelper.getInitTime());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -358,39 +315,5 @@ public class ContactFragment extends Fragment {
         AuthenticationManager.getInstance().setContextActivity(getActivity());
         AuthenticationManager.getInstance().disconnect();
         getActivity().finish();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        mCallStatusReceiver = new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                boolean on = intent.getBooleanExtra(NotificationUtil.NOTIFY_CALL_ON, false);
-                if (on) {
-                    mDisplayEndButton = true;
-                    endButton.setVisibility(View.VISIBLE);
-                } else {
-                    mDisplayEndButton = false;
-                    endButton.setVisibility(View.GONE);
-                }
-            }
-        };
-        IntentFilter notify_filter = new IntentFilter(NotificationUtil.ACTION_CALL);
-        LocalBroadcastManager manager = LocalBroadcastManager.getInstance(getContext());
-        manager.registerReceiver(mCallStatusReceiver, notify_filter);
-
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        if (mCallStatusReceiver != null) {
-            LocalBroadcastManager manager = LocalBroadcastManager.getInstance(getContext());
-            manager.unregisterReceiver(mCallStatusReceiver);
-        }
     }
 }

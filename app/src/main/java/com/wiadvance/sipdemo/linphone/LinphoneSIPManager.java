@@ -44,6 +44,7 @@ public class LinphoneSipManager extends WiSipManager {
 
     private static final int ANSWER_REQUEST_CODE = 1;
     private static final int DECLINE_REQUEST_CODE = 2;
+    private boolean mCancelByUser;
 
     public LinphoneSipManager(Context context) {
 
@@ -124,18 +125,25 @@ public class LinphoneSipManager extends WiSipManager {
                     String sipNumber = contact.getSip();
                     if (sipNumber == null) {
                         NotificationUtil.displayStatus(mContext, "This user has no sip number");
-                    }else{
+                    } else {
+                        NotificationUtil.notifyCallStatus(mContext, true, "SIP Dialing...");
                         isConnected = call(sipNumber, true);
+                    }
+
+                    if (mCancelByUser) {
+                        NotificationUtil.notifyCallStatus(mContext, false, null);
+                        return;
                     }
 
                     String phone = contact.getPhone();
                     if (phone == null) {
                         NotificationUtil.displayStatus(mContext, "This user has no phone number");
-                    }else if(!isConnected){
-                        NotificationUtil.displayStatus(mContext, "Try to call user phone:" + phone);
+                    } else if (!isConnected) {
+                        NotificationUtil.notifyCallStatus(mContext, true, "Dialing to: " + phone);
                         call(phone, false);
                     }
 
+                    NotificationUtil.notifyCallStatus(mContext, false, null);
                 } catch (LinphoneCoreException e) {
                     e.printStackTrace();
                     Log.e(TAG, "LinphoneCoreException", e);
@@ -157,8 +165,6 @@ public class LinphoneSipManager extends WiSipManager {
                 } else {
                     Log.d(TAG, "Call to: " + account);
                     mIsCalling = true;
-
-                    NotificationUtil.notifyCallStatus(mContext, true);
 
                     long callingTime = 0;
                     long iterateInterval = 50L;
@@ -200,8 +206,6 @@ public class LinphoneSipManager extends WiSipManager {
                         Log.d(TAG, "Terminating the call");
                         lc.terminateCall(call);
                     }
-
-                    NotificationUtil.notifyCallStatus(mContext, false);
                 }
                 return isConnected;
             }
@@ -211,6 +215,11 @@ public class LinphoneSipManager extends WiSipManager {
     @Override
     public void endCall() {
         mIsCalling = false;
+    }
+
+    public void endCallByUser() {
+        endCall();
+        mCancelByUser = true;
     }
 
     @Override

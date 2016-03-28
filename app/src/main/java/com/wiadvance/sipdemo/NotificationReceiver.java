@@ -13,7 +13,7 @@ public class NotificationReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "NotificationReceiver, onReceive()");
-        String message = intent.getStringExtra(NotificationUtil.NOTIFY_MESSAGE);
+        String message = intent.getStringExtra(NotificationUtil.GLOBAL_NOTIFY_MESSAGE);
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 }
