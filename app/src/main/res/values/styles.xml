@@ -36,7 +36,7 @@
     <style name="button" parent="@style/Widget.AppCompat.Button">
         <item name="android:background">@android:color/white</item>
         <item name="android:textColor">@color/blue</item>
-        <item name="android:textSize">14pt</item>
+        <item name="android:textSize">10pt</item>
     </style>
 
 

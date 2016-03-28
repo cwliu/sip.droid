@@ -14,7 +14,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
@@ -40,6 +42,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private Button mLoginButton;
     private ProgressBar mLoginProgressBar;
+    private TextView mLoginAppNameTextView;
+    private ImageView mLoginLogoImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,13 +65,20 @@ public class LoginActivity extends AppCompatActivity {
     private void initializeViews() {
         mLoginButton = (Button) findViewById(R.id.login_button);
         mLoginProgressBar = (ProgressBar) findViewById(R.id.login_progress_bar);
+        mLoginAppNameTextView = (TextView) findViewById(R.id.appName_textView);
+        mLoginLogoImageView = (ImageView) findViewById(R.id.logo_imageView);
+
     }
 
     private void showLoading(boolean on) {
         if(on){
+            mLoginLogoImageView.setVisibility(View.GONE);
+            mLoginAppNameTextView.setVisibility(View.GONE);
             mLoginButton.setVisibility(View.GONE);
             mLoginProgressBar.setVisibility(View.VISIBLE);
         }else{
+            mLoginLogoImageView.setVisibility(View.VISIBLE);
+            mLoginAppNameTextView.setVisibility(View.VISIBLE);
             mLoginButton.setVisibility(View.VISIBLE);
             mLoginProgressBar.setVisibility(View.GONE);
         }
