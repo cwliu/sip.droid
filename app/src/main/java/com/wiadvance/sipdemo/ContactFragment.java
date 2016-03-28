@@ -9,8 +9,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -68,6 +72,8 @@ public class ContactFragment extends Fragment {
     private BroadcastReceiver mCallStatusReceiver;
 
     private boolean mDisplayEndButton = false;
+    private ListView mDrawerList;
+    private DrawerLayout mDrawerLayout;
 
     public static ContactFragment newInstance(String name, String email, String sipNumber, String domain, String password) {
 
@@ -113,6 +119,8 @@ public class ContactFragment extends Fragment {
         TextView nameTextView = (TextView) rootView.findViewById(R.id.name);
         TextView emailTextView = (TextView) rootView.findViewById(R.id.email);
         TextView sipNumberTextView = (TextView) rootView.findViewById(R.id.sip_number);
+        Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.app_name);
 
         nameTextView.setText(mName);
         emailTextView.setText(mEmail);
@@ -135,6 +143,42 @@ public class ContactFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         mLoadingProgress = (ProgressBar) rootView.findViewById(R.id.loading_progress_bar);
+
+        mDrawerLayout = (DrawerLayout) rootView.findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) rootView.findViewById(R.id.left_drawer);
+
+        List<String> sampleMenu = new ArrayList<>();
+        sampleMenu.add("Information");
+        sampleMenu.add("Log out");
+
+        // Set the adapter for the list view
+        List<DrawerItem> items = new ArrayList<>();
+        items.add(new DrawerItem("Information", android.R.drawable.ic_dialog_info));
+        items.add(new DrawerItem("Logout", android.R.drawable.ic_menu_mapmode));
+        mDrawerList.setAdapter(new DrawerItemAdapter(getContext(), items));
+        // Set the list's click listener
+//        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+
+        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
+                getActivity(),
+                mDrawerLayout,
+                toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close
+        ) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+            }
+        };
+
+        drawerToggle.syncState();
+        mDrawerLayout.setDrawerListener(drawerToggle);
         return rootView;
     }
 
@@ -245,7 +289,7 @@ public class ContactFragment extends Fragment {
                                         }
                                         Log.d(TAG, "phone: " + phone);
                                     }
-                                    String sipUri = "sip:"+ contact.getSip() +"@" + "210.202.37.33";
+                                    String sipUri = "sip:" + contact.getSip() + "@" + "210.202.37.33";
                                     mWiSipManager.addFriend(sipUri);
                                     mContactList.add(contact);
                                 }

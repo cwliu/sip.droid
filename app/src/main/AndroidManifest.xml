@@ -14,7 +14,7 @@
 
     <!-- Mixpanel -->
     <uses-permission android:name="android.permission.BLUETOOTH"/>
-
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <!-- Filter out the device doesn't support sip -->
     <uses-feature android:name="android.hardware.sip.voip"/>
@@ -38,7 +38,6 @@
 
         <activity
             android:name=".LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
