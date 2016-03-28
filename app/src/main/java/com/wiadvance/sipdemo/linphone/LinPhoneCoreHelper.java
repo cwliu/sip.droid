@@ -4,13 +4,9 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
-import com.wiadvance.sipdemo.BuildConfig;
 import com.wiadvance.sipdemo.FileUtils;
 import com.wiadvance.sipdemo.R;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.linphone.core.LinphoneCore;
 import org.linphone.core.LinphoneCoreException;
 import org.linphone.core.LinphoneCoreFactory;
@@ -70,27 +66,28 @@ public class LinphoneCoreHelper {
     private static void startIterate(final Context context) {
         TimerTask lTask = new TimerTask() {
             @Override
-            public void run() {
+            public synchronized void run() {
+
                 if (mLinphoneCore != null) {
                     mLinphoneCore.iterate();
 
-                    if (count == 0) {
-                        MixpanelAPI mixpanel = MixpanelAPI.getInstance(context, BuildConfig.MIXPANL_TOKEN);
-
-                        JSONObject props = new JSONObject();
-                        try {
-                            props.put("SIP_NUMBER", sSipNumber);
-                            props.put("INIT_TIME", sInitTime.toString());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        mixpanel.track("STANDBY", props);
-                    }
-
-                    count += 1;
-                    if (count >= 6000) {
-                        count = 0;
-                    }
+//                    if (count == 0) {
+//                        MixpanelAPI mixpanel = MixpanelAPI.getInstance(context, BuildConfig.MIXPANL_TOKEN);
+//
+//                        JSONObject props = new JSONObject();
+//                        try {
+//                            props.put("SIP_NUMBER", sSipNumber);
+//                            props.put("INIT_TIME", sInitTime.toString());
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                        mixpanel.track("STANDBY", props);
+//                    }
+//
+//                    count += 1;
+//                    if (count >= 6000) {
+//                        count = 0;
+//                    }
                 }
             }
         };

@@ -7,15 +7,48 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
 
-        <item name="android:buttonStyle">@style/wiButtonStyle</item>
+        <item name="android:buttonStyle">@style/button</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
 
     </style>
 
-    <style name="wiButtonStyle" parent="@style/Widget.AppCompat.Button">
+    <style name="textHeadline" parent="textRegular">
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="textTitle" parent="textMedium">
+        <item name="android:textSize">20pt</item>
+    </style>
+
+    <style name="textBody2Menu" parent="textMedium">
+        <item name="android:textSize">14pt</item>
+    </style>
+
+    <style name="textBody1" parent="textRegular">
+        <item name="android:textSize">14pt</item>
+    </style>
+
+    <style name="caption" parent="textRegular">
+        <item name="android:textSize">12pt</item>
+    </style>
+
+    <style name="button" parent="@style/Widget.AppCompat.Button">
         <item name="android:background">@android:color/white</item>
         <item name="android:textColor">@color/blue</item>
+        <item name="android:textSize">14pt</item>
     </style>
+
+
+    <style name="textMedium">
+        <item name="android:fontFamily">@string/font_fontFamily_medium</item>
+    </style>
+
+    <style name="textRegular">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <string name="font_fontFamily_medium">sans-serif</string>
 
 </resources>
