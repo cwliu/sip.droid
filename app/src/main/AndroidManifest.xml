@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
 
     <!-- Mixpanel -->
-    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
 
 
     <!-- Filter out the device doesn't support sip -->
@@ -36,7 +36,8 @@
             android:name="io.fabric.ApiKey"
             android:value="2c5de1ba077edd775560b40be6ae292a31ca855b"/>
 
-        <activity android:name=".LoginActivity"
+        <activity
+            android:name=".LoginActivity"
             android:theme="@style/AppTheme.NoActionBar"
             >
             <intent-filter>
@@ -48,9 +49,11 @@
 
         <activity android:name=".ContactActivity"/>
 
-        <activity android:name=".CallReceiverActivity"
+        <activity
+            android:name=".CallReceiverActivity"
             android:parentActivityName=".ContactActivity">
         </activity>
 
+        <activity android:name="com.mixpanel.android.surveys.SurveyActivity"/>
     </application>
 </manifest>
