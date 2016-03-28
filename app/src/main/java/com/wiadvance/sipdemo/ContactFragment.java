@@ -259,8 +259,10 @@ public class ContactFragment extends Fragment {
     private void showLoading(boolean on) {
         if (on) {
             mLoadingProgress.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.GONE);
         } else {
             mLoadingProgress.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
         }
     }
 
