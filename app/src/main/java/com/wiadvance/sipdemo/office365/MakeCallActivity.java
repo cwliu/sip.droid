@@ -58,7 +58,7 @@ public class MakeCallActivity extends AppCompatActivity {
         endcall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mWiSipManager.endCallByUser();
+                mWiSipManager.endAllCall();
             }
         });
     }
@@ -102,5 +102,7 @@ public class MakeCallActivity extends AppCompatActivity {
             LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
             manager.unregisterReceiver(mCallStatusReceiver);
         }
+
+        mWiSipManager.endAllCall();
     }
 }

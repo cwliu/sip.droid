@@ -34,14 +34,6 @@ public class CallReceiverActivity extends AppCompatActivity {
     private LinphoneCall mLinephoneCall;
     private NotificationReceiver mNotificationReceiver;
 
-    public static Intent newNativeSipIntent(Context context, Intent sipIntent, Boolean answerCall){
-        Intent intent = new Intent(context, CallReceiverActivity.class);
-
-        intent.putExtra(ARG_SIP_INTENT, sipIntent);
-        intent.putExtra(ARG_ANSWER_CALL, answerCall);
-        return intent;
-    }
-
     public static Intent newLinephoneIntnet(Context context, Boolean answerCall){
         Intent intent = new Intent(context, CallReceiverActivity.class);
         intent.putExtra(ARG_ANSWER_CALL, answerCall);

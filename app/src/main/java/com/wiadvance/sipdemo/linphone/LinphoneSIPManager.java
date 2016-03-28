@@ -44,7 +44,7 @@ public class LinphoneSipManager extends WiSipManager {
 
     private static final int ANSWER_REQUEST_CODE = 1;
     private static final int DECLINE_REQUEST_CODE = 2;
-    private boolean mCancelByUser;
+    private boolean mCancelAllCall;
 
     public LinphoneSipManager(Context context) {
 
@@ -130,7 +130,7 @@ public class LinphoneSipManager extends WiSipManager {
                         isConnected = call(sipNumber, true);
                     }
 
-                    if (mCancelByUser) {
+                    if (mCancelAllCall) {
                         NotificationUtil.notifyCallStatus(mContext, false, null);
                         return;
                     }
@@ -217,9 +217,9 @@ public class LinphoneSipManager extends WiSipManager {
         mIsCalling = false;
     }
 
-    public void endCallByUser() {
+    public void endAllCall() {
         endCall();
-        mCancelByUser = true;
+        mCancelAllCall = true;
     }
 
     @Override
