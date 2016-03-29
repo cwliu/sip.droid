@@ -287,7 +287,9 @@ public class ContactFragment extends Fragment {
                                 showLoading(false);
 
                                 NotificationUtil.displayStatus(getContext(), "Please re-login.\nDownload contact data failed: " + error.toString());
-                                getActivity().finish();
+                                if(getActivity() != null){
+                                    getActivity().finish();
+                                }
                             }
                         });
                     }

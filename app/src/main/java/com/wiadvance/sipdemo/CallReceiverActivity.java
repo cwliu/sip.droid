@@ -1,5 +1,6 @@
 package com.wiadvance.sipdemo;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -33,6 +34,7 @@ public class CallReceiverActivity extends AppCompatActivity {
     private LinphoneCore mLc;
     private LinphoneCall mLinephoneCall;
     private NotificationReceiver mNotificationReceiver;
+    private BroadcastReceiver mCallStatusReceiver;
 
     public static Intent newLinephoneIntnet(Context context, String caller) {
         Intent intent = new Intent(context, CallReceiverActivity.class);
@@ -68,6 +70,21 @@ public class CallReceiverActivity extends AppCompatActivity {
         IntentFilter notify_filter = new IntentFilter(NotificationUtil.ACTION_NOTIFICATION);
         LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
         manager.registerReceiver(mNotificationReceiver, notify_filter);
+
+        mCallStatusReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                boolean on = intent.getBooleanExtra(NotificationUtil.NOTIFY_CALL_ON, false);
+                if (!on) {
+                    finish();
+                }
+            }
+        };
+        IntentFilter call_notify_filter = new IntentFilter(NotificationUtil.ACTION_CALL);
+        LocalBroadcastManager call_manager = LocalBroadcastManager.getInstance(this);
+        call_manager.registerReceiver(mCallStatusReceiver, call_notify_filter);
+
     }
 
     @Override
@@ -78,6 +95,12 @@ public class CallReceiverActivity extends AppCompatActivity {
             LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
             manager.unregisterReceiver(mNotificationReceiver);
         }
+
+        if (mCallStatusReceiver != null) {
+            LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
+            manager.unregisterReceiver(mCallStatusReceiver);
+        }
+
     }
 
     public void onEndCallButtonClick(View view) {

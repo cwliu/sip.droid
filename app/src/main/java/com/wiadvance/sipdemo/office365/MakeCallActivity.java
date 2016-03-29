@@ -90,7 +90,9 @@ public class MakeCallActivity extends AppCompatActivity {
                     }
 
                 } else {
-                    finish();
+                    if(mWiSipManager.triedSip()){
+                        finish();
+                    }
                 }
             }
         };

@@ -41,6 +41,7 @@ public class LinphoneSipManager extends WiSipManager {
     private static final int ANSWER_REQUEST_CODE = 1;
     private static final int DECLINE_REQUEST_CODE = 2;
     private boolean mCancelAllCall;
+    private boolean mTriedAllCall;
 
     public LinphoneSipManager(Context context) {
 
@@ -139,6 +140,7 @@ public class LinphoneSipManager extends WiSipManager {
                         call(phone, false);
                     }
 
+                    mTriedAllCall = true;
                     NotificationUtil.notifyCallStatus(mContext, false, null, false);
                 } catch (LinphoneCoreException e) {
                     e.printStackTrace();
@@ -270,5 +272,9 @@ public class LinphoneSipManager extends WiSipManager {
             }
         }
 
+    }
+
+    public boolean triedSip() {
+        return mTriedAllCall;
     }
 }
