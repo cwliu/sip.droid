@@ -16,6 +16,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
+    <uses-permission android:name="android.permission.CAMERA"/>
+
     <!-- Filter out the device doesn't support sip -->
     <uses-feature android:name="android.hardware.sip.voip"/>
     <uses-feature
@@ -27,7 +29,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/phone_icon"
+        android:icon="@mipmap/icon_192"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">

@@ -10,6 +10,8 @@ public class UserPreference {
     private static final String PREF_SIP = "sip";
     private static final String PREF_DOMAIN = "domain";
     private static final String PREF_PASSWORD = "password";
+    private static final String PREF_REGISTRATION_OK = "registration_ok";
+
 
     public static String getName(Context context){
         return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_NAME, null);
@@ -31,6 +33,10 @@ public class UserPreference {
         return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_PASSWORD, null);
     }
 
+    public static boolean getRegistrationStatus(Context context){
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_REGISTRATION_OK, false);
+    }
+
     public static void setName(Context context, String name){
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_NAME, name).apply();
     }
@@ -49,5 +55,9 @@ public class UserPreference {
 
     public static void setPassword(Context context, String password){
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_PASSWORD, password).apply();
+    }
+
+    public static void setRegistrationStatus(Context context, boolean isOk){
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_REGISTRATION_OK, isOk).apply();
     }
 }

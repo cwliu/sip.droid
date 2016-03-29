@@ -21,11 +21,22 @@
             />
 
         <ImageView
+            android:id="@+id/drawer_header_register_ok"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
             android:src="@drawable/check_green_24dp"
+            android:visibility="gone"
+            />
+
+        <ImageView
+            android:id="@+id/drawer_header_register_fail"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/cross_red_24dp"
             android:visibility="gone"
             />
 

@@ -8,6 +8,7 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.wiadvance.sipdemo.BuildConfig;
 import com.wiadvance.sipdemo.CallReceiverActivity;
 import com.wiadvance.sipdemo.NotificationUtil;
+import com.wiadvance.sipdemo.UserPreference;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -80,6 +81,21 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
         }
     }
 
+
+    @Override
+    public void registrationState(LinphoneCore core, LinphoneProxyConfig config, LinphoneCore.RegistrationState state, String s) {
+        Log.d(TAG, "registrationState() called with: " + "core = [" + core + "], config = [" + config + "], state = [" + state + "], s = [" + s + "]");
+
+
+        if(state.equals(LinphoneCore.RegistrationState.RegistrationOk)){
+            UserPreference.setRegistrationStatus(mContext, true);
+        }
+
+        if(state.equals(LinphoneCore.RegistrationState.RegistrationFailed)){
+            UserPreference.setRegistrationStatus(mContext, false);
+        }
+
+    }
     @Override
     public void authInfoRequested(LinphoneCore core, String s, String s1, String s2) {
         Log.d(TAG, "authInfoRequested() called with: " + "core = [" + core + "], s = [" + s + "], s1 = [" + s1 + "], s2 = [" + s2 + "]");
@@ -171,19 +187,6 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
     @Override
     public void globalState(LinphoneCore core, LinphoneCore.GlobalState state, String s) {
         Log.d(TAG, "globalState() called with: " + "core = [" + core + "], state = [" + state + "], s = [" + s + "]");
-    }
-
-    @Override
-    public void registrationState(LinphoneCore core, LinphoneProxyConfig config, LinphoneCore.RegistrationState state, String s) {
-        Log.d(TAG, "registrationState() called with: " + "core = [" + core + "], config = [" + config + "], state = [" + state + "], s = [" + s + "]");
-
-
-        if(state.equals(LinphoneCore.RegistrationState.RegistrationOk)){
-
-        }else{
-//            UserPreference
-        }
-
     }
 
     @Override

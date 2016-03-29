@@ -37,7 +37,7 @@ public class LinphoneCoreHelper {
     public synchronized static LinphoneCore getLinphoneCoreInstance(Context context) throws LinphoneCoreException {
         if (mLinphoneCore == null) {
 
-            LinphoneCoreFactory.instance().setDebugMode(true, "WiAdvance");
+            LinphoneCoreFactory.instance().setDebugMode(true, "WiCore");
 
             sInitTime = new Date().toString();
 
@@ -49,6 +49,7 @@ public class LinphoneCoreHelper {
 
             mLinphoneCore.setMaxCalls(3);
             mLinphoneCore.setNetworkReachable(true);
+            mLinphoneCore.enableVideo(false, false);
 
             setUserAgent(context);
             startIterate(context);
