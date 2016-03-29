@@ -46,14 +46,14 @@ public class DrawerItemAdapter extends BaseAdapter {
             ImageView registerOk = (ImageView) rootView.findViewById(R.id.drawer_header_register_ok);
             ImageView registerFailed = (ImageView) rootView.findViewById(R.id.drawer_header_register_fail);
 
-            name.setText(UserPreference.getName(mContext));
-            if(UserPreference.getRegistrationStatus(mContext)){
+            if (UserPreference.getRegistrationStatus(mContext)) {
                 registerOk.setVisibility(View.VISIBLE);
                 registerFailed.setVisibility(View.GONE);
-            }else{
+            } else {
                 registerOk.setVisibility(View.GONE);
                 registerFailed.setVisibility(View.VISIBLE);
             }
+
             return rootView;
 
         } else {

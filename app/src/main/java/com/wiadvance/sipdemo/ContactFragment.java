@@ -58,7 +58,8 @@ public class ContactFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private List<Contact> mContactList = new ArrayList<>();
     private ProgressBar mLoadingProgress;
-    private WiSipManager mWiSipManager;
+    private LinphoneSipManager mWiSipManager;
+    private DrawerItemAdapter mAdapter;
 
     public static ContactFragment newInstance(String name, String email, String sipNumber, String domain, String password) {
 
@@ -83,7 +84,6 @@ public class ContactFragment extends Fragment {
         setRetainInstance(true);
 
         mWiSipManager = new LinphoneSipManager(getContext());
-        mWiSipManager.register(mSipNumber, mPassword, mDomain);
     }
 
     private void initializeViews() {
@@ -112,7 +112,8 @@ public class ContactFragment extends Fragment {
         items.add(new DrawerItem("Header", R.drawable.ic_info_outline_black_24dp));
         items.add(new DrawerItem("Information", R.drawable.ic_info_outline_black_24dp));
         items.add(new DrawerItem("Logout", R.drawable.ic_exit_to_app_black_24dp));
-        drawerList.setAdapter(new DrawerItemAdapter(getContext(), items));
+        mAdapter = new DrawerItemAdapter(getContext(), items);
+        drawerList.setAdapter(mAdapter);
 
         drawerList.setBackgroundColor(getResources().getColor(R.color.beige));
         int versionCode = BuildConfig.VERSION_CODE;
@@ -151,6 +152,8 @@ public class ContactFragment extends Fragment {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+
+                mAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -231,6 +234,8 @@ public class ContactFragment extends Fragment {
             showLoading(true);
         }
 
+        mWiSipManager.register(mSipNumber, mPassword, mDomain);
+
         AuthenticationManager.getInstance().setContextActivity(getActivity());
         AuthenticationManager.getInstance().connect(
                 new AuthenticationCallback<AuthenticationResult>() {
@@ -274,12 +279,9 @@ public class ContactFragment extends Fragment {
 
                             @Override
                             public void failure(RetrofitError error) {
-                                showLoading(false);
-
                                 NotificationUtil.displayStatus(getContext(), "Please re-login.\nDownload contact data failed: " + error.toString());
-                                if (getActivity() != null) {
-                                    getActivity().finish();
-                                }
+
+                                showLoading(false);
                             }
                         });
                     }

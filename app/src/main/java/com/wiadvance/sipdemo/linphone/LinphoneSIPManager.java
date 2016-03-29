@@ -59,6 +59,7 @@ public class LinphoneSipManager extends WiSipManager {
 
     @Override
     public void register(String account, String password, String domain) {
+
         String identity = "sip:" + account + "@" + domain;
         LinphoneCoreHelper.setSipNumber(identity);
 
