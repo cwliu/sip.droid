@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.microsoft.aad.adal.AuthenticationCallback;
 import com.microsoft.aad.adal.AuthenticationCancelError;
+import com.microsoft.aad.adal.AuthenticationContext;
 import com.microsoft.aad.adal.AuthenticationResult;
 import com.microsoft.aad.adal.UserInfo;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -166,10 +167,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "onActivityResult() called with: " + "requestCode = [" + requestCode + "], resultCode = [" + resultCode + "], data = [" + data + "]");
 
-        AuthenticationManager
-                .getInstance()
-                .getAuthenticationContext()
-                .onActivityResult(requestCode, resultCode, data);
+        AuthenticationContext context = AuthenticationManager.getInstance().getAuthenticationContext();
+        if(context != null) {
+            context.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     private void checkO365Config() {
