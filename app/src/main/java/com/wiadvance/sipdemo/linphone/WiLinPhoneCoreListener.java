@@ -71,6 +71,10 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
             mContext.startActivity(intent);
         }
 
+        if(state.equals(LinphoneCall.State.OutgoingRinging)){
+            NotificationUtil.notifyCallStatus(mContext, true, "Ringing..." , true);
+        }
+
         if(state.equals(LinphoneCall.State.CallEnd)){
             NotificationUtil.notifyCallStatus(mContext, false, null, false);
         }

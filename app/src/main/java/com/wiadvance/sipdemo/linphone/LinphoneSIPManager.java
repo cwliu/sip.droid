@@ -38,10 +38,9 @@ public class LinphoneSipManager extends WiSipManager {
     public LinphoneCore mLinphoneCore;
     private LinphoneProxyConfig mProxyConfig;
 
-    private static final int ANSWER_REQUEST_CODE = 1;
-    private static final int DECLINE_REQUEST_CODE = 2;
     private boolean mCancelAllCall;
     private boolean mTriedAllCall;
+    private boolean mHasConnected;
 
     public LinphoneSipManager(Context context) {
 
@@ -64,7 +63,6 @@ public class LinphoneSipManager extends WiSipManager {
         LinphoneCoreHelper.setSipNumber(identity);
 
         try {
-
             mProxyConfig = mLinphoneCore.createProxyConfig(identity, domain, null, true);
             mProxyConfig.setExpires(300);
 
@@ -74,8 +72,6 @@ public class LinphoneSipManager extends WiSipManager {
                     account, password, null, domain);
             mLinphoneCore.addAuthInfo(authInfo);
             mLinphoneCore.setDefaultProxyConfig(mProxyConfig);
-
-            setOnlineStatus();
 
             MixpanelAPI mixpanel = MixpanelAPI.getInstance(mContext, BuildConfig.MIXPANL_TOKEN);
             JSONObject props = new JSONObject();
@@ -118,13 +114,12 @@ public class LinphoneSipManager extends WiSipManager {
             public void run() {
                 try {
 
-                    Boolean isConnected = false;
                     String sipNumber = contact.getSip();
                     if (sipNumber == null) {
                         NotificationUtil.displayStatus(mContext, "This user has no sip number");
                     } else {
                         NotificationUtil.notifyCallStatus(mContext, true, "SIP Dialing...", true);
-                        isConnected = call(sipNumber, true);
+                        mHasConnected = call(sipNumber, true);
                     }
 
                     if (mCancelAllCall) {
@@ -135,7 +130,7 @@ public class LinphoneSipManager extends WiSipManager {
                     String phone = contact.getPhone();
                     if (phone == null) {
                         NotificationUtil.displayStatus(mContext, "This user has no phone number");
-                    } else if (!isConnected) {
+                    } else if (!mHasConnected) {
                         NotificationUtil.notifyCallStatus(mContext, true, "Dialing to: " + phone, false);
                         call(phone, false);
                     }
@@ -275,5 +270,13 @@ public class LinphoneSipManager extends WiSipManager {
 
     public boolean triedSip() {
         return mTriedAllCall;
+    }
+
+    public boolean isHasConnected() {
+        return mHasConnected;
+    }
+
+    public void setHasConnected(boolean hasConnected) {
+        mHasConnected = hasConnected;
     }
 }

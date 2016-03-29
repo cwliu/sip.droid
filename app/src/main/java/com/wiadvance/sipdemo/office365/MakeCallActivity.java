@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.wiadvance.sipdemo.NotificationUtil;
@@ -26,6 +28,7 @@ public class MakeCallActivity extends AppCompatActivity {
     private Contact mCallee;
     private BroadcastReceiver mCallStatusReceiver;
     private TextView mCallStatus;
+    private boolean isEndedByCaller;
 
     public static Intent newIntent(Context context, Contact contact) {
         Intent intent = new Intent(context, MakeCallActivity.class);
@@ -42,6 +45,7 @@ public class MakeCallActivity extends AppCompatActivity {
 
         mWiSipManager = new LinphoneSipManager(this);
         mWiSipManager.makeCall(mCallee);
+
     }
 
     private void initView() {
@@ -58,6 +62,7 @@ public class MakeCallActivity extends AppCompatActivity {
         endcall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                isEndedByCaller = true;
                 mWiSipManager.endAllCall();
                 finish();
             }
@@ -77,7 +82,7 @@ public class MakeCallActivity extends AppCompatActivity {
         mCallStatusReceiver = new BroadcastReceiver() {
 
             @Override
-            public void onReceive(Context context, Intent intent) {
+            public void onReceive(final Context context, Intent intent) {
                 boolean on = intent.getBooleanExtra(NotificationUtil.NOTIFY_CALL_ON, false);
                 if (on) {
                     String status = intent.getStringExtra(NotificationUtil.NOTIFY_CALL_STATUS);
@@ -92,7 +97,22 @@ public class MakeCallActivity extends AppCompatActivity {
 
                 } else {
                     if(mWiSipManager.triedSip()){
-                        finish();
+                        mCallStatus.setText("Call Ended");
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(mWiSipManager.isHasConnected()){
+                                    Toast.makeText(context, "Call ended", Toast.LENGTH_SHORT).show();
+                                }else if(isEndedByCaller) {
+                                    //Nothing need to do
+                                }else{
+                                    Toast.makeText(context, "No one answered the phone", Toast.LENGTH_SHORT).show();
+                                }
+
+                                finish();
+                            }
+                        }, 1200);
                     }
                 }
             }
