@@ -41,10 +41,10 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.2.0'
+    compile 'com.android.support:appcompat-v7:23.2.1'
     // Azure Active Directory Library
     compile 'com.microsoft.aad:adal:1.1.7'
-    compile 'com.android.support:recyclerview-v7:23.2.0'
+    compile 'com.android.support:recyclerview-v7:23.2.1'
     // Retrofit + custom HTTP
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
     compile 'com.squareup.okhttp:okhttp:2.0.0'
@@ -56,4 +56,7 @@ dependencies {
     }
     // Mixpanel
     compile 'com.mixpanel.android:mixpanel-android:4.8.0'
+
+    // Circular image ivew
+    compile 'de.hdodenhof:circleimageview:2.0.0'
 }

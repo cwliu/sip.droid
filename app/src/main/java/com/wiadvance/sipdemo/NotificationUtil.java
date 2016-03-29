@@ -11,7 +11,7 @@ public class NotificationUtil {
     private static final String TAG = "NotificationUtil";
 
     public static String ACTION_NOTIFICATION = "com.wiadvance.sipdemo.notification";
-    public static String ACTION_CALL = "com.wiadvance.sipdemo.call";
+    public static String ACTION_CALL_STATUS_CHANGED = "com.wiadvance.sipdemo.call";
 
     public static final String GLOBAL_NOTIFY_MESSAGE = "notify_message";
 
@@ -29,7 +29,7 @@ public class NotificationUtil {
     }
 
     public static void notifyCallStatus(Context context, boolean on, String message, boolean isSip){
-        Intent intent = new Intent(ACTION_CALL);
+        Intent intent = new Intent(ACTION_CALL_STATUS_CHANGED);
         intent.putExtra(NOTIFY_CALL_ON, on);
         intent.putExtra(NOTIFY_CALL_STATUS, message);
         intent.putExtra(NOTIFY_CALL_IS_SIP, isSip);

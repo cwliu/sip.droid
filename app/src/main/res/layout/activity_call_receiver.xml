@@ -7,7 +7,7 @@
     android:background="@color/blue"
     tools:context="com.wiadvance.sipdemo.CallReceiverActivity">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/call_receiver_avatar"
         android:layout_width="120dp"
         android:layout_height="120dp"

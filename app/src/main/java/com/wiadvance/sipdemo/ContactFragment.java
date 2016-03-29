@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -52,7 +51,6 @@ public class ContactFragment extends Fragment {
     private static final String ARG_DOMAIN = "domain";
     private static final String ARG_PASSWORD = "password";
 
-    private Button endButton;
     private String mSipNumber;
     private String mDomain;
     private String mPassword;

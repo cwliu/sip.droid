@@ -97,7 +97,7 @@ public class MakeCallActivity extends AppCompatActivity {
                 }
             }
         };
-        IntentFilter notify_filter = new IntentFilter(NotificationUtil.ACTION_CALL);
+        IntentFilter notify_filter = new IntentFilter(NotificationUtil.ACTION_CALL_STATUS_CHANGED);
         LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
         manager.registerReceiver(mCallStatusReceiver, notify_filter);
 

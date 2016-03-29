@@ -81,7 +81,7 @@ public class CallReceiverActivity extends AppCompatActivity {
                 }
             }
         };
-        IntentFilter call_notify_filter = new IntentFilter(NotificationUtil.ACTION_CALL);
+        IntentFilter call_notify_filter = new IntentFilter(NotificationUtil.ACTION_CALL_STATUS_CHANGED);
         LocalBroadcastManager call_manager = LocalBroadcastManager.getInstance(this);
         call_manager.registerReceiver(mCallStatusReceiver, call_notify_filter);
 

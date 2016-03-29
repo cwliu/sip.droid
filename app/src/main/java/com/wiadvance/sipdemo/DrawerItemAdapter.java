@@ -40,7 +40,7 @@ public class DrawerItemAdapter extends BaseAdapter {
 
         if (position == 0) {
             View rootView = LayoutInflater.from(mContext).inflate(
-                    R.layout.drawer_list_header, parent, false);
+                    R.layout.list_item_drawer_header, parent, false);
 
             TextView name = (TextView) rootView.findViewById(R.id.drawer_nameTextView);
             name.setText(UserPreference.getName(mContext));
@@ -48,7 +48,7 @@ public class DrawerItemAdapter extends BaseAdapter {
 
         } else {
             View rootView = LayoutInflater.from(mContext).inflate(
-                    R.layout.drawer_list_item, parent, false);
+                    R.layout.list_item_drawer_item, parent, false);
 
             TextView item = (TextView) rootView.findViewById(R.id.drawer_item_text);
             ImageView icon = (ImageView) rootView.findViewById(R.id.drawer_item_icon);

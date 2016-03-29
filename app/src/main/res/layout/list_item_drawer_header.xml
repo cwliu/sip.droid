@@ -6,7 +6,7 @@
                 android:orientation="horizontal">
 
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/drawer_profile"
         android:layout_width="120dp"
         android:layout_height="120dp"

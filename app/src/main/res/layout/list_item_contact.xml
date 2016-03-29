@@ -6,7 +6,7 @@
               android:background="@color/beige"
               android:orientation="horizontal">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/list_item_avatar"
         android:layout_width="40dp"
         android:layout_height="40dp"

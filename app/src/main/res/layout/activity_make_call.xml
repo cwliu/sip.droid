@@ -7,7 +7,7 @@
     android:background="@color/blue"
     tools:context=".office365.MakeCallActivity">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/callee_avatar"
         android:layout_width="120dp"
         android:layout_height="120dp"
