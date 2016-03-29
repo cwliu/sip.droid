@@ -102,14 +102,6 @@ public class ContactFragment extends Fragment {
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.app_name);
 
-        endButton = (Button) rootView.findViewById(R.id.end_button);
-        endButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mWiSipManager.endCall();
-            }
-        });
-
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.contacts_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -138,7 +130,7 @@ public class ContactFragment extends Fragment {
                     case 1:
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(
-                                getContext()).setTitle("Version")
+                                getContext()).setTitle("Information")
                                 .setMessage(message)
                                 .setPositiveButton("ok", null);
                         AlertDialog dialog = builder.create();
@@ -192,7 +184,7 @@ public class ContactFragment extends Fragment {
 
             int randomAvatar[] = {R.drawable.avatar_1_120dp, R.drawable.avatar_2_120dp, R.drawable.avatar_3_120dp};
 
-            mAvatar.setImageResource(randomAvatar[position%randomAvatar.length]);
+            mAvatar.setImageResource(randomAvatar[position % randomAvatar.length]);
             mPhoneImageview.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -287,7 +279,7 @@ public class ContactFragment extends Fragment {
                                 showLoading(false);
 
                                 NotificationUtil.displayStatus(getContext(), "Please re-login.\nDownload contact data failed: " + error.toString());
-                                if(getActivity() != null){
+                                if (getActivity() != null) {
                                     getActivity().finish();
                                 }
                             }

@@ -210,13 +210,12 @@ public class LinphoneSipManager extends WiSipManager {
         }).start();
     }
 
-    @Override
-    public void endCall() {
+    public void endCurrentCall() {
         mIsCalling = false;
     }
 
     public void endAllCall() {
-        endCall();
+        endCurrentCall();
         mCancelAllCall = true;
     }
 

@@ -59,6 +59,7 @@ public class MakeCallActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mWiSipManager.endAllCall();
+                finish();
             }
         });
     }
