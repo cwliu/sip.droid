@@ -6,32 +6,41 @@
                 android:orientation="horizontal">
 
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/drawer_profile"
+    <RelativeLayout
+        android:id="@+id/drawer_profile_relativelayout"
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
-        android:src="@drawable/avatar_120dp"
-        />
+        android:layout_centerHorizontal="true">
 
-    <TextView
-        android:id="@+id/drawer_nameTextView"
-        style="@style/textMedium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/drawer_profile"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="24dp"
-        android:text="Alice Wang"
-        android:textColor="@android:color/white"
-        android:textSize="16sp"
-        />
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/drawer_profile"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/avatar_120dp"
+            />
 
-    <TextView
-        android:id="@+id/drawer_item_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/dark_gray"
-        />
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/check_green_24dp"
+            android:visibility="gone"
+            />
+
+    </RelativeLayout>
+
+        <TextView
+            android:id="@+id/drawer_nameTextView"
+            style="@style/textMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/drawer_profile_relativelayout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="24dp"
+            android:text="Alice Wang"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            />
 </RelativeLayout>

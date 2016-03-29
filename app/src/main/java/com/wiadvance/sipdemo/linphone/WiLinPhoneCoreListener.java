@@ -176,6 +176,14 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
     @Override
     public void registrationState(LinphoneCore core, LinphoneProxyConfig config, LinphoneCore.RegistrationState state, String s) {
         Log.d(TAG, "registrationState() called with: " + "core = [" + core + "], config = [" + config + "], state = [" + state + "], s = [" + s + "]");
+
+
+        if(state.equals(LinphoneCore.RegistrationState.RegistrationOk)){
+
+        }else{
+//            UserPreference
+        }
+
     }
 
     @Override

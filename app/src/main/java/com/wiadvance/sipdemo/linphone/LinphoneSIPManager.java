@@ -168,16 +168,17 @@ public class LinphoneSipManager extends WiSipManager {
                         try {
                             Thread.sleep(iterateInterval);
 
-                            if (call.getState().toString().equals("CallEnd") || call.getState().toString().equals("Released")) {
+                            Log.d(TAG, call.getState().toString());
+                            if (call.getState().equals(LinphoneCall.State.CallEnd)
+                                    || call.getState().equals(LinphoneCall.State.CallReleased)) {
                                 mIsCalling = false;
-                                Log.d(TAG, "Call end");
                             }
 
-                            if (call.getState().toString().equals("Connected") || call.getState().toString().equals("Connected")) {
+                            if (call.getState().equals(LinphoneCall.State.StreamsRunning)) {
                                 isConnected = true;
                             }
 
-                            if (call.getState().toString().equals("OutgoingRinging")) {
+                            if (call.getState().equals(LinphoneCall.State.OutgoingRinging)) {
                                 hasRinging = true;
                             }
 
@@ -186,14 +187,15 @@ public class LinphoneSipManager extends WiSipManager {
                             Log.d(TAG, "Interrupted! Aborting");
                         }
 
-
                         if (hasRinging) {
                             callingTime += iterateInterval;
                         }
-                        Log.d(TAG, "call: callingTime: " + callingTime);
-                        if (hasMaxWaitTime && callingTime >= MAX_WAIT_TIME_IN_SECONDS) {
+
+                        if (!isConnected && hasMaxWaitTime && callingTime >= MAX_WAIT_TIME_IN_SECONDS) {
+                            Log.d(TAG, "CallingTime >= MAX_WAIT_TIME_IN_SECONDS, " + callingTime);
                             mIsCalling = false;
                         }
+
                     }
                     if (!LinphoneCall.State.CallEnd.equals(call.getState())) {
                         Log.d(TAG, "Terminating the call");
