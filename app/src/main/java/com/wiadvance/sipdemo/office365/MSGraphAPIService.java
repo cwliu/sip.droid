@@ -4,7 +4,7 @@
 
 package com.wiadvance.sipdemo.office365;
 
-import com.wiadvance.sipdemo.model.ContactRaw;
+import com.wiadvance.sipdemo.model.UserRaw;
 
 import retrofit.Callback;
 import retrofit.client.Response;
@@ -14,8 +14,8 @@ import retrofit.http.Streaming;
 
 public interface MSGraphAPIService {
 
-    @GET("/me/contacts")
-    void contacts(Callback<ContactRaw> callback);
+    @GET("/users")
+    void contacts(Callback<UserRaw> callback);
 
     @GET("/me/photo/$value")
     @Streaming

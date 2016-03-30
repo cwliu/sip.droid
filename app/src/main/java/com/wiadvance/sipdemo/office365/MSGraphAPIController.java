@@ -4,7 +4,7 @@
 package com.wiadvance.sipdemo.office365;
 
 import com.wiadvance.sipdemo.RESTHelper;
-import com.wiadvance.sipdemo.model.ContactRaw;
+import com.wiadvance.sipdemo.model.UserRaw;
 
 import retrofit.Callback;
 import retrofit.client.Response;
@@ -34,7 +34,7 @@ public class MSGraphAPIController {
     }
 
 
-    public void showContacts(Callback<ContactRaw> callback){
+    public void showContacts(Callback<UserRaw> callback){
         ensureService();
         mMSGraphAPIService.contacts(callback);
     }

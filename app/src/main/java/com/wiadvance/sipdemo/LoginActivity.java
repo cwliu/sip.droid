@@ -178,7 +178,11 @@ public class LoginActivity extends AppCompatActivity {
                 .downloader(new OkHttpDownloader(picassoClient))
                 .build();
 
-        Picasso.setSingletonInstance(picasso);
+        try{
+            Picasso.setSingletonInstance(picasso);
+        }catch (IllegalStateException ignored){
+            // Picasso already started
+        }
 
     }
 

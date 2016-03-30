@@ -27,8 +27,9 @@ import com.squareup.picasso.Picasso;
 import com.wiadvance.sipdemo.linphone.LinphoneCoreHelper;
 import com.wiadvance.sipdemo.linphone.LinphoneSipManager;
 import com.wiadvance.sipdemo.model.Contact;
-import com.wiadvance.sipdemo.model.ContactRaw;
+import com.wiadvance.sipdemo.model.UserRaw;
 import com.wiadvance.sipdemo.office365.AuthenticationManager;
+import com.wiadvance.sipdemo.office365.Constants;
 import com.wiadvance.sipdemo.office365.MSGraphAPIController;
 
 import org.json.JSONException;
@@ -49,6 +50,7 @@ public class ContactFragment extends Fragment {
     private static final String ARG_SIP = "sip";
     private static final String ARG_DOMAIN = "domain";
     private static final String ARG_PASSWORD = "password";
+
 
     private String mSipNumber;
     private String mDomain;
@@ -95,22 +97,51 @@ public class ContactFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_sip, container, false);
 
-        Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.app_name);
-
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.contacts_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         mLoadingProgress = (ProgressBar) rootView.findViewById(R.id.loading_progress_bar);
 
-        DrawerLayout drawerLayout = (DrawerLayout) rootView.findViewById(R.id.drawer_layout);
-        ListView drawerList = (ListView) rootView.findViewById(R.id.left_drawer);
 
         List<DrawerItem> items = new ArrayList<>();
         items.add(new DrawerItem("Header", R.drawable.ic_info_outline_black_24dp));
         items.add(new DrawerItem("Information", R.drawable.ic_info_outline_black_24dp));
         items.add(new DrawerItem("Logout", R.drawable.ic_exit_to_app_black_24dp));
         mAdapter = new DrawerItemAdapter(getContext(), items);
+
+        setupNavigationDrawer(rootView);
+
+        return rootView;
+    }
+
+    private void setupNavigationDrawer(View rootView) {
+        Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.app_name);
+
+        DrawerLayout drawerLayout = (DrawerLayout) rootView.findViewById(R.id.drawer_layout);
+        ListView drawerList = (ListView) rootView.findViewById(R.id.left_drawer);
+
+        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
+                getActivity(),
+                (DrawerLayout) rootView.findViewById(R.id.drawer_layout),
+                toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close
+        ) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+            }
+        };
+
+        drawerToggle.syncState();
+        drawerLayout.setDrawerListener(drawerToggle);
+
         drawerList.setAdapter(mAdapter);
 
         drawerList.setBackgroundColor(getResources().getColor(R.color.beige));
@@ -138,30 +169,6 @@ public class ContactFragment extends Fragment {
                 }
             }
         });
-
-        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
-                getActivity(),
-                drawerLayout,
-                toolbar,
-                R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close
-        ) {
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-
-//                mAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-            }
-        };
-
-        drawerToggle.syncState();
-        drawerLayout.setDrawerListener(drawerToggle);
-        return rootView;
     }
 
     public class ContactHolder extends RecyclerView.ViewHolder {
@@ -177,12 +184,12 @@ public class ContactFragment extends Fragment {
             mAvatar = (ImageView) itemView.findViewById(R.id.list_item_avatar);
         }
 
-        public void bindViewHolder(final Contact contact, int position) {
+        public void bindViewHolder(final Contact contact) {
             mNameTextView.setText(contact.getName());
 
-            int randomAvatar[] = {R.drawable.avatar_1_120dp, R.drawable.avatar_2_120dp, R.drawable.avatar_3_120dp};
-
-            mAvatar.setImageResource(randomAvatar[position % randomAvatar.length]);
+            String photoUrl = String.format(Constants.USER_PHOTO_URL_FORMAT, contact.getEmail());
+            Picasso.with(getContext()).load(photoUrl)
+                    .placeholder(R.drawable.avatar_120dp).into(mAvatar);
             mPhoneImageview.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -203,7 +210,7 @@ public class ContactFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(ContactHolder holder, int position) {
-            holder.bindViewHolder(mContactList.get(position), position);
+            holder.bindViewHolder(mContactList.get(position));
         }
 
         @Override
@@ -219,7 +226,6 @@ public class ContactFragment extends Fragment {
         } else {
             mLoadingProgress.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);
-
         }
     }
 
@@ -262,20 +268,32 @@ public class ContactFragment extends Fragment {
             //Need to get the new access token to the RESTHelper instance
             Log.i(TAG, "onConnectButtonClick onSuccess() - Successfully connected to Office 365");
 
-            MSGraphAPIController.getInstance().showContacts(new Callback<ContactRaw>() {
+            MSGraphAPIController.getInstance().showContacts(new Callback<UserRaw>() {
                 @Override
-                public void success(ContactRaw contactRaw, Response response) {
+                public void success(UserRaw userRaw, Response response) {
                     mContactList.clear();
-                    for (ContactRaw.InnerDict person : contactRaw.value) {
-                        Contact contact = new Contact(person.displayName);
-
-                        for (String phone : person.businessPhones) {
-                            if (!phone.startsWith("070")) {
-                                contact.setPhone(phone);
-                            } else {
-                                contact.setSip(phone);
-                            }
+                    for (UserRaw.InnerDict user : userRaw.value) {
+                        if(user.mail == null || user.mail.equals(UserPreference.getEmail(getContext()))){
+                            continue;
                         }
+
+                        Contact contact = new Contact(user.displayName, user.mail);
+
+
+                        if(user.mobilePhone != null && user.mobilePhone.equals("0986558985")){
+                            contact.setPhone(user.mobilePhone);
+                        }
+//                        for (String phone : user.businessPhones) {
+//                            if(phone.equals("0986558985")){
+//                                contact.setPhone(phone);
+//                            }
+//                        }
+//                            if (!phone.startsWith("070")) {
+//                            } else {
+//                                contact.setSip(phone);
+//                            }
+//                        }
+
                         mContactList.add(contact);
                     }
 
@@ -292,7 +310,6 @@ public class ContactFragment extends Fragment {
                     showLoading(false);
                 }
             });
-
 
 
             Picasso.with(getContext()).setLoggingEnabled(true);

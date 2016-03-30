@@ -15,8 +15,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 import com.wiadvance.sipdemo.linphone.LinphoneSipManager;
 import com.wiadvance.sipdemo.model.Contact;
+import com.wiadvance.sipdemo.office365.Constants;
 
 public class MakeCallActivity extends AppCompatActivity {
 
@@ -39,6 +41,9 @@ public class MakeCallActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_make_call);
 
+        String json = getIntent().getStringExtra(ARG_CONTACT);
+        mCallee = new Gson().fromJson(json, Contact.class);
+
         initView();
 
         mWiSipManager = new LinphoneSipManager(this);
@@ -47,24 +52,30 @@ public class MakeCallActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        String json = getIntent().getStringExtra(ARG_CONTACT);
-        mCallee = new Gson().fromJson(json, Contact.class);
 
         TextView name = (TextView) findViewById(R.id.callee_name);
+        if (mCallee != null && name != null) {
+            name.setText(mCallee.getName());
+        }
+
         mCallStatus = (TextView) findViewById(R.id.call_status);
         ImageView avatar = (ImageView) findViewById(R.id.callee_avatar);
 
-        name.setText(mCallee.getName());
+        String photoUrl = String.format(Constants.USER_PHOTO_URL_FORMAT, mCallee.getEmail());
+        Picasso.with(this).load(photoUrl).placeholder(R.drawable.avatar_120dp).into(avatar);
+
 
         ImageButton endcall = (ImageButton) findViewById(R.id.make_call_end_call_button);
-        endcall.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isEndedByCaller = true;
-                mWiSipManager.endAllCall();
-                finish();
-            }
-        });
+        if (endcall != null) {
+            endcall.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    isEndedByCaller = true;
+                    mWiSipManager.endAllCall();
+                    finish();
+                }
+            });
+        }
     }
 
     @Override
@@ -94,17 +105,17 @@ public class MakeCallActivity extends AppCompatActivity {
                     }
 
                 } else {
-                    if(mWiSipManager.triedSip()){
+                    if (mWiSipManager.triedSip()) {
                         mCallStatus.setText("Call Ended");
 
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                if(mWiSipManager.isHasConnected()){
+                                if (mWiSipManager.isHasConnected()) {
                                     Toast.makeText(context, "Call ended", Toast.LENGTH_SHORT).show();
-                                }else if(isEndedByCaller) {
+                                } else if (isEndedByCaller) {
                                     //Nothing need to do
-                                }else{
+                                } else {
                                     Toast.makeText(context, "No one answered the phone", Toast.LENGTH_SHORT).show();
                                 }
 

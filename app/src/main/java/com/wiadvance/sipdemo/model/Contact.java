@@ -5,9 +5,11 @@ public class Contact {
     private String mName;
     private String mSip;
     private String mPhone;
+    private String mEmail;
 
-    public Contact(String name) {
+    public Contact(String name, String email) {
         mName = name;
+        mEmail = email;
     }
 
     public String getName() {
@@ -30,7 +32,15 @@ public class Contact {
         mSip = sip;
     }
 
-    public void setPhone(String phone){
+    public void setPhone(String phone) {
         mPhone = phone;
+    }
+
+    public String getEmail() {
+        return mEmail;
+    }
+
+    public void setEmail(String email) {
+        mEmail = email;
     }
 }
