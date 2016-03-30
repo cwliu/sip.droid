@@ -1,4 +1,4 @@
-package com.wiadvance.sipdemo.office365;
+package com.wiadvance.sipdemo;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -15,8 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.wiadvance.sipdemo.NotificationUtil;
-import com.wiadvance.sipdemo.R;
 import com.wiadvance.sipdemo.linphone.LinphoneSipManager;
 import com.wiadvance.sipdemo.model.Contact;
 

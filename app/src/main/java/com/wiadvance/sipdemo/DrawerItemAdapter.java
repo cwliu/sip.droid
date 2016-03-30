@@ -8,9 +8,15 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+import com.wiadvance.sipdemo.office365.Constants;
+
 import java.util.List;
 
 public class DrawerItemAdapter extends BaseAdapter {
+
+    private static final String MY_PHOTO_URL = Constants.MICROSOFT_GRAPH_API_ENDPOINT + "me/photo/$value";
+    private static final String TAG = "DrawerItemAdapter";
 
     private final List<DrawerItem> mItems;
     private final Context mContext;
@@ -43,8 +49,14 @@ public class DrawerItemAdapter extends BaseAdapter {
                     R.layout.list_item_drawer_header, parent, false);
 
             TextView name = (TextView) rootView.findViewById(R.id.drawer_nameTextView);
+            name.setText(UserPreference.getName(mContext));
             ImageView registerOk = (ImageView) rootView.findViewById(R.id.drawer_header_register_ok);
             ImageView registerFailed = (ImageView) rootView.findViewById(R.id.drawer_header_register_fail);
+
+            ImageView userPhotoImageView = (ImageView) rootView.findViewById(R.id.drawer_user_photo);
+
+            Picasso.with(mContext).load(MY_PHOTO_URL).placeholder(R.drawable.avatar_120dp)
+                    .into(userPhotoImageView);
 
             if (UserPreference.getRegistrationStatus(mContext)) {
                 registerOk.setVisibility(View.VISIBLE);

@@ -23,13 +23,13 @@ import android.widget.TextView;
 import com.microsoft.aad.adal.AuthenticationCallback;
 import com.microsoft.aad.adal.AuthenticationResult;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.squareup.picasso.Picasso;
 import com.wiadvance.sipdemo.linphone.LinphoneCoreHelper;
 import com.wiadvance.sipdemo.linphone.LinphoneSipManager;
 import com.wiadvance.sipdemo.model.Contact;
 import com.wiadvance.sipdemo.model.ContactRaw;
 import com.wiadvance.sipdemo.office365.AuthenticationManager;
 import com.wiadvance.sipdemo.office365.MSGraphAPIController;
-import com.wiadvance.sipdemo.office365.MakeCallActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,7 +40,6 @@ import java.util.List;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import retrofit.mime.TypedByteArray;
 
 public class ContactFragment extends Fragment {
 
@@ -78,7 +77,6 @@ public class ContactFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
         initializeViews();
         setRetainInstance(true);
@@ -127,7 +125,6 @@ public class ContactFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 1:
-
                         AlertDialog.Builder builder = new AlertDialog.Builder(
                                 getContext()).setTitle("Information")
                                 .setMessage(message)
@@ -153,7 +150,7 @@ public class ContactFragment extends Fragment {
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
 
-                mAdapter.notifyDataSetChanged();
+//                mAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -237,60 +234,7 @@ public class ContactFragment extends Fragment {
         mWiSipManager.register(mSipNumber, mPassword, mDomain);
 
         AuthenticationManager.getInstance().setContextActivity(getActivity());
-        AuthenticationManager.getInstance().connect(
-                new AuthenticationCallback<AuthenticationResult>() {
-                    @Override
-                    public void onSuccess(AuthenticationResult result) {
-                        //Need to get the new access token to the RESTHelper instance
-                        Log.i(TAG, "onConnectButtonClick onSuccess() - Successfully connected to Office 365");
-
-                        MSGraphAPIController.getInstance().showContacts(new Callback<ContactRaw>() {
-                            @Override
-                            public void success(ContactRaw contactRaw, Response response) {
-                                Log.d(TAG, "success() called with: " + "contactRaw = [" + contactRaw + "], response = [" + response + "]");
-                                Log.d(TAG, "response.getStatus()" + response.getStatus());
-
-                                String s = new String(((TypedByteArray) response.getBody()).getBytes());
-                                Log.d(TAG, "response: " + s);
-                                Log.d(TAG, "contactRaw.data: " + contactRaw.data);
-                                Log.d(TAG, "contactRaw.value: " + contactRaw.value);
-                                mContactList.clear();
-                                for (ContactRaw.InnerDict person : contactRaw.value) {
-
-                                    Log.d(TAG, "person: " + person.displayName);
-                                    Contact contact = new Contact(person.displayName);
-
-                                    for (String phone : person.businessPhones) {
-                                        if (!phone.startsWith("070")) {
-                                            contact.setPhone(phone);
-                                        } else {
-                                            contact.setSip(phone);
-                                        }
-                                        Log.d(TAG, "phone: " + phone);
-                                    }
-                                    mContactList.add(contact);
-                                }
-
-                                mRecyclerView.setAdapter(new ContactAdapter());
-                                mRecyclerView.getAdapter().notifyDataSetChanged();
-
-                                showLoading(false);
-                            }
-
-                            @Override
-                            public void failure(RetrofitError error) {
-                                NotificationUtil.displayStatus(getContext(), "Please re-login.\nDownload contact data failed: " + error.toString());
-
-                                showLoading(false);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onError(final Exception e) {
-                        Log.e(TAG, "onConnectButtonClick onError() - " + e.getMessage());
-                    }
-                });
+        AuthenticationManager.getInstance().connect(mAuthenticationCallback);
     }
 
     private void logout() {
@@ -311,4 +255,52 @@ public class ContactFragment extends Fragment {
         AuthenticationManager.getInstance().disconnect();
         getActivity().finish();
     }
+
+    private AuthenticationCallback<AuthenticationResult> mAuthenticationCallback = new AuthenticationCallback<AuthenticationResult>() {
+        @Override
+        public void onSuccess(AuthenticationResult result) {
+            //Need to get the new access token to the RESTHelper instance
+            Log.i(TAG, "onConnectButtonClick onSuccess() - Successfully connected to Office 365");
+
+            MSGraphAPIController.getInstance().showContacts(new Callback<ContactRaw>() {
+                @Override
+                public void success(ContactRaw contactRaw, Response response) {
+                    mContactList.clear();
+                    for (ContactRaw.InnerDict person : contactRaw.value) {
+                        Contact contact = new Contact(person.displayName);
+
+                        for (String phone : person.businessPhones) {
+                            if (!phone.startsWith("070")) {
+                                contact.setPhone(phone);
+                            } else {
+                                contact.setSip(phone);
+                            }
+                        }
+                        mContactList.add(contact);
+                    }
+
+                    mRecyclerView.setAdapter(new ContactAdapter());
+                    mRecyclerView.getAdapter().notifyDataSetChanged();
+
+                    showLoading(false);
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    NotificationUtil.displayStatus(getContext(), "Please re-login.\nDownload contact data failed: " + error.toString());
+
+                    showLoading(false);
+                }
+            });
+
+
+
+            Picasso.with(getContext()).setLoggingEnabled(true);
+        }
+
+        @Override
+        public void onError(final Exception e) {
+            Log.e(TAG, "onConnectButtonClick onError() - " + e.getMessage());
+        }
+    };
 }

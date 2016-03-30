@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="256dp"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:background="@color/blue"
                 android:orientation="horizontal">
 
@@ -14,7 +15,7 @@
         android:layout_centerHorizontal="true">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/drawer_profile"
+            android:id="@+id/drawer_user_photo"
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:src="@drawable/avatar_120dp"

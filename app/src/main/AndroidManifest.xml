@@ -56,7 +56,7 @@
         </activity>
 
         <activity
-            android:name=".office365.MakeCallActivity"
+            android:name=".MakeCallActivity"
             android:screenOrientation="portrait"/>
 
         <activity android:name="com.mixpanel.android.surveys.SurveyActivity"/>

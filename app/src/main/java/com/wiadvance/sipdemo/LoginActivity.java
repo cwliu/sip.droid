@@ -26,9 +26,15 @@ import com.microsoft.aad.adal.AuthenticationContext;
 import com.microsoft.aad.adal.AuthenticationResult;
 import com.microsoft.aad.adal.UserInfo;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.squareup.okhttp.Interceptor;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.picasso.OkHttpDownloader;
+import com.squareup.picasso.Picasso;
 import com.wiadvance.sipdemo.office365.AuthenticationManager;
 import com.wiadvance.sipdemo.office365.Constants;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.UUID;
 
@@ -72,12 +78,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void showLoading(boolean on) {
-        if(on){
+        if (on) {
             mLoginLogoImageView.setVisibility(View.GONE);
             mLoginAppNameTextView.setVisibility(View.GONE);
             mLoginButton.setVisibility(View.GONE);
             mLoginProgressBar.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             mLoginLogoImageView.setVisibility(View.VISIBLE);
             mLoginAppNameTextView.setVisibility(View.VISIBLE);
             mLoginButton.setVisibility(View.VISIBLE);
@@ -100,58 +106,80 @@ public class LoginActivity extends AppCompatActivity {
         showLoading(true);
 
         AuthenticationManager.getInstance().setContextActivity(this);
-        AuthenticationManager.getInstance().connect(
-                new AuthenticationCallback<AuthenticationResult>() {
-                    @Override
-                    public void onSuccess(AuthenticationResult result) {
-                        //Need to get the new access token to the RESTHelper instance
-                        Log.i(TAG, "onConnectButtonClick onSuccess() - Successfully connected to Office 365");
+        AuthenticationManager.getInstance().connect(new AuthenticationCallback<AuthenticationResult>() {
+            @Override
+            public void onSuccess(AuthenticationResult result) {
+                //Need to get the new access token to the RESTHelper instance
+                Log.i(TAG, "onConnectButtonClick onSuccess() - Successfully connected to Office 365");
 
-                        UserInfo info = result.getUserInfo();
-                        String sip;
-                        String domain;
-                        String password;
+                UserInfo info = result.getUserInfo();
+                String sip;
+                String domain;
+                String password;
 
-                        // FIXME Hardcoded credential
-                        if(info.getDisplayableId().equals("boss@wiadvance.net")){
-                            sip = "0702552502";
-                            domain = "210.202.37.33";
-                            password = "123456789";
-                        }
-                        else if(info.getDisplayableId().equals("mgr@wiadvance.net")){
-                            sip = "0702552501";
-                            domain = "210.202.37.33";
-                            password = "123456789";
-                        }else if(info.getDisplayableId().equals("staff@wiadvance.net")){
-                            sip = "0702552503";
-                            domain = "210.202.37.33";
-                            password = "123456789";
-                        }else {
-                            sip = "0702552503";
-                            domain = "210.202.37.33";
-                            password = "123456789";
-                        }
+                // FIXME Hardcoded credential
+                if (info.getDisplayableId().equals("boss@wiadvance.net")) {
+                    sip = "0702552502";
+                    domain = "210.202.37.33";
+                    password = "123456789";
+                } else if (info.getDisplayableId().equals("mgr@wiadvance.net")) {
+                    sip = "0702552501";
+                    domain = "210.202.37.33";
+                    password = "123456789";
+                } else if (info.getDisplayableId().equals("staff@wiadvance.net")) {
+                    sip = "0702552503";
+                    domain = "210.202.37.33";
+                    password = "123456789";
+                } else {
+                    sip = "0702552503";
+                    domain = "210.202.37.33";
+                    password = "123456789";
+                }
 
-                        UserPreference.setName(LoginActivity.this, info.getGivenName());
-                        UserPreference.setEmail(LoginActivity.this, info.getDisplayableId());
-                        UserPreference.setSip(LoginActivity.this, sip);
-                        UserPreference.setDomain(LoginActivity.this, domain);
-                        UserPreference.setPassword(LoginActivity.this, password);
+                UserPreference.setName(LoginActivity.this, info.getGivenName());
+                UserPreference.setEmail(LoginActivity.this, info.getDisplayableId());
+                UserPreference.setSip(LoginActivity.this, sip);
+                UserPreference.setDomain(LoginActivity.this, domain);
+                UserPreference.setPassword(LoginActivity.this, password);
 
-                        Intent intent = ContactActivity.newIntent(LoginActivity.this);
-                        startActivity(intent);
-                    }
+                Intent intent = ContactActivity.newIntent(LoginActivity.this);
+                setupPicasso();
+                startActivity(intent);
+            }
 
-                    @Override
-                    public void onError(final Exception e) {
-                        Log.e(TAG, "onConnectButtonClick onError() - " + e.getMessage());
-                        if (!(e instanceof AuthenticationCancelError)) {
-                            showConnectErrorUI(e.getMessage());
-                        } else {
-                            resetUI();
-                        }
-                    }
-                });
+            @Override
+            public void onError(final Exception e) {
+                Log.e(TAG, "onConnectButtonClick onError() - " + e.getMessage());
+                if (!(e instanceof AuthenticationCancelError)) {
+                    showConnectErrorUI(e.getMessage());
+                } else {
+                    resetUI();
+                }
+            }
+        });
+    }
+
+    private void setupPicasso() {
+
+        final String accessToken = AuthenticationManager.getInstance().getAccessToken();
+        OkHttpClient picassoClient = new OkHttpClient();
+        picassoClient.networkInterceptors().add(new Interceptor() {
+            @Override
+            public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
+                Request newRequest = chain.request().newBuilder()
+                        .addHeader("Authorization", "Bearer " + accessToken)
+                        .addHeader("Content-Type", "image/jpg")
+                        .build();
+                return chain.proceed(newRequest);
+            }
+        });
+
+        Picasso picasso = new Picasso.Builder(this)
+                .downloader(new OkHttpDownloader(picassoClient))
+                .build();
+
+        Picasso.setSingletonInstance(picasso);
+
     }
 
     private void showConnectErrorUI(String errorMessage) {
@@ -168,7 +196,7 @@ public class LoginActivity extends AppCompatActivity {
         Log.d(TAG, "onActivityResult() called with: " + "requestCode = [" + requestCode + "], resultCode = [" + resultCode + "], data = [" + data + "]");
 
         AuthenticationContext context = AuthenticationManager.getInstance().getAuthenticationContext();
-        if(context != null) {
+        if (context != null) {
             context.onActivityResult(requestCode, resultCode, data);
         }
     }

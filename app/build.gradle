@@ -47,7 +47,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.2.1'
     // Retrofit + custom HTTP
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
-    compile 'com.squareup.okhttp:okhttp:2.0.0'
+    compile 'com.squareup.okhttp:okhttp:2.4.0'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'com.google.code.gson:gson:2.6.2'
     // Crashlytics
@@ -59,4 +59,7 @@ dependencies {
 
     // Circular image ivew
     compile 'de.hdodenhof:circleimageview:2.0.0'
+
+    // Image cache
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }

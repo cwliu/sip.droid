@@ -7,6 +7,7 @@ import com.wiadvance.sipdemo.RESTHelper;
 import com.wiadvance.sipdemo.model.ContactRaw;
 
 import retrofit.Callback;
+import retrofit.client.Response;
 
 
 /**
@@ -36,6 +37,11 @@ public class MSGraphAPIController {
     public void showContacts(Callback<ContactRaw> callback){
         ensureService();
         mMSGraphAPIService.contacts(callback);
+    }
+
+    public void getPhoto(Callback<Response> callback){
+        ensureService();
+        mMSGraphAPIService.photo(callback);
     }
 
     //Creates a Microsoft Graph API endpoint service interface if it does not exist.
