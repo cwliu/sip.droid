@@ -35,13 +35,7 @@ public class ContactActivity extends SingleFragmentActivity {
     @Override
     protected Fragment createFragment() {
 
-        String name = UserPreference.getName(getApplicationContext());
-        String email = UserPreference.getEmail(getApplicationContext());
-        String sipNumber = UserPreference.getSip(getApplicationContext());
-        String domain = UserPreference.getDomain(getApplicationContext());
-        String password = UserPreference.getPassword(getApplicationContext());
-
-        ContactFragment sipFragment = ContactFragment.newInstance(name, email, sipNumber, domain, password);
+        ContactFragment sipFragment = ContactFragment.newInstance();
         return sipFragment;
     }
 

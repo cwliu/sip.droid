@@ -113,34 +113,12 @@ public class LoginActivity extends AppCompatActivity {
                 Log.i(TAG, "onConnectButtonClick onSuccess() - Successfully connected to Office 365");
 
                 UserInfo info = result.getUserInfo();
-                String sip;
-                String domain;
-                String password;
-
-                // FIXME Hardcoded credential
-                if (info.getDisplayableId().equals("boss@wiadvance.net")) {
-                    sip = "0702552502";
-                    domain = "210.202.37.33";
-                    password = "123456789";
-                } else if (info.getDisplayableId().equals("mgr@wiadvance.net")) {
-                    sip = "0702552501";
-                    domain = "210.202.37.33";
-                    password = "123456789";
-                } else if (info.getDisplayableId().equals("staff@wiadvance.net")) {
-                    sip = "0702552503";
-                    domain = "210.202.37.33";
-                    password = "123456789";
-                } else {
-                    sip = "0702552503";
-                    domain = "210.202.37.33";
-                    password = "123456789";
-                }
 
                 UserPreference.setName(LoginActivity.this, info.getGivenName());
                 UserPreference.setEmail(LoginActivity.this, info.getDisplayableId());
-                UserPreference.setSip(LoginActivity.this, sip);
-                UserPreference.setDomain(LoginActivity.this, domain);
-                UserPreference.setPassword(LoginActivity.this, password);
+//                UserPreference.setSip(LoginActivity.this, sip);
+//                UserPreference.setDomain(LoginActivity.this, domain);
+//                UserPreference.setPassword(LoginActivity.this, password);
 
                 Intent intent = ContactActivity.newIntent(LoginActivity.this);
                 setupPicasso();

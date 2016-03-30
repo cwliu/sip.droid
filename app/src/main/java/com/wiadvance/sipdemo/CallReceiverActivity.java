@@ -9,10 +9,14 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.squareup.picasso.Picasso;
 import com.wiadvance.sipdemo.linphone.LinphoneCoreHelper;
+import com.wiadvance.sipdemo.model.Contact;
+import com.wiadvance.sipdemo.office365.Constants;
 
 import org.linphone.LinphoneUtils;
 import org.linphone.core.LinphoneAddress;
@@ -35,6 +39,7 @@ public class CallReceiverActivity extends AppCompatActivity {
     private LinphoneCall mLinephoneCall;
     private NotificationReceiver mNotificationReceiver;
     private BroadcastReceiver mCallStatusReceiver;
+    private ImageView call_receiver_avatar;
 
     public static Intent newLinephoneIntnet(Context context, String caller) {
         Intent intent = new Intent(context, CallReceiverActivity.class);
@@ -55,8 +60,20 @@ public class CallReceiverActivity extends AppCompatActivity {
             throw new RuntimeException("Can't get linphone core");
         }
 
-        String num = getIntent().getStringExtra(ARG_CALLER_NUM);
-        ((TextView) findViewById(R.id.call_receiver_sip)).setText(num);
+        String caller_address = getIntent().getStringExtra(ARG_CALLER_NUM);
+        TextView name = (TextView) findViewById(R.id.call_receiver_sip);
+        name.setText(caller_address);
+
+        for(Contact c: UserPreference.sContactList){
+            if(caller_address.contains(c.getSip())){
+                ImageView avatar = (ImageView) findViewById(R.id.call_receiver_avatar);
+                String photoUrl = String.format(Constants.USER_PHOTO_URL_FORMAT, c.getEmail());
+                Picasso.with(this).load(photoUrl).placeholder(R.drawable.avatar_120dp).into(avatar);
+                name.setText(c.getName());
+                break;
+            }
+        }
+
 
         MixpanelAPI mixpanel = MixpanelAPI.getInstance(this, BuildConfig.MIXPANL_TOKEN);
         mixpanel.track(TAG, null);
@@ -106,8 +123,8 @@ public class CallReceiverActivity extends AppCompatActivity {
     public void onEndCallButtonClick(View view) {
         if (mLinephoneCall != null) {
             mLc.terminateCall(mLinephoneCall);
-            finish();
         }
+        finish();
     }
 
     public void onAnswerButtonClick(View view) {
@@ -161,7 +178,7 @@ public class CallReceiverActivity extends AppCompatActivity {
             Log.e(TAG, "Couldn\'t find incoming call");
         } else {
             mLc.declineCall(mLinephoneCall, Reason.Declined);
-            finish();
         }
+        finish();
     }
 }

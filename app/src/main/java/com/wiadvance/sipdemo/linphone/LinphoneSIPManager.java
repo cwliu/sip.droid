@@ -169,7 +169,6 @@ public class LinphoneSipManager extends WiSipManager {
                         try {
                             Thread.sleep(iterateInterval);
 
-                            Log.d(TAG, call.getState().toString());
                             if (call.getState().equals(LinphoneCall.State.CallEnd)
                                     || call.getState().equals(LinphoneCall.State.CallReleased)) {
                                 mIsCalling = false;
@@ -268,7 +267,6 @@ public class LinphoneSipManager extends WiSipManager {
 
             }
         }
-
     }
 
     public boolean triedSip() {

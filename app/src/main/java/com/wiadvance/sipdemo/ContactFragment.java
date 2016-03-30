@@ -19,7 +19,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.microsoft.aad.adal.AuthenticationCallback;
 import com.microsoft.aad.adal.AuthenticationResult;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -34,10 +36,19 @@ import com.wiadvance.sipdemo.office365.MSGraphAPIController;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.linphone.core.LinphoneCore;
+import org.linphone.core.LinphoneCoreException;
+import org.linphone.core.LinphoneCoreListenerBase;
+import org.linphone.core.LinphoneProxyConfig;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.Call;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -45,32 +56,18 @@ import retrofit.client.Response;
 public class ContactFragment extends Fragment {
 
     private static final String TAG = "ContactFragment";
-    private static final String ARG_NAME = "name";
-    private static final String ARG_EMAIL = "email";
-    private static final String ARG_SIP = "sip";
-    private static final String ARG_DOMAIN = "domain";
-    private static final String ARG_PASSWORD = "password";
-
-
-    private String mSipNumber;
-    private String mDomain;
-    private String mPassword;
 
     private RecyclerView mRecyclerView;
-    private List<Contact> mContactList = new ArrayList<>();
     private ProgressBar mLoadingProgress;
     private LinphoneSipManager mWiSipManager;
-    private DrawerItemAdapter mAdapter;
+    private DrawerItemAdapter mDrawerAdapter;
+    private LinphoneCoreListenerBase mLinPhoneListener;
+    public static final String HTTPS_SIP_SERVER_HEROKUAPP_COM_API_V1_SIPS = "https://sip-server.herokuapp.com/api/v1/sips/";
 
-    public static ContactFragment newInstance(String name, String email, String sipNumber, String domain, String password) {
+
+    public static ContactFragment newInstance() {
 
         Bundle args = new Bundle();
-        args.putString(ARG_NAME, name);
-        args.putString(ARG_EMAIL, email);
-        args.putString(ARG_SIP, sipNumber);
-        args.putString(ARG_DOMAIN, domain);
-        args.putString(ARG_PASSWORD, password);
-
         ContactFragment fragment = new ContactFragment();
         fragment.setArguments(args);
         return fragment;
@@ -80,17 +77,11 @@ public class ContactFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        initializeViews();
         setRetainInstance(true);
 
         mWiSipManager = new LinphoneSipManager(getContext());
     }
 
-    private void initializeViews() {
-        mSipNumber = getArguments().getString(ARG_SIP);
-        mDomain = getArguments().getString(ARG_DOMAIN);
-        mPassword = getArguments().getString(ARG_PASSWORD);
-    }
 
     @Nullable
     @Override
@@ -102,12 +93,11 @@ public class ContactFragment extends Fragment {
 
         mLoadingProgress = (ProgressBar) rootView.findViewById(R.id.loading_progress_bar);
 
-
         List<DrawerItem> items = new ArrayList<>();
         items.add(new DrawerItem("Header", R.drawable.ic_info_outline_black_24dp));
         items.add(new DrawerItem("Information", R.drawable.ic_info_outline_black_24dp));
         items.add(new DrawerItem("Logout", R.drawable.ic_exit_to_app_black_24dp));
-        mAdapter = new DrawerItemAdapter(getContext(), items);
+        mDrawerAdapter = new DrawerItemAdapter(getContext(), items);
 
         setupNavigationDrawer(rootView);
 
@@ -142,20 +132,22 @@ public class ContactFragment extends Fragment {
         drawerToggle.syncState();
         drawerLayout.setDrawerListener(drawerToggle);
 
-        drawerList.setAdapter(mAdapter);
+        drawerList.setAdapter(mDrawerAdapter);
 
         drawerList.setBackgroundColor(getResources().getColor(R.color.beige));
-        int versionCode = BuildConfig.VERSION_CODE;
-        String versionName = BuildConfig.VERSION_NAME;
-        final String message = "Version: " + versionName + "." + versionCode + "\n"
-                + "Sip Number: " + UserPreference.getSip(getContext()) + "\n"
-                + "Email: " + UserPreference.getEmail(getContext()) + "\n";
 
         drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 1:
+                        int versionCode = BuildConfig.VERSION_CODE;
+                        String versionName = BuildConfig.VERSION_NAME;
+
+                        final String message = "Version: " + versionName + "." + versionCode + "\n"
+                                + "Sip Number: " + UserPreference.getSip(getContext()) + "\n"
+                                + "Email: " + UserPreference.getEmail(getContext()) + "\n";
+
                         AlertDialog.Builder builder = new AlertDialog.Builder(
                                 getContext()).setTitle("Information")
                                 .setMessage(message)
@@ -170,6 +162,7 @@ public class ContactFragment extends Fragment {
             }
         });
     }
+
 
     public class ContactHolder extends RecyclerView.ViewHolder {
 
@@ -197,6 +190,10 @@ public class ContactFragment extends Fragment {
                     startActivity(intent);
                 }
             });
+
+//            if (contact.getPhone() == null && contact.getSip() == null) {
+//                mPhoneImageview.setVisibility(View.GONE);
+//            }
         }
     }
 
@@ -210,12 +207,12 @@ public class ContactFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(ContactHolder holder, int position) {
-            holder.bindViewHolder(mContactList.get(position));
+            holder.bindViewHolder(UserPreference.sContactList.get(position));
         }
 
         @Override
         public int getItemCount() {
-            return mContactList.size();
+            return UserPreference.sContactList.size();
         }
     }
 
@@ -233,19 +230,149 @@ public class ContactFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        if (mContactList.size() == 0) {
+        if (UserPreference.sContactList.size() == 0) {
             showLoading(true);
         }
 
-        mWiSipManager.register(mSipNumber, mPassword, mDomain);
+        try {
+            LinphoneCore lc = LinphoneCoreHelper.getLinphoneCoreInstance(getContext());
+            mLinPhoneListener = new LinphoneCoreListenerBase() {
+                @Override
+                public void registrationState(LinphoneCore lc, LinphoneProxyConfig cfg, LinphoneCore.RegistrationState state, final String message) {
+
+                    if(state.equals(LinphoneCore.RegistrationState.RegistrationOk)){
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mDrawerAdapter != null) {
+                                    mDrawerAdapter.notifyDataSetChanged();
+                                }
+                            }
+                        });
+                    }
+
+                    if(state.equals(LinphoneCore.RegistrationState.RegistrationFailed)){
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mDrawerAdapter != null) {
+                                    mDrawerAdapter.notifyDataSetChanged();
+                                }
+                                Toast.makeText(getContext(), "Sip registration error: " + message, Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                }
+            };
+            lc.addListener(mLinPhoneListener);
+
+        } catch (LinphoneCoreException e) {
+            e.printStackTrace();
+        }
+
 
         AuthenticationManager.getInstance().setContextActivity(getActivity());
         AuthenticationManager.getInstance().connect(mAuthenticationCallback);
+
+        downloadSipAccount();
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        try {
+            LinphoneCore lc = LinphoneCoreHelper.getLinphoneCoreInstance(getContext());
+            lc.removeListener(mLinPhoneListener);
+
+        } catch (LinphoneCoreException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void downloadSipAccount() {
+        OkHttpClient client = new OkHttpClient();
+
+        FormBody body = new FormBody.Builder()
+                .add("email", UserPreference.getEmail(getContext()))
+                .add("access_token", AuthenticationManager.getInstance().getAccessToken())
+                .build();
+
+        Request request = new Request.Builder()
+                .url(HTTPS_SIP_SERVER_HEROKUAPP_COM_API_V1_SIPS)
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(TAG, "onFailure() called with: " + "call = [" + call + "], e = [" + e + "]");
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                Log.d(TAG, "onResponse() called with: " + "call = [" + call + "], response = [" + response + "]");
+
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getContext(), response.body().string(), Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                String rawBodyString = response.body().string();
+
+                SipApiResponse sip_data = new Gson().fromJson(rawBodyString, SipApiResponse.class);
+
+                String sip_domain = sip_data.proxy_address + ":" + sip_data.proxy_port;
+                UserPreference.setSip(getContext(), sip_data.sip_account);
+                UserPreference.setPassword(getContext(), sip_data.sip_password);
+                UserPreference.setDomain(getContext(), sip_domain);
+
+                for (SipApiResponse.SipAccount acc : sip_data.sip_list) {
+                    UserPreference.sEmailtoSipBiMap.forcePut(acc.email, acc.sip_account);
+                    UserPreference.sEmailtoPhoneBiMap.forcePut(acc.email, acc.phone);
+                }
+
+                mWiSipManager.register(sip_data.sip_account, sip_data.sip_password, sip_domain);
+
+                updateContact();
+            }
+        });
+    }
+
+    private void updateContact() {
+        for (Contact c : UserPreference.sContactList) {
+            String email = c.getEmail();
+            String phone = UserPreference.sEmailtoPhoneBiMap.get(email);
+            String sip = UserPreference.sEmailtoSipBiMap.get(email);
+
+            if (phone != null) {
+                c.setPhone(phone);
+            }
+
+            if (sip != null) {
+                c.setSip(sip);
+            }
+        }
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(mRecyclerView.getAdapter() != null){
+                    mRecyclerView.getAdapter().notifyDataSetChanged();
+                }
+            }
+        });
     }
 
     private void logout() {
-        mWiSipManager.unregister(mSipNumber);
-        LinphoneCoreHelper.destroyLinphoneCore(getContext());
+
+        String sipNumber = UserPreference.getSip(getContext());
+        if (sipNumber != null) {
+            mWiSipManager.unregister(sipNumber);
+        }
+
+        UserPreference.clean(getContext());
 
         MixpanelAPI mixpanel = MixpanelAPI.getInstance(getContext(), BuildConfig.MIXPANL_TOKEN);
         JSONObject props = new JSONObject();
@@ -257,8 +384,11 @@ public class ContactFragment extends Fragment {
         }
         mixpanel.track("LOGOUT", props);
 
+        LinphoneCoreHelper.destroyLinphoneCore(getContext());
+
         AuthenticationManager.getInstance().setContextActivity(getActivity());
         AuthenticationManager.getInstance().disconnect();
+
         getActivity().finish();
     }
 
@@ -271,34 +401,25 @@ public class ContactFragment extends Fragment {
             MSGraphAPIController.getInstance().showContacts(new Callback<UserRaw>() {
                 @Override
                 public void success(UserRaw userRaw, Response response) {
-                    mContactList.clear();
+
+                    UserPreference.sContactList.clear();
                     for (UserRaw.InnerDict user : userRaw.value) {
-                        if(user.mail == null || user.mail.equals(UserPreference.getEmail(getContext()))){
+                        if (user.mail == null || user.mail.equals(UserPreference.getEmail(getContext()))) {
                             continue;
                         }
 
                         Contact contact = new Contact(user.displayName, user.mail);
 
-
-                        if(user.mobilePhone != null && user.mobilePhone.equals("0986558985")){
-                            contact.setPhone(user.mobilePhone);
+                        Log.d(TAG, "user: " + user.displayName + ", mobilePhone: " + user.mobilePhone);
+                        for (String phone : user.businessPhones) {
+                            Log.d(TAG, "user: " + user.displayName + ", businessPhone: " + phone);
                         }
-//                        for (String phone : user.businessPhones) {
-//                            if(phone.equals("0986558985")){
-//                                contact.setPhone(phone);
-//                            }
-//                        }
-//                            if (!phone.startsWith("070")) {
-//                            } else {
-//                                contact.setSip(phone);
-//                            }
-//                        }
 
-                        mContactList.add(contact);
+                        UserPreference.sContactList.add(contact);
                     }
 
                     mRecyclerView.setAdapter(new ContactAdapter());
-                    mRecyclerView.getAdapter().notifyDataSetChanged();
+                    updateContact();
 
                     showLoading(false);
                 }
@@ -310,9 +431,6 @@ public class ContactFragment extends Fragment {
                     showLoading(false);
                 }
             });
-
-
-            Picasso.with(getContext()).setLoggingEnabled(true);
         }
 
         @Override
