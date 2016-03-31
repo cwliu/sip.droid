@@ -1,6 +1,7 @@
 package com.wiadvance.sipdemo;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -153,7 +154,18 @@ public class ContactFragment extends Fragment {
                         dialog.show();
                         break;
                     case 2:
-                        logout();
+
+                        AlertDialog.Builder logoutBuilder = new AlertDialog.Builder(getContext())
+                            .setTitle("Logout")
+                            .setMessage("Are you sure you want to logout?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    logout();
+                                }
+                            })
+                            .setNegativeButton("No", null);
+                        logoutBuilder.create().show();
                         break;
                 }
             }
@@ -303,14 +315,16 @@ public class ContactFragment extends Fragment {
             }
         }
 
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (mRecyclerView.getAdapter() != null) {
-                    mRecyclerView.getAdapter().notifyDataSetChanged();
+        if(getActivity() != null){
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mRecyclerView.getAdapter() != null) {
+                        mRecyclerView.getAdapter().notifyDataSetChanged();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     private void logout() {
