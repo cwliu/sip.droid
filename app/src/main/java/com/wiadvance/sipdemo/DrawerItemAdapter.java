@@ -15,7 +15,6 @@ import java.util.List;
 
 public class DrawerItemAdapter extends BaseAdapter {
 
-    private static final String MY_PHOTO_URL = Constants.MICROSOFT_GRAPH_API_ENDPOINT + "me/photo/$value";
     private static final String TAG = "DrawerItemAdapter";
 
     private final List<DrawerItem> mItems;
@@ -55,7 +54,7 @@ public class DrawerItemAdapter extends BaseAdapter {
 
             ImageView userPhotoImageView = (ImageView) rootView.findViewById(R.id.drawer_user_photo);
 
-            Picasso.with(mContext).load(MY_PHOTO_URL).placeholder(R.drawable.avatar_120dp)
+            Picasso.with(mContext).load(Constants.MY_PHOTO_URL).placeholder(R.drawable.avatar_120dp)
                     .into(userPhotoImageView);
 
             if (UserPreference.getRegistrationStatus(mContext)) {

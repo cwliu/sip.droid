@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -52,6 +53,10 @@ public class LoginActivity extends AppCompatActivity {
     private TextView mLoginAppNameTextView;
     private ImageView mLoginLogoImageView;
 
+    public static Intent newIntent(Context context){
+        return new Intent(context, LoginActivity.class);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,14 +102,14 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLoginButtonClick(View view) {
         Log.d(TAG, "onLoginButtonClick() called with: " + "view = [" + view + "]");
-        login();
-    }
-
-    private void login() {
-        checkO365Config();
-
         showLoading(true);
 
+        checkO365Config();
+        setupPicasso();
+        o365login();
+    }
+
+    private void o365login() {
         AuthenticationManager.getInstance().setContextActivity(this);
         AuthenticationManager.getInstance().connect(new AuthenticationCallback<AuthenticationResult>() {
             @Override
@@ -112,16 +117,14 @@ public class LoginActivity extends AppCompatActivity {
                 //Need to get the new access token to the RESTHelper instance
                 Log.i(TAG, "onConnectButtonClick onSuccess() - Successfully connected to Office 365");
 
-                UserInfo info = result.getUserInfo();
+                //Once we have o365 access token, setup picasso
+                setupPicasso();
 
+                UserInfo info = result.getUserInfo();
                 UserPreference.setName(LoginActivity.this, info.getGivenName());
                 UserPreference.setEmail(LoginActivity.this, info.getDisplayableId());
-//                UserPreference.setSip(LoginActivity.this, sip);
-//                UserPreference.setDomain(LoginActivity.this, domain);
-//                UserPreference.setPassword(LoginActivity.this, password);
 
                 Intent intent = ContactActivity.newIntent(LoginActivity.this);
-                setupPicasso();
                 startActivity(intent);
             }
 
@@ -138,12 +141,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setupPicasso() {
-
-        final String accessToken = AuthenticationManager.getInstance().getAccessToken();
         OkHttpClient picassoClient = new OkHttpClient();
         picassoClient.networkInterceptors().add(new Interceptor() {
             @Override
             public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
+                String accessToken = AuthenticationManager.getInstance().getAccessToken();
                 Request newRequest = chain.request().newBuilder()
                         .addHeader("Authorization", "Bearer " + accessToken)
                         .addHeader("Content-Type", "image/jpg")
@@ -154,6 +156,12 @@ public class LoginActivity extends AppCompatActivity {
 
         Picasso picasso = new Picasso.Builder(this)
                 .downloader(new OkHttpDownloader(picassoClient))
+                .listener(new Picasso.Listener() {
+                    @Override
+                    public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                        Log.d(TAG, "onImageLoadFailed() called with: " + "picasso = [" + picasso + "], uri = [" + uri + "], exception = [" + exception + "]");
+                    }
+                })
                 .build();
 
         try{
@@ -162,6 +170,8 @@ public class LoginActivity extends AppCompatActivity {
             // Picasso already started
         }
 
+        picasso.invalidate(Constants.MY_PHOTO_URL);
+        picasso.setLoggingEnabled(false);
     }
 
     private void showConnectErrorUI(String errorMessage) {

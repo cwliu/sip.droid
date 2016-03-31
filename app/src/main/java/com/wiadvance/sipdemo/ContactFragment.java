@@ -80,6 +80,9 @@ public class ContactFragment extends Fragment {
         setRetainInstance(true);
 
         mWiSipManager = new LinphoneSipManager(getContext());
+
+        String acc = AuthenticationManager.getInstance().getAccessToken();
+        Log.d(TAG, "onCreate: acc: " + acc);
     }
 
 
@@ -274,7 +277,7 @@ public class ContactFragment extends Fragment {
         AuthenticationManager.getInstance().setContextActivity(getActivity());
         AuthenticationManager.getInstance().connect(mAuthenticationCallback);
 
-        downloadSipAccount();
+        syncSipAccountList();
 
     }
 
@@ -291,7 +294,7 @@ public class ContactFragment extends Fragment {
         }
     }
 
-    private void downloadSipAccount() {
+    private void syncSipAccountList() {
         OkHttpClient client = new OkHttpClient();
 
         FormBody body = new FormBody.Builder()
@@ -324,17 +327,18 @@ public class ContactFragment extends Fragment {
                 SipApiResponse sip_data = new Gson().fromJson(rawBodyString, SipApiResponse.class);
 
                 String sip_domain = sip_data.proxy_address + ":" + sip_data.proxy_port;
-                UserPreference.setSip(getContext(), sip_data.sip_account);
-                UserPreference.setPassword(getContext(), sip_data.sip_password);
-                UserPreference.setDomain(getContext(), sip_domain);
+                if(getContext() != null){
+                    UserPreference.setSip(getContext(), sip_data.sip_account);
+                    UserPreference.setPassword(getContext(), sip_data.sip_password);
+                    UserPreference.setDomain(getContext(), sip_domain);
 
-                for (SipApiResponse.SipAccount acc : sip_data.sip_list) {
-                    UserPreference.sEmailtoSipBiMap.forcePut(acc.email, acc.sip_account);
-                    UserPreference.sEmailtoPhoneBiMap.forcePut(acc.email, acc.phone);
+                    for (SipApiResponse.SipAccount acc : sip_data.sip_list) {
+                        UserPreference.sEmailtoSipBiMap.forcePut(acc.email, acc.sip_account);
+                        UserPreference.sEmailtoPhoneBiMap.forcePut(acc.email, acc.phone);
+                    }
+
+                    mWiSipManager.register(sip_data.sip_account, sip_data.sip_password, sip_domain);
                 }
-
-                mWiSipManager.register(sip_data.sip_account, sip_data.sip_password, sip_domain);
-
                 updateContact();
             }
         });
@@ -389,7 +393,10 @@ public class ContactFragment extends Fragment {
         AuthenticationManager.getInstance().setContextActivity(getActivity());
         AuthenticationManager.getInstance().disconnect();
 
-        getActivity().finish();
+        // Back to login activity
+        Intent intent = LoginActivity.newIntent(getContext());
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
     private AuthenticationCallback<AuthenticationResult> mAuthenticationCallback = new AuthenticationCallback<AuthenticationResult>() {

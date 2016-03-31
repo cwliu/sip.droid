@@ -8,5 +8,5 @@ public interface Constants {
     String MICROSOFT_GRAPH_API_ENDPOINT = "https://graph.microsoft.com/v1.0/";
     String MICROSOFT_GRAPH_API_ENDPOINT_RESOURCE_ID = "https://graph.microsoft.com/";
     String USER_PHOTO_URL_FORMAT = Constants.MICROSOFT_GRAPH_API_ENDPOINT + "Users('%s')/photo/$value";
-
+    String MY_PHOTO_URL = Constants.MICROSOFT_GRAPH_API_ENDPOINT + "me/photo/$value";
 }
