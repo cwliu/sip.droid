@@ -68,4 +68,8 @@ dependencies {
 
     // For using bimap
     compile 'com.google.guava:guava:19.0'
+
+    // For swipelayout
+    compile 'com.android.support:support-v4:23.2.1'
+    compile "com.daimajia.swipelayout:library:1.2.0@aar"
 }

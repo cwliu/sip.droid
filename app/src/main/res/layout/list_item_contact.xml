@@ -1,42 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="@color/beige"
-              android:orientation="horizontal">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/list_item_avatar"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="16dp"
-        android:src="@drawable/avatar_2_120dp"
-        />
+    <com.daimajia.swipe.SwipeLayout
+        android:id="@+id/swipe_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/beige"
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/contact_name_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_centerVertical="true"
-        android:gravity="center_vertical"
-        android:textColor="@color/dark_gray"
-        android:textSize="16sp"
-        tools:text="David"
-        />
-
-    <RelativeLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
-        android:layout_weight="1">
-
+        <!-- Bottom View Start-->
         <RelativeLayout
-            android:id="@+id/buttons_relative_layout"
-            android:layout_width="match_parent"
+            android:id="@+id/bottom_wrapper"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:visibility="gone"
-            >
+            android:layout_gravity="right">
 
             <ImageView
                 android:id="@+id/phone_icon_image_view"
@@ -68,19 +51,61 @@
                 android:src="@drawable/sms_green_40dp"/>
 
         </RelativeLayout>
+        <!-- Bottom View End-->
 
-        <ImageView
-            android:id="@+id/outline_image_view"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:alpha="0.12"
-            android:paddingBottom="26dp"
-            android:paddingTop="26dp"
-            android:src="@drawable/right_outline_black_20dp"
-            />
-    </RelativeLayout>
+        <!-- Surface View Start -->
+        <LinearLayout
+            android:id="@+id/surview_view"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:orientation="vertical">
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/list_item_avatar"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="16dp"
+                    android:src="@drawable/avatar_2_120dp"
+                    />
+
+                <TextView
+                    android:id="@+id/contact_name_text_view"
+                    android:layout_toRightOf="@+id/list_item_avatar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="16sp"
+                    tools:text="David"
+                    />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:layout_margin="16dp"
+                    android:alpha="0.12"
+                    android:src="@drawable/right_outline_black_20dp"
+                    />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+
+        <!-- Surface View End -->
+
+    </com.daimajia.swipe.SwipeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
 
 </LinearLayout>
