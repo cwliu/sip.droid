@@ -21,7 +21,7 @@ public class ContactHolder extends RecyclerView.ViewHolder {
     private final View mRootItemView;
     private final ImageView mOutLineImageView;
     private boolean isButtonDisplayed;
-    private final RelativeLayout mButtonImageView;
+    private final RelativeLayout mButtonRelativeLayout;
 
     public ContactHolder(Context context, View itemView) {
         super(itemView);
@@ -32,7 +32,7 @@ public class ContactHolder extends RecyclerView.ViewHolder {
         mPhoneImageview = (ImageView) itemView.findViewById(R.id.phone_icon_image_view);
         mAvatar = (ImageView) itemView.findViewById(R.id.list_item_avatar);
         mOutLineImageView = (ImageView) itemView.findViewById(R.id.outline_image_view);
-        mButtonImageView = (RelativeLayout) itemView.findViewById(R.id.buttons_relative_layout);
+        mButtonRelativeLayout = (RelativeLayout) itemView.findViewById(R.id.buttons_relative_layout);
     }
 
     public void bindViewHolder(final Contact contact) {
@@ -62,15 +62,22 @@ public class ContactHolder extends RecyclerView.ViewHolder {
                 toggleButtonsRelativeLayout();
             }
         });
+
+        mButtonRelativeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     private void toggleButtonsRelativeLayout() {
         if(isButtonDisplayed){
-            mButtonImageView.setVisibility(View.GONE);
+            mButtonRelativeLayout.setVisibility(View.GONE);
             mOutLineImageView.setVisibility(View.VISIBLE);
             isButtonDisplayed = false;
         }else{
-            mButtonImageView.setVisibility(View.VISIBLE);
+            mButtonRelativeLayout.setVisibility(View.VISIBLE);
             mOutLineImageView.setVisibility(View.GONE);
             isButtonDisplayed = true;
         }
