@@ -15,23 +15,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.microsoft.aad.adal.AuthenticationCallback;
 import com.microsoft.aad.adal.AuthenticationResult;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
-import com.squareup.picasso.Picasso;
 import com.wiadvance.sipdemo.linphone.LinphoneCoreHelper;
 import com.wiadvance.sipdemo.linphone.LinphoneSipManager;
 import com.wiadvance.sipdemo.model.Contact;
 import com.wiadvance.sipdemo.model.UserRaw;
 import com.wiadvance.sipdemo.office365.AuthenticationManager;
-import com.wiadvance.sipdemo.office365.Constants;
 import com.wiadvance.sipdemo.office365.MSGraphAPIController;
 
 import org.json.JSONException;
@@ -57,13 +53,14 @@ public class ContactFragment extends Fragment {
 
     private static final String TAG = "ContactFragment";
 
+    public static final String HTTPS_SIP_SERVER_HEROKUAPP_COM_API_V1_SIPS =
+            "https://sip-server.herokuapp.com/api/v1/sips/";
+
     private RecyclerView mRecyclerView;
     private ProgressBar mLoadingProgress;
     private LinphoneSipManager mWiSipManager;
     private DrawerItemAdapter mDrawerAdapter;
     private LinphoneCoreListenerBase mLinPhoneListener;
-    public static final String HTTPS_SIP_SERVER_HEROKUAPP_COM_API_V1_SIPS = "https://sip-server.herokuapp.com/api/v1/sips/";
-
 
     public static ContactFragment newInstance() {
 
@@ -166,59 +163,6 @@ public class ContactFragment extends Fragment {
         });
     }
 
-
-    public class ContactHolder extends RecyclerView.ViewHolder {
-
-        private final TextView mNameTextView;
-        private final ImageView mPhoneImageview;
-        private final ImageView mAvatar;
-
-        public ContactHolder(View itemView) {
-            super(itemView);
-            mNameTextView = (TextView) itemView.findViewById(R.id.contact_name_text_view);
-            mPhoneImageview = (ImageView) itemView.findViewById(R.id.phone_icon_image_view);
-            mAvatar = (ImageView) itemView.findViewById(R.id.list_item_avatar);
-        }
-
-        public void bindViewHolder(final Contact contact) {
-            mNameTextView.setText(contact.getName());
-
-            String photoUrl = String.format(Constants.USER_PHOTO_URL_FORMAT, contact.getEmail());
-            Picasso.with(getContext()).load(photoUrl)
-                    .placeholder(R.drawable.avatar_120dp).into(mAvatar);
-            mPhoneImageview.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = MakeCallActivity.newIntent(getContext(), contact);
-                    startActivity(intent);
-                }
-            });
-
-//            if (contact.getPhone() == null && contact.getSip() == null) {
-//                mPhoneImageview.setVisibility(View.GONE);
-//            }
-        }
-    }
-
-    public class ContactAdapter extends RecyclerView.Adapter<ContactHolder> {
-
-        @Override
-        public ContactHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View inflate = LayoutInflater.from(getContext()).inflate(R.layout.list_item_contact, parent, false);
-            return new ContactHolder(inflate);
-        }
-
-        @Override
-        public void onBindViewHolder(ContactHolder holder, int position) {
-            holder.bindViewHolder(UserPreference.sContactList.get(position));
-        }
-
-        @Override
-        public int getItemCount() {
-            return UserPreference.sContactList.size();
-        }
-    }
-
     private void showLoading(boolean on) {
         if (on) {
             mLoadingProgress.setVisibility(View.VISIBLE);
@@ -243,7 +187,7 @@ public class ContactFragment extends Fragment {
                 @Override
                 public void registrationState(LinphoneCore lc, LinphoneProxyConfig cfg, LinphoneCore.RegistrationState state, final String message) {
 
-                    if(state.equals(LinphoneCore.RegistrationState.RegistrationOk)){
+                    if (state.equals(LinphoneCore.RegistrationState.RegistrationOk)) {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -254,7 +198,7 @@ public class ContactFragment extends Fragment {
                         });
                     }
 
-                    if(state.equals(LinphoneCore.RegistrationState.RegistrationFailed)){
+                    if (state.equals(LinphoneCore.RegistrationState.RegistrationFailed)) {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -327,7 +271,7 @@ public class ContactFragment extends Fragment {
                 SipApiResponse sip_data = new Gson().fromJson(rawBodyString, SipApiResponse.class);
 
                 String sip_domain = sip_data.proxy_address + ":" + sip_data.proxy_port;
-                if(getContext() != null){
+                if (getContext() != null) {
                     UserPreference.setSip(getContext(), sip_data.sip_account);
                     UserPreference.setPassword(getContext(), sip_data.sip_password);
                     UserPreference.setDomain(getContext(), sip_domain);
@@ -339,12 +283,12 @@ public class ContactFragment extends Fragment {
 
                     mWiSipManager.register(sip_data.sip_account, sip_data.sip_password, sip_domain);
                 }
-                updateContact();
+                refreshContacts();
             }
         });
     }
 
-    private void updateContact() {
+    private void refreshContacts() {
         for (Contact c : UserPreference.sContactList) {
             String email = c.getEmail();
             String phone = UserPreference.sEmailtoPhoneBiMap.get(email);
@@ -362,7 +306,7 @@ public class ContactFragment extends Fragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(mRecyclerView.getAdapter() != null){
+                if (mRecyclerView.getAdapter() != null) {
                     mRecyclerView.getAdapter().notifyDataSetChanged();
                 }
             }
@@ -425,8 +369,8 @@ public class ContactFragment extends Fragment {
                         UserPreference.sContactList.add(contact);
                     }
 
-                    mRecyclerView.setAdapter(new ContactAdapter());
-                    updateContact();
+                    mRecyclerView.setAdapter(new ContactAdapter(getContext()));
+                    refreshContacts();
 
                     showLoading(false);
                 }
