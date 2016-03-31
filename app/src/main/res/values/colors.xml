@@ -11,5 +11,6 @@
     <color name="beige">#eee9e7</color>
     <color name="dark_gray">#dd000000</color>
     <color name="gray">#90000000</color>
+    <color name="white">#FFFFFF</color>
 
 </resources>
