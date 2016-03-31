@@ -23,6 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/call_receiver_avatar"
         android:layout_centerHorizontal="true"
+        android:maxWidth="200dp"
         android:layout_marginTop="24dp"
         android:text="1234"
         android:textColor="@android:color/white"

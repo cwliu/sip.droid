@@ -29,6 +29,8 @@ public class MakeCallActivity extends AppCompatActivity {
     private BroadcastReceiver mCallStatusReceiver;
     private TextView mCallStatus;
     private boolean isEndedByCaller;
+    private TextView mCallStatusAnimation;
+    private boolean isCalling;
 
     public static Intent newIntent(Context context, Contact contact) {
         Intent intent = new Intent(context, MakeCallActivity.class);
@@ -59,6 +61,8 @@ public class MakeCallActivity extends AppCompatActivity {
         }
 
         mCallStatus = (TextView) findViewById(R.id.call_status);
+        mCallStatusAnimation = (TextView) findViewById(R.id.call_status_dot_animation);
+
         ImageView avatar = (ImageView) findViewById(R.id.callee_avatar);
 
         String photoUrl = String.format(Constants.USER_PHOTO_URL_FORMAT, mCallee.getEmail());
@@ -76,6 +80,25 @@ public class MakeCallActivity extends AppCompatActivity {
                 }
             });
         }
+
+        isCalling = true;
+        final Handler dotAnimationHandler = new Handler();
+        Runnable task = new Runnable() {
+            @Override
+            public void run() {
+                String s = mCallStatusAnimation.getText().toString();
+                if(s.length() == 3){
+                    mCallStatusAnimation.setText(".");
+                }else{
+                    mCallStatusAnimation.setText(s +".");
+                }
+                if(isCalling){
+                    dotAnimationHandler.postDelayed(this, 800);
+                }
+            }
+        };
+        dotAnimationHandler.post(task);
+
     }
 
     @Override
@@ -94,6 +117,7 @@ public class MakeCallActivity extends AppCompatActivity {
             public void onReceive(final Context context, Intent intent) {
                 boolean on = intent.getBooleanExtra(NotificationUtil.NOTIFY_CALL_ON, false);
                 if (on) {
+                    isCalling = true;
                     String status = intent.getStringExtra(NotificationUtil.NOTIFY_CALL_STATUS);
                     if (status != null) {
                         mCallStatus.setText(status);
@@ -105,6 +129,7 @@ public class MakeCallActivity extends AppCompatActivity {
                     }
 
                 } else {
+                    isCalling = false;
                     if (mWiSipManager.triedSip()) {
                         mCallStatus.setText("Call Ended");
 

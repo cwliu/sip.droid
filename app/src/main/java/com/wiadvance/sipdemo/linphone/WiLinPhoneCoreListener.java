@@ -41,7 +41,6 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
     @Override
     public void displayStatus(LinphoneCore core, String s) {
         Log.d(TAG, "displayStatus() called with: " + "core = [" + core + "], s = [" + s + "]");
-        NotificationUtil.displayStatus(mContext, "Status: " + s);
 
 
         MixpanelAPI mixpanel = MixpanelAPI.getInstance(mContext, BuildConfig.MIXPANL_TOKEN);
@@ -73,7 +72,7 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
         }
 
         if(state.equals(LinphoneCall.State.OutgoingRinging)){
-            NotificationUtil.notifyCallStatus(mContext, true, "Ringing..." , true);
+            NotificationUtil.notifyCallStatus(mContext, true, "Ringing" , true);
         }
 
         if(state.equals(LinphoneCall.State.CallEnd)){

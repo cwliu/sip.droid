@@ -179,7 +179,7 @@ public class LoginActivity extends AppCompatActivity {
                 R.string.connect_toast_text_error), errorMessage
         );
 
-        Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_LONG).show();
+        NotificationUtil.displayStatus(this, msg);
     }
 
     @Override

@@ -72,4 +72,8 @@ dependencies {
     // For swipelayout
     compile 'com.android.support:support-v4:23.2.1'
     compile "com.daimajia.swipelayout:library:1.2.0@aar"
+
+    // For snackbar
+    compile 'com.android.support:design:23.2.1'
+
 }

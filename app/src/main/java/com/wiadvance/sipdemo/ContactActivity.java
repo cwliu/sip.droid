@@ -9,6 +9,7 @@ import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
@@ -66,7 +67,7 @@ public class ContactActivity extends SingleFragmentActivity {
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "NotificationReceiver, onReceive()");
             String message = intent.getStringExtra(NotificationUtil.GLOBAL_NOTIFY_MESSAGE);
-//            Toast.makeText(ContactActivity.this, message, Toast.LENGTH_SHORT).show();
+            Toast.makeText(ContactActivity.this, message, Toast.LENGTH_SHORT).show();
         }
     }
 }

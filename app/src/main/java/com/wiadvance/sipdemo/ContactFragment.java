@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.microsoft.aad.adal.AuthenticationCallback;
@@ -61,6 +60,7 @@ public class ContactFragment extends Fragment {
     private LinphoneSipManager mWiSipManager;
     private DrawerItemAdapter mDrawerAdapter;
     private LinphoneCoreListenerBase mLinPhoneListener;
+    private View mRootView;
 
     public static ContactFragment newInstance() {
 
@@ -77,21 +77,18 @@ public class ContactFragment extends Fragment {
         setRetainInstance(true);
 
         mWiSipManager = new LinphoneSipManager(getContext());
-
-        String acc = AuthenticationManager.getInstance().getAccessToken();
-        Log.d(TAG, "onCreate: acc: " + acc);
     }
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_sip, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_sip, container, false);
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.contacts_recycler_view);
+        mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.contacts_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        mLoadingProgress = (ProgressBar) rootView.findViewById(R.id.loading_progress_bar);
+        mLoadingProgress = (ProgressBar) mRootView.findViewById(R.id.loading_progress_bar);
 
         List<DrawerItem> items = new ArrayList<>();
         items.add(new DrawerItem("Header", R.drawable.ic_info_outline_black_24dp));
@@ -99,9 +96,9 @@ public class ContactFragment extends Fragment {
         items.add(new DrawerItem("Logout", R.drawable.ic_exit_to_app_black_24dp));
         mDrawerAdapter = new DrawerItemAdapter(getContext(), items);
 
-        setupNavigationDrawer(rootView);
+        setupNavigationDrawer(mRootView);
 
-        return rootView;
+        return mRootView;
     }
 
     private void setupNavigationDrawer(View rootView) {
@@ -164,13 +161,13 @@ public class ContactFragment extends Fragment {
     }
 
     private void showLoading(boolean on) {
-//        if (on) {
-//            mLoadingProgress.setVisibility(View.VISIBLE);
-//            mRecyclerView.setVisibility(View.GONE);
-//        } else {
-//            mLoadingProgress.setVisibility(View.GONE);
-//            mRecyclerView.setVisibility(View.VISIBLE);
-//        }
+        if (on) {
+            mLoadingProgress.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.GONE);
+        } else {
+            mLoadingProgress.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -205,7 +202,7 @@ public class ContactFragment extends Fragment {
                                 if (mDrawerAdapter != null) {
                                     mDrawerAdapter.notifyDataSetChanged();
                                 }
-                                Toast.makeText(getContext(), "Sip registration error: " + message, Toast.LENGTH_LONG).show();
+                                NotificationUtil.displayStatus(getContext(), "Sip registration error: " + message);
                             }
                         });
                     }
@@ -255,6 +252,8 @@ public class ContactFragment extends Fragment {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.d(TAG, "onFailure() called with: " + "call = [" + call + "], e = [" + e + "]");
+                NotificationUtil.displayStatus(getContext(),
+                        "Sip backend server error: " + e.getMessage());
             }
 
             @Override
@@ -262,7 +261,8 @@ public class ContactFragment extends Fragment {
                 Log.d(TAG, "onResponse() called with: " + "call = [" + call + "], response = [" + response + "]");
 
                 if (!response.isSuccessful()) {
-                    Toast.makeText(getContext(), response.body().string(), Toast.LENGTH_LONG).show();
+                    NotificationUtil.displayStatus(getContext(),
+                            "Sip backend server error: " + response.body().string());
                     return;
                 }
 
@@ -359,8 +359,8 @@ public class ContactFragment extends Fragment {
                             continue;
                         }
 
+                        // TODO
                         Contact contact = new Contact(user.displayName, user.mail);
-
                         Log.d(TAG, "user: " + user.displayName + ", mobilePhone: " + user.mobilePhone);
                         for (String phone : user.businessPhones) {
                             Log.d(TAG, "user: " + user.displayName + ", businessPhone: " + phone);
@@ -377,7 +377,7 @@ public class ContactFragment extends Fragment {
 
                 @Override
                 public void failure(RetrofitError error) {
-                    NotificationUtil.displayStatus(getContext(), "Please re-login.\nDownload contact data failed: " + error.toString());
+                    NotificationUtil.displayStatus(getContext(), "Microsoft Graph Server error: " + error.toString());
 
                     showLoading(false);
                 }

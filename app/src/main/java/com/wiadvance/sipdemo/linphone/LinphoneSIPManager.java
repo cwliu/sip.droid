@@ -119,7 +119,7 @@ public class LinphoneSipManager extends WiSipManager {
                     if (sipNumber == null) {
                         NotificationUtil.displayStatus(mContext, "This user has no sip number");
                     } else {
-                        NotificationUtil.notifyCallStatus(mContext, true, "SIP Dialing...", true);
+                        NotificationUtil.notifyCallStatus(mContext, true, "SIP Dialing", true);
                         mHasConnected = call(sipNumber, true);
                     }
 
