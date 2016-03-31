@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -17,14 +18,21 @@ public class ContactHolder extends RecyclerView.ViewHolder {
     private final ImageView mPhoneImageview;
     private final ImageView mAvatar;
     private final Context mContext;
+    private final View mRootItemView;
+    private final ImageView mOutLineImageView;
+    private boolean isButtonDisplayed;
+    private final RelativeLayout mButtonImageView;
 
     public ContactHolder(Context context, View itemView) {
         super(itemView);
 
         mContext = context;
+        mRootItemView = itemView;
         mNameTextView = (TextView) itemView.findViewById(R.id.contact_name_text_view);
         mPhoneImageview = (ImageView) itemView.findViewById(R.id.phone_icon_image_view);
         mAvatar = (ImageView) itemView.findViewById(R.id.list_item_avatar);
+        mOutLineImageView = (ImageView) itemView.findViewById(R.id.outline_image_view);
+        mButtonImageView = (RelativeLayout) itemView.findViewById(R.id.buttons_relative_layout);
     }
 
     public void bindViewHolder(final Contact contact) {
@@ -36,9 +44,40 @@ public class ContactHolder extends RecyclerView.ViewHolder {
         mPhoneImageview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = MakeCallActivity.newIntent(mContext, contact);
-                mContext.startActivity(intent);
+                call(contact);
             }
         });
+
+        mRootItemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                call(contact);
+                return true;
+            }
+        });
+
+        mRootItemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleButtonsRelativeLayout();
+            }
+        });
+    }
+
+    private void toggleButtonsRelativeLayout() {
+        if(isButtonDisplayed){
+            mButtonImageView.setVisibility(View.GONE);
+            mOutLineImageView.setVisibility(View.VISIBLE);
+            isButtonDisplayed = false;
+        }else{
+            mButtonImageView.setVisibility(View.VISIBLE);
+            mOutLineImageView.setVisibility(View.GONE);
+            isButtonDisplayed = true;
+        }
+    }
+
+    private void call(Contact contact) {
+        Intent intent = MakeCallActivity.newIntent(mContext, contact);
+        mContext.startActivity(intent);
     }
 }
