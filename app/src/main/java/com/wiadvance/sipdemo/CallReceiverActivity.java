@@ -62,14 +62,19 @@ public class CallReceiverActivity extends AppCompatActivity {
 
         String caller_address = getIntent().getStringExtra(ARG_CALLER_NUM);
         TextView name = (TextView) findViewById(R.id.call_receiver_sip);
-        name.setText(caller_address);
+        if (name != null) {
+            name.setText(LinphoneUtils.getUsernameFromAddress(caller_address));
+        }
+
 
         for(Contact c: UserPreference.sContactList){
             if(caller_address.contains(c.getSip())){
                 ImageView avatar = (ImageView) findViewById(R.id.call_receiver_avatar);
                 String photoUrl = String.format(Constants.USER_PHOTO_URL_FORMAT, c.getEmail());
                 Picasso.with(this).load(photoUrl).placeholder(R.drawable.avatar_120dp).into(avatar);
-                name.setText(c.getName());
+                if (name != null) {
+                    name.setText(c.getName());
+                }
                 break;
             }
         }

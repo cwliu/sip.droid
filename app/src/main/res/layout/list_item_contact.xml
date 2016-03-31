@@ -38,7 +38,7 @@
                 android:layout_marginBottom="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_toLeftOf="@+id/sms_icon_image_view"
-                android:alpha="0.36"
+                android:alpha="0.38"
                 android:src="@drawable/im_black_40dp"/>
 
             <ImageView
@@ -49,7 +49,7 @@
                 android:layout_marginBottom="16dp"
                 android:layout_marginTop="16dp"
                 android:paddingRight="16dp"
-                android:alpha="0.36"
+                android:alpha="0.38"
                 android:src="@drawable/sms_black_40dp"/>
 
         </RelativeLayout>
@@ -72,6 +72,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_margin="16dp"
+                    android:layout_centerVertical="true"
                     android:src="@drawable/avatar_2_120dp"
                     />
 

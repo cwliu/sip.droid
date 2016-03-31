@@ -26,6 +26,7 @@
                 android:layout_height="56dp"
                 android:background="@color/colorPrimary"
                 app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+            <!--style="@style/textTitle"-->
 
             <RelativeLayout
                 android:layout_width="match_parent"
