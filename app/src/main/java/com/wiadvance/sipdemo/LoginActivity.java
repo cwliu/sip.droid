@@ -121,8 +121,8 @@ public class LoginActivity extends AppCompatActivity {
                 setupPicasso();
 
                 UserInfo info = result.getUserInfo();
-                UserPreference.setName(LoginActivity.this, info.getGivenName());
-                UserPreference.setEmail(LoginActivity.this, info.getDisplayableId());
+                UserData.setName(LoginActivity.this, info.getGivenName());
+                UserData.setEmail(LoginActivity.this, info.getDisplayableId());
 
                 Intent intent = ContactActivity.newIntent(LoginActivity.this);
                 startActivity(intent);

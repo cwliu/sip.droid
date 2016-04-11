@@ -18,6 +18,8 @@
 
     <uses-permission android:name="android.permission.CAMERA"/>
 
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+
     <!-- Filter out the device doesn't support sip -->
     <uses-feature android:name="android.hardware.sip.voip"/>
     <uses-feature

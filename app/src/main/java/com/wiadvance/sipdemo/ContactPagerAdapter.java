@@ -11,8 +11,12 @@ public class ContactPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        Fragment fragment = CompanyContactFragment.newInstance();
-        return fragment;
+        switch (position) {
+            case 0:
+                return PhoneContactFragment.newInstance();
+            default:
+                return CompanyContactFragment.newInstance();
+        }
     }
 
     @Override
@@ -23,7 +27,7 @@ public class ContactPagerAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
 
-        switch (position){
+        switch (position) {
             case 0:
                 return "聯絡人";
             case 1:

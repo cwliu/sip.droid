@@ -133,8 +133,8 @@ public class ContactFragment extends Fragment {
                         String versionName = BuildConfig.VERSION_NAME;
 
                         final String message = "Version: " + versionName + "." + versionCode + "\n"
-                                + "Sip Number: " + UserPreference.getSip(getContext()) + "\n"
-                                + "Email: " + UserPreference.getEmail(getContext()) + "\n";
+                                + "Sip Number: " + UserData.getSip(getContext()) + "\n"
+                                + "Email: " + UserData.getEmail(getContext()) + "\n";
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(
                                 getContext()).setTitle("Information")
@@ -223,7 +223,7 @@ public class ContactFragment extends Fragment {
         OkHttpClient client = new OkHttpClient();
 
         FormBody body = new FormBody.Builder()
-                .add("email", UserPreference.getEmail(getContext()))
+                .add("email", UserData.getEmail(getContext()))
                 .add("access_token", AuthenticationManager.getInstance().getAccessToken())
                 .build();
 
@@ -256,13 +256,13 @@ public class ContactFragment extends Fragment {
 
                 String sip_domain = sip_data.proxy_address + ":" + sip_data.proxy_port;
                 if (getContext() != null) {
-                    UserPreference.setSip(getContext(), sip_data.sip_account);
-                    UserPreference.setPassword(getContext(), sip_data.sip_password);
-                    UserPreference.setDomain(getContext(), sip_domain);
+                    UserData.setSip(getContext(), sip_data.sip_account);
+                    UserData.setPassword(getContext(), sip_data.sip_password);
+                    UserData.setDomain(getContext(), sip_domain);
 
                     for (SipApiResponse.SipAccount acc : sip_data.sip_list) {
-                        UserPreference.sEmailtoSipBiMap.forcePut(acc.email, acc.sip_account);
-                        UserPreference.sEmailtoPhoneBiMap.forcePut(acc.email, acc.phone);
+                        UserData.sEmailtoSipBiMap.forcePut(acc.email, acc.sip_account);
+                        UserData.sEmailtoPhoneBiMap.forcePut(acc.email, acc.phone);
                     }
 
                     mWiSipManager.register(sip_data.sip_account, sip_data.sip_password, sip_domain);
@@ -273,12 +273,12 @@ public class ContactFragment extends Fragment {
 
     private void logout() {
 
-        String sipNumber = UserPreference.getSip(getContext());
+        String sipNumber = UserData.getSip(getContext());
         if (sipNumber != null) {
             mWiSipManager.unregister(sipNumber);
         }
 
-        UserPreference.clean(getContext());
+        UserData.clean(getContext());
 
         MixpanelAPI mixpanel = MixpanelAPI.getInstance(getContext(), BuildConfig.MIXPANL_TOKEN);
         JSONObject props = new JSONObject();

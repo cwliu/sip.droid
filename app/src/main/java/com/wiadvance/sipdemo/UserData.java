@@ -9,7 +9,7 @@ import com.wiadvance.sipdemo.model.Contact;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserPreference {
+public class UserData {
 
     private static final String PREF_NAME = "name";
     private static final String PREF_EMAIL = "email";
@@ -20,7 +20,8 @@ public class UserPreference {
 
     public static HashBiMap<String, String> sEmailtoSipBiMap = HashBiMap.create();
     public static HashBiMap<String, String> sEmailtoPhoneBiMap = HashBiMap.create();
-    public static List<Contact> sContactList = new ArrayList<>();
+    public static List<Contact> sCompanyContactList = new ArrayList<>();
+    public static List<Contact> sPhoneContactList = new ArrayList<>();
 
 
     public static String getName(Context context) {

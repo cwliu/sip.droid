@@ -16,7 +16,6 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.squareup.picasso.Picasso;
 import com.wiadvance.sipdemo.linphone.LinphoneCoreHelper;
 import com.wiadvance.sipdemo.model.Contact;
-import com.wiadvance.sipdemo.office365.Constants;
 
 import org.linphone.LinphoneUtils;
 import org.linphone.core.LinphoneAddress;
@@ -67,11 +66,13 @@ public class CallReceiverActivity extends AppCompatActivity {
         }
 
 
-        for(Contact c: UserPreference.sContactList){
+        for(Contact c: UserData.sCompanyContactList){
             if(caller_address.contains(c.getSip())){
-                ImageView avatar = (ImageView) findViewById(R.id.call_receiver_avatar);
-                String photoUrl = String.format(Constants.USER_PHOTO_URL_FORMAT, c.getEmail());
-                Picasso.with(this).load(photoUrl).placeholder(R.drawable.avatar_120dp).into(avatar);
+                if(c.getEmail() != null){
+                    ImageView avatar = (ImageView) findViewById(R.id.call_receiver_avatar);
+                    Picasso.with(this).load(c.getPhotoUri()).placeholder(R.drawable.avatar_120dp).into(avatar);
+                }
+
                 if (name != null) {
                     name.setText(c.getName());
                 }

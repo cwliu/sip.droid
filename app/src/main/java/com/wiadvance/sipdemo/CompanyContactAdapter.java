@@ -6,11 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class ContactAdapter extends RecyclerView.Adapter<ContactHolder> {
+public class CompanyContactAdapter extends RecyclerView.Adapter<ContactHolder> {
 
     private final Context mContext;
 
-    public ContactAdapter(Context context) {
+    public CompanyContactAdapter(Context context) {
         mContext = context;
     }
 
@@ -22,11 +22,11 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactHolder> {
 
     @Override
     public void onBindViewHolder(ContactHolder holder, int position) {
-        holder.bindViewHolder(UserPreference.sContactList.get(position));
+        holder.bindViewHolder(UserData.sCompanyContactList.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return UserPreference.sContactList.size();
+        return UserData.sCompanyContactList.size();
     }
 }

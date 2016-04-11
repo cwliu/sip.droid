@@ -48,7 +48,7 @@ public class DrawerItemAdapter extends BaseAdapter {
                     R.layout.list_item_drawer_header, parent, false);
 
             TextView name = (TextView) rootView.findViewById(R.id.drawer_nameTextView);
-            name.setText(UserPreference.getName(mContext));
+            name.setText(UserData.getName(mContext));
             ImageView registerOk = (ImageView) rootView.findViewById(R.id.drawer_header_register_ok);
             ImageView registerFailed = (ImageView) rootView.findViewById(R.id.drawer_header_register_fail);
 
@@ -57,7 +57,7 @@ public class DrawerItemAdapter extends BaseAdapter {
             Picasso.with(mContext).load(Constants.MY_PHOTO_URL).placeholder(R.drawable.avatar_120dp)
                     .into(userPhotoImageView);
 
-            if (UserPreference.getRegistrationStatus(mContext)) {
+            if (UserData.getRegistrationStatus(mContext)) {
                 registerOk.setVisibility(View.VISIBLE);
                 registerFailed.setVisibility(View.GONE);
             } else {

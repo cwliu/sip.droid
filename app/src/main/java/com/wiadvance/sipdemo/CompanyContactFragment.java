@@ -1,5 +1,6 @@
 package com.wiadvance.sipdemo;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,6 +17,7 @@ import com.microsoft.aad.adal.AuthenticationResult;
 import com.wiadvance.sipdemo.model.Contact;
 import com.wiadvance.sipdemo.model.UserRaw;
 import com.wiadvance.sipdemo.office365.AuthenticationManager;
+import com.wiadvance.sipdemo.office365.Constants;
 import com.wiadvance.sipdemo.office365.MSGraphAPIController;
 
 import retrofit.Callback;
@@ -36,7 +38,7 @@ public class CompanyContactFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_company_contact, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_contact, container, false);
 
         mLoadingProgress = (ProgressBar) rootView.findViewById(R.id.loading_progress_bar);
 
@@ -60,7 +62,7 @@ public class CompanyContactFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        if (UserPreference.sContactList.size() == 0) {
+        if (UserData.sCompanyContactList.size() == 0) {
             showLoading(true);
         }
 
@@ -69,10 +71,10 @@ public class CompanyContactFragment extends Fragment {
     }
 
     private void refreshContacts() {
-        for (Contact c : UserPreference.sContactList) {
+        for (Contact c : UserData.sCompanyContactList) {
             String email = c.getEmail();
-            String phone = UserPreference.sEmailtoPhoneBiMap.get(email);
-            String sip = UserPreference.sEmailtoSipBiMap.get(email);
+            String phone = UserData.sEmailtoPhoneBiMap.get(email);
+            String sip = UserData.sEmailtoSipBiMap.get(email);
 
             if (phone != null) {
                 c.setPhone(phone);
@@ -104,9 +106,9 @@ public class CompanyContactFragment extends Fragment {
                 @Override
                 public void success(UserRaw userRaw, Response response) {
 
-                    UserPreference.sContactList.clear();
+                    UserData.sCompanyContactList.clear();
                     for (UserRaw.InnerDict user : userRaw.value) {
-                        if (user.mail == null || user.mail.equals(UserPreference.getEmail(getActivity()))) {
+                        if (user.mail == null || user.mail.equals(UserData.getEmail(getActivity()))) {
                             continue;
                         }
 
@@ -116,11 +118,12 @@ public class CompanyContactFragment extends Fragment {
                         for (String phone : user.businessPhones) {
                             Log.d(TAG, "user: " + user.displayName + ", businessPhone: " + phone);
                         }
-
-                        UserPreference.sContactList.add(contact);
+                        String photoUrl = String.format(Constants.USER_PHOTO_URL_FORMAT, user.mail);
+                        contact.setPhotoUri(Uri.parse(photoUrl));
+                        UserData.sCompanyContactList.add(contact);
                     }
 
-                    mRecyclerView.setAdapter(new ContactAdapter(getActivity()));
+                    mRecyclerView.setAdapter(new CompanyContactAdapter(getActivity()));
                     refreshContacts();
 
                     showLoading(false);

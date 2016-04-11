@@ -8,7 +8,7 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.wiadvance.sipdemo.BuildConfig;
 import com.wiadvance.sipdemo.CallReceiverActivity;
 import com.wiadvance.sipdemo.NotificationUtil;
-import com.wiadvance.sipdemo.UserPreference;
+import com.wiadvance.sipdemo.UserData;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -87,11 +87,11 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
 
 
         if(state.equals(LinphoneCore.RegistrationState.RegistrationOk)){
-            UserPreference.setRegistrationStatus(mContext, true);
+            UserData.setRegistrationStatus(mContext, true);
         }
 
         if(state.equals(LinphoneCore.RegistrationState.RegistrationFailed)){
-            UserPreference.setRegistrationStatus(mContext, false);
+            UserData.setRegistrationStatus(mContext, false);
         }
 
     }
