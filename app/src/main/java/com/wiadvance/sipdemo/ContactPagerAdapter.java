@@ -17,6 +17,20 @@ public class ContactPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 4;
+        return 2;
+    }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+
+        switch (position){
+            case 0:
+                return "聯絡人";
+            case 1:
+                return "公司通訊";
+
+            default:
+                return "N/A";
+        }
     }
 }

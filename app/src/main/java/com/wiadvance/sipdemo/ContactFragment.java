@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -65,6 +66,7 @@ public class ContactFragment extends Fragment {
         setRetainInstance(true);
 
         mWiSipManager = new LinphoneSipManager(getContext());
+
     }
 
 
@@ -85,6 +87,8 @@ public class ContactFragment extends Fragment {
         ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.contacts_view_pager);
         viewPager.setAdapter(new ContactPagerAdapter(getFragmentManager()));
 
+        TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.contacts_tab_layout);
+        tabLayout.setupWithViewPager(viewPager);
         return rootView;
     }
 
