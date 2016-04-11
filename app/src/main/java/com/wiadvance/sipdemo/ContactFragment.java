@@ -6,10 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,18 +16,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 
 import com.google.gson.Gson;
-import com.microsoft.aad.adal.AuthenticationCallback;
-import com.microsoft.aad.adal.AuthenticationResult;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.wiadvance.sipdemo.linphone.LinphoneCoreHelper;
 import com.wiadvance.sipdemo.linphone.LinphoneSipManager;
-import com.wiadvance.sipdemo.model.Contact;
-import com.wiadvance.sipdemo.model.UserRaw;
 import com.wiadvance.sipdemo.office365.AuthenticationManager;
-import com.wiadvance.sipdemo.office365.MSGraphAPIController;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,9 +38,6 @@ import okhttp3.Call;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 public class ContactFragment extends Fragment {
 
@@ -56,12 +46,9 @@ public class ContactFragment extends Fragment {
     public static final String HTTPS_SIP_SERVER_HEROKUAPP_COM_API_V1_SIPS =
             "https://sip-server.herokuapp.com/api/v1/sips/";
 
-    private RecyclerView mRecyclerView;
-    private ProgressBar mLoadingProgress;
     private LinphoneSipManager mWiSipManager;
     private DrawerItemAdapter mDrawerAdapter;
     private LinphoneCoreListenerBase mLinPhoneListener;
-    private View mRootView;
 
     public static ContactFragment newInstance() {
 
@@ -84,12 +71,8 @@ public class ContactFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mRootView = inflater.inflate(R.layout.fragment_sip, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_sip, container, false);
 
-        mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.contacts_recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        mLoadingProgress = (ProgressBar) mRootView.findViewById(R.id.loading_progress_bar);
 
         List<DrawerItem> items = new ArrayList<>();
         items.add(new DrawerItem("Header", R.drawable.ic_info_outline_black_24dp));
@@ -97,9 +80,12 @@ public class ContactFragment extends Fragment {
         items.add(new DrawerItem("Logout", R.drawable.ic_exit_to_app_black_24dp));
         mDrawerAdapter = new DrawerItemAdapter(getContext(), items);
 
-        setupNavigationDrawer(mRootView);
+        setupNavigationDrawer(rootView);
 
-        return mRootView;
+        ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.contacts_view_pager);
+        viewPager.setAdapter(new ContactPagerAdapter(getFragmentManager()));
+
+        return rootView;
     }
 
     private void setupNavigationDrawer(View rootView) {
@@ -172,23 +158,9 @@ public class ContactFragment extends Fragment {
         });
     }
 
-    private void showLoading(boolean on) {
-        if (on) {
-            mLoadingProgress.setVisibility(View.VISIBLE);
-            mRecyclerView.setVisibility(View.GONE);
-        } else {
-            mLoadingProgress.setVisibility(View.GONE);
-            mRecyclerView.setVisibility(View.VISIBLE);
-        }
-    }
-
     @Override
     public void onResume() {
         super.onResume();
-
-        if (UserPreference.sContactList.size() == 0) {
-            showLoading(true);
-        }
 
         try {
             LinphoneCore lc = LinphoneCoreHelper.getLinphoneCoreInstance(getContext());
@@ -226,11 +198,7 @@ public class ContactFragment extends Fragment {
             e.printStackTrace();
         }
 
-
-        AuthenticationManager.getInstance().setContextActivity(getActivity());
-        AuthenticationManager.getInstance().connect(mAuthenticationCallback);
-
-        syncSipAccountList();
+        getSipAccounts();
 
     }
 
@@ -247,7 +215,7 @@ public class ContactFragment extends Fragment {
         }
     }
 
-    private void syncSipAccountList() {
+    private void getSipAccounts() {
         OkHttpClient client = new OkHttpClient();
 
         FormBody body = new FormBody.Builder()
@@ -295,36 +263,8 @@ public class ContactFragment extends Fragment {
 
                     mWiSipManager.register(sip_data.sip_account, sip_data.sip_password, sip_domain);
                 }
-                refreshContacts();
             }
         });
-    }
-
-    private void refreshContacts() {
-        for (Contact c : UserPreference.sContactList) {
-            String email = c.getEmail();
-            String phone = UserPreference.sEmailtoPhoneBiMap.get(email);
-            String sip = UserPreference.sEmailtoSipBiMap.get(email);
-
-            if (phone != null) {
-                c.setPhone(phone);
-            }
-
-            if (sip != null) {
-                c.setSip(sip);
-            }
-        }
-
-        if(getActivity() != null){
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (mRecyclerView.getAdapter() != null) {
-                        mRecyclerView.getAdapter().notifyDataSetChanged();
-                    }
-                }
-            });
-        }
     }
 
     private void logout() {
@@ -356,51 +296,4 @@ public class ContactFragment extends Fragment {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
-
-    private AuthenticationCallback<AuthenticationResult> mAuthenticationCallback = new AuthenticationCallback<AuthenticationResult>() {
-        @Override
-        public void onSuccess(AuthenticationResult result) {
-            //Need to get the new access token to the RESTHelper instance
-            Log.i(TAG, "onConnectButtonClick onSuccess() - Successfully connected to Office 365");
-
-            MSGraphAPIController.getInstance().showContacts(new Callback<UserRaw>() {
-                @Override
-                public void success(UserRaw userRaw, Response response) {
-
-                    UserPreference.sContactList.clear();
-                    for (UserRaw.InnerDict user : userRaw.value) {
-                        if (user.mail == null || user.mail.equals(UserPreference.getEmail(getContext()))) {
-                            continue;
-                        }
-
-                        // TODO
-                        Contact contact = new Contact(user.displayName, user.mail);
-                        Log.d(TAG, "user: " + user.displayName + ", mobilePhone: " + user.mobilePhone);
-                        for (String phone : user.businessPhones) {
-                            Log.d(TAG, "user: " + user.displayName + ", businessPhone: " + phone);
-                        }
-
-                        UserPreference.sContactList.add(contact);
-                    }
-
-                    mRecyclerView.setAdapter(new ContactAdapter(getContext()));
-                    refreshContacts();
-
-                    showLoading(false);
-                }
-
-                @Override
-                public void failure(RetrofitError error) {
-                    NotificationUtil.displayStatus(getContext(), "Microsoft Graph Server error: " + error.toString());
-
-                    showLoading(false);
-                }
-            });
-        }
-
-        @Override
-        public void onError(final Exception e) {
-            Log.e(TAG, "onConnectButtonClick onError() - " + e.getMessage());
-        }
-    };
 }
