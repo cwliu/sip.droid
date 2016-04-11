@@ -20,12 +20,23 @@ public class PhoneContactAdapter extends RecyclerView.Adapter<ContactHolder> {
     public PhoneContactAdapter(Context context) {
         mContext = context;
 
-        Cursor phones = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+        String orderBy = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME;
+        Cursor phones = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, orderBy);
         if (phones != null) {
             {
+                int i = 1;
+                String lastName = "";
                 try {
                     while (phones.moveToNext()) {
                         String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+
+                        if (name.equals(lastName)) {
+                            name = lastName + "-" + ++i;
+                        } else {
+                            lastName = name;
+                            i = 1;
+                        }
+
                         String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                         Contact c = new Contact(name);
                         c.setPhone(phoneNumber);
