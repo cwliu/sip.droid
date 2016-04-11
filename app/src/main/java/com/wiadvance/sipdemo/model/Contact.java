@@ -8,11 +8,12 @@ public class Contact {
     private String mSip;
     private String mPhone;
     private String mEmail;
-    private Uri mPhotoUri;
+    private String mPhotoUri;
 
-    public Contact(String name){
+    public Contact(String name) {
         this(name, null);
     }
+
     public Contact(String name, String email) {
         mName = name;
         mEmail = email;
@@ -51,10 +52,10 @@ public class Contact {
     }
 
     public void setPhotoUri(Uri photoUri) {
-        mPhotoUri = photoUri;
+        mPhotoUri = photoUri.toString();
     }
 
-    public Uri getPhotoUri() {
+    public String getPhotoUri() {
         return mPhotoUri;
     }
 }
