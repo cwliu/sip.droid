@@ -58,4 +58,35 @@ public class Contact {
     public String getPhotoUri() {
         return mPhotoUri;
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+
+        boolean isEqual = true;
+
+        if (!(o instanceof Contact)) {
+            return false;
+        }
+
+        Contact rhs = (Contact) o;
+
+        if (getName() != null && (rhs.getName() == null || !getName().equals(rhs.getName()))) {
+            isEqual = false;
+        }
+
+        if (getEmail() != null && (rhs.getEmail() == null || !getEmail().equals(rhs.getEmail()))) {
+            isEqual = false;
+        }
+
+        if (getSip() != null && (rhs.getSip() == null || !getSip().equals(rhs.getSip()))) {
+            isEqual = false;
+        }
+
+        if (getPhone() != null && (rhs.getPhone() == null || !getPhone().equals(rhs.getPhone()))) {
+            isEqual = false;
+        }
+
+        return isEqual;
+    }
 }

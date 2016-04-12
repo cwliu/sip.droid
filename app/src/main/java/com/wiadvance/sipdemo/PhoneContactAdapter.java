@@ -1,91 +1,11 @@
 package com.wiadvance.sipdemo;
 
-import android.content.ContentUris;
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
-import android.provider.ContactsContract;
-
-import com.wiadvance.sipdemo.model.Contact;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class PhoneContactAdapter extends AbstractContactAdapter {
 
     public PhoneContactAdapter(Context context) {
         super(context);
-
-        setContactList(UserData.sCompanyContactList);
-        setContactList(getPhoneContacts(context));
-    }
-
-    private List<Contact> getPhoneContacts(Context context) {
-
-        List<Contact> list = new ArrayList<>();
-
-        String orderBy = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME;
-        Cursor phones = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, orderBy);
-        if (phones != null) {
-            {
-                int i = 1;
-                String lastName = "";
-                try {
-                    while (phones.moveToNext()) {
-                        String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-
-                        if (name.equals(lastName)) {
-                            name = lastName + "-" + ++i;
-                        } else {
-                            lastName = name;
-                            i = 1;
-                        }
-
-                        String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                        Contact c = new Contact(name);
-                        c.setPhone(phoneNumber);
-                        Uri uri = getPhotoUri(phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)));
-                        if (uri != null) {
-                            c.setPhotoUri(uri);
-                        }
-                        list.add(c);
-                    }
-                } finally {
-                    phones.close();
-                }
-            }
-        }
-
-        return list;
-    }
-
-    public Uri getPhotoUri(String id) {
-        Cursor cur = null;
-        try {
-            cur = getContext().getContentResolver().query(
-                    ContactsContract.Data.CONTENT_URI,
-                    null,
-                    ContactsContract.Data.CONTACT_ID + "=" + id + " AND "
-                            + ContactsContract.Data.MIMETYPE + "='"
-                            + ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE + "'", null,
-                    null);
-            if (cur != null) {
-                if (!cur.moveToFirst()) {
-                    return null; // no photo
-                }
-            } else {
-                return null; // error in cursor process
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        } finally {
-            if (cur != null) {
-                cur.close();
-            }
-        }
-        Uri person = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, Long
-                .parseLong(id));
-        return Uri.withAppendedPath(person, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
+        setContactList(UserData.sPhoneContactList);
     }
 }

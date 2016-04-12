@@ -46,6 +46,8 @@ public class MakeCallActivity extends AppCompatActivity {
         String json = getIntent().getStringExtra(ARG_CONTACT);
         mCallee = new Gson().fromJson(json, Contact.class);
 
+        UserData.updateRecentContact(this, mCallee);
+
         initView();
 
         mWiSipManager = new LinphoneSipManager(this);
@@ -87,12 +89,12 @@ public class MakeCallActivity extends AppCompatActivity {
             @Override
             public void run() {
                 String s = mCallStatusAnimation.getText().toString();
-                if(s.length() == 3){
+                if (s.length() == 3) {
                     mCallStatusAnimation.setText(".");
-                }else{
-                    mCallStatusAnimation.setText(s +".");
+                } else {
+                    mCallStatusAnimation.setText(s + ".");
                 }
-                if(isCalling){
+                if (isCalling) {
                     dotAnimationHandler.postDelayed(this, 800);
                 }
             }

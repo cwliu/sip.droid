@@ -66,9 +66,9 @@ public class CallReceiverActivity extends AppCompatActivity {
         }
 
 
-        for(Contact c: UserData.sCompanyContactList){
-            if(caller_address.contains(c.getSip())){
-                if(c.getEmail() != null){
+        for (Contact c : UserData.sCompanyContactList) {
+            if (caller_address.contains(c.getSip())) {
+                if (c.getEmail() != null) {
                     ImageView avatar = (ImageView) findViewById(R.id.call_receiver_avatar);
                     Picasso.with(this).load(c.getPhotoUri()).placeholder(R.drawable.avatar_120dp).into(avatar);
                 }
@@ -76,9 +76,28 @@ public class CallReceiverActivity extends AppCompatActivity {
                 if (name != null) {
                     name.setText(c.getName());
                 }
+
+                UserData.updateRecentContact(this, c);
                 break;
             }
         }
+
+        // TODO
+//        for(Contact c: UserData.sPhoneContactList){
+//            if(caller_address.contains(c.getPhone())){
+//                if(c.getEmail() != null){
+//                    ImageView avatar = (ImageView) findViewById(R.id.call_receiver_avatar);
+//                    Picasso.with(this).load(c.getPhotoUri()).placeholder(R.drawable.avatar_120dp).into(avatar);
+//                }
+//
+//                if (name != null) {
+//                    name.setText(c.getName());
+//                }
+//
+//                UserData.updateRecentContact(this, c);
+//                break;
+//            }
+//        }
 
 
         MixpanelAPI mixpanel = MixpanelAPI.getInstance(this, BuildConfig.MIXPANL_TOKEN);

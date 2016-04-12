@@ -13,6 +13,8 @@ public class ContactPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
+                return RecentContactFragment.newInstance();
+            case 1:
                 return PhoneContactFragment.newInstance();
             default:
                 return CompanyContactFragment.newInstance();
@@ -21,7 +23,7 @@ public class ContactPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -29,8 +31,12 @@ public class ContactPagerAdapter extends FragmentPagerAdapter {
 
         switch (position) {
             case 0:
-                return "聯絡人";
+                return "經常聯絡";
+
             case 1:
+                return "聯絡人";
+
+            case 2:
                 return "公司通訊";
 
             default:

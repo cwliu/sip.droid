@@ -4,9 +4,12 @@ import android.content.Context;
 import android.preference.PreferenceManager;
 
 import com.google.common.collect.HashBiMap;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.wiadvance.sipdemo.model.Contact;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class UserData {
@@ -17,6 +20,7 @@ public class UserData {
     private static final String PREF_DOMAIN = "domain";
     private static final String PREF_PASSWORD = "password";
     private static final String PREF_REGISTRATION_OK = "registration_ok";
+    private static final String PREF_RECENT_CONTACT = "recent_contact";
 
     public static HashBiMap<String, String> sEmailtoSipBiMap = HashBiMap.create();
     public static HashBiMap<String, String> sEmailtoPhoneBiMap = HashBiMap.create();
@@ -48,6 +52,12 @@ public class UserData {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_REGISTRATION_OK, false);
     }
 
+    public static List<Contact> getRecentContactList(Context context) {
+        Gson gson = new Gson();
+        String json = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_RECENT_CONTACT, new Gson().toJson(new ArrayList<Contact>()));
+        return gson.fromJson(json, new TypeToken<List<Contact>>(){}.getType());
+    }
+
     public static void setName(Context context, String name) {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_NAME, name).apply();
     }
@@ -72,6 +82,12 @@ public class UserData {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_REGISTRATION_OK, isOk).apply();
     }
 
+    public static void setRecentContactList(Context context, List<Contact> contacts) {
+        Gson gson = new Gson();
+        String json = gson.toJson(contacts);
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_RECENT_CONTACT, json).apply();
+    }
+
     public static void clean(Context context) {
         setName(context, null);
         setEmail(context, null);
@@ -79,5 +95,24 @@ public class UserData {
         setDomain(context, null);
         setPassword(context, null);
         setRegistrationStatus(context, false);
+        setRecentContactList(context, new ArrayList<Contact>());
+
+        sCompanyContactList.clear();
+        sPhoneContactList.clear();
+    }
+
+    public static void updateRecentContact(Context context, Contact contact) {
+        List<Contact> list = getRecentContactList(context);
+
+        Iterator<Contact> i = list.iterator();
+        while (i.hasNext()) {
+            Contact c = i.next(); // must be called before you can call i.remove()
+            if(c.equals(contact)){
+                list.remove(c);
+            }
+        }
+
+        list.add(0, contact);
+        setRecentContactList(context, list);
     }
 }
