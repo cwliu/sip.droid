@@ -5,20 +5,24 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.wiadvance.sipdemo.model.Contact;
 
-public class PhoneContactAdapter extends RecyclerView.Adapter<ContactHolder> {
+import java.util.ArrayList;
+import java.util.List;
 
-    private static final String TAG = "PhoneContactAdapter";
-    private final Context mContext;
+public class PhoneContactAdapter extends AbstractContactAdapter {
 
     public PhoneContactAdapter(Context context) {
-        mContext = context;
+        super(context);
+
+        setContactList(UserData.sCompanyContactList);
+        setContactList(getPhoneContacts(context));
+    }
+
+    private List<Contact> getPhoneContacts(Context context) {
+
+        List<Contact> list = new ArrayList<>();
 
         String orderBy = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME;
         Cursor phones = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, orderBy);
@@ -44,34 +48,21 @@ public class PhoneContactAdapter extends RecyclerView.Adapter<ContactHolder> {
                         if (uri != null) {
                             c.setPhotoUri(uri);
                         }
-                        UserData.sPhoneContactList.add(c);
+                        list.add(c);
                     }
                 } finally {
                     phones.close();
                 }
             }
         }
-    }
 
-    @Override
-    public ContactHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rootView = LayoutInflater.from(mContext).inflate(R.layout.list_item_contact, parent, false);
-        return new ContactHolder(mContext, rootView);
-    }
-
-    @Override
-    public void onBindViewHolder(ContactHolder holder, int position) {
-        holder.bindViewHolder(UserData.sPhoneContactList.get(position));
-    }
-
-    @Override
-    public int getItemCount() {
-        return UserData.sPhoneContactList.size();
+        return list;
     }
 
     public Uri getPhotoUri(String id) {
+        Cursor cur = null;
         try {
-            Cursor cur = mContext.getContentResolver().query(
+            cur = getContext().getContentResolver().query(
                     ContactsContract.Data.CONTENT_URI,
                     null,
                     ContactsContract.Data.CONTACT_ID + "=" + id + " AND "
@@ -88,6 +79,10 @@ public class PhoneContactAdapter extends RecyclerView.Adapter<ContactHolder> {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        } finally {
+            if (cur != null) {
+                cur.close();
+            }
         }
         Uri person = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, Long
                 .parseLong(id));
