@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.wiadvance.sipdemo">
+          package="com.wiadvance.sip">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -40,7 +40,7 @@
             android:value="2c5de1ba077edd775560b40be6ae292a31ca855b"/>
 
         <activity
-            android:name=".LoginActivity"
+            android:name="com.wiadvance.sip.LoginActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -49,16 +49,16 @@
         </activity>
 
         <activity
-            android:name=".ContactActivity"
+            android:name="com.wiadvance.sip.ContactActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".CallReceiverActivity"
-            android:parentActivityName=".ContactActivity"
+            android:name="com.wiadvance.sip.CallReceiverActivity"
+            android:parentActivityName="com.wiadvance.sip.ContactActivity"
             android:screenOrientation="portrait">
         </activity>
 
         <activity
-            android:name=".MakeCallActivity"
+            android:name="com.wiadvance.sip.MakeCallActivity"
             android:screenOrientation="portrait"/>
 
         <activity android:name="com.mixpanel.android.surveys.SurveyActivity"/>

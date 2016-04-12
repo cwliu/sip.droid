@@ -20,7 +20,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "com.wiadvance.sipdemo"
+        applicationId "com.wiadvance.sip"
         minSdkVersion 16
         targetSdkVersion 22
         versionCode 1
