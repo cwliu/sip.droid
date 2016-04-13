@@ -6,6 +6,6 @@ public class CompanyContactAdapter extends AbstractContactAdapter {
 
     public CompanyContactAdapter(Context context) {
         super(context);
-        setContactList(UserData.sCompanyContactList);
+        setContactList(UserData.getCompanyContactList(context));
     }
 }

@@ -20,6 +20,9 @@ import com.wiadvance.sip.office365.AuthenticationManager;
 import com.wiadvance.sip.office365.Constants;
 import com.wiadvance.sip.office365.MSGraphAPIController;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -29,10 +32,10 @@ public class CompanyContactFragment extends Fragment {
     private static final String TAG = "CompanyContactFragment";
     private RecyclerView mRecyclerView;
     private ProgressBar mLoadingProgress;
+    private CompanyContactAdapter mAdapter;
 
-    public static Fragment newInstance(){
-        CompanyContactFragment fragment = new CompanyContactFragment();
-        return fragment;
+    public static Fragment newInstance() {
+        return new CompanyContactFragment();
     }
 
     @Nullable
@@ -43,7 +46,9 @@ public class CompanyContactFragment extends Fragment {
         mLoadingProgress = (ProgressBar) rootView.findViewById(R.id.loading_progress_bar);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.contacts_recycler_view);
+        mAdapter = new CompanyContactAdapter(getActivity());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setAdapter(mAdapter);
 
         return rootView;
     }
@@ -62,7 +67,7 @@ public class CompanyContactFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        if (UserData.sCompanyContactList.size() == 0) {
+        if (UserData.getCompanyContactList(getContext()).size() == 0) {
             showLoading(true);
         }
 
@@ -70,8 +75,8 @@ public class CompanyContactFragment extends Fragment {
         AuthenticationManager.getInstance().connect(mAuthenticationCallback);
     }
 
-    private void refreshContacts() {
-        for (Contact c : UserData.sCompanyContactList) {
+    private void updateContactsSipPhone(List<Contact> list) {
+        for (Contact c : list) {
             String email = c.getEmail();
             String phone = UserData.sEmailtoPhoneBiMap.get(email);
             String sip = UserData.sEmailtoSipBiMap.get(email);
@@ -85,17 +90,19 @@ public class CompanyContactFragment extends Fragment {
             }
         }
 
-        if(getActivity() != null){
+        UserData.setCompanyContactList(getContext(), list);
+
+        if (getActivity() != null) {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (mRecyclerView.getAdapter() != null) {
-                        mRecyclerView.getAdapter().notifyDataSetChanged();
-                    }
+                    mAdapter.setContactList(UserData.getCompanyContactList(getContext()));
+                    mAdapter.notifyDataSetChanged();
                 }
             });
         }
     }
+
     private AuthenticationCallback<AuthenticationResult> mAuthenticationCallback = new AuthenticationCallback<AuthenticationResult>() {
         @Override
         public void onSuccess(AuthenticationResult result) {
@@ -106,7 +113,7 @@ public class CompanyContactFragment extends Fragment {
                 @Override
                 public void success(UserRaw userRaw, Response response) {
 
-                    UserData.sCompanyContactList.clear();
+                    List<Contact> list = new ArrayList<>();
                     for (UserRaw.InnerDict user : userRaw.value) {
                         if (user.mail == null || user.mail.equals(UserData.getEmail(getActivity()))) {
                             continue;
@@ -114,25 +121,22 @@ public class CompanyContactFragment extends Fragment {
 
                         // TODO
                         Contact contact = new Contact(user.displayName, user.mail);
-                        Log.d(TAG, "user: " + user.displayName + ", mobilePhone: " + user.mobilePhone);
-                        for (String phone : user.businessPhones) {
-                            Log.d(TAG, "user: " + user.displayName + ", businessPhone: " + phone);
-                        }
+//                        Log.d(TAG, "user: " + user.displayName + ", mobilePhone: " + user.mobilePhone);
+//                        for (String phone : user.businessPhones) {
+//                            Log.d(TAG, "user: " + user.displayName + ", businessPhone: " + phone);
+//                        }
                         String photoUrl = String.format(Constants.USER_PHOTO_URL_FORMAT, user.mail);
                         contact.setPhotoUri(Uri.parse(photoUrl));
-                        UserData.sCompanyContactList.add(contact);
+                        list.add(contact);
                     }
 
-                    mRecyclerView.setAdapter(new CompanyContactAdapter(getActivity()));
-                    refreshContacts();
-
+                    updateContactsSipPhone(list);
                     showLoading(false);
                 }
 
                 @Override
                 public void failure(RetrofitError error) {
                     NotificationUtil.displayStatus(getActivity(), "Microsoft Graph Server error: " + error.toString());
-
                     showLoading(false);
                 }
             });

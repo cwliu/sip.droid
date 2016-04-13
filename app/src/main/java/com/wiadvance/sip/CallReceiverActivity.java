@@ -66,7 +66,7 @@ public class CallReceiverActivity extends AppCompatActivity {
         }
 
 
-        for (Contact c : UserData.sCompanyContactList) {
+        for (Contact c : UserData.getCompanyContactList(this)) {
             if (caller_address.contains(c.getSip())) {
                 if (c.getEmail() != null) {
                     ImageView avatar = (ImageView) findViewById(R.id.call_receiver_avatar);

@@ -22,12 +22,12 @@ public class UserData {
     private static final String PREF_PASSWORD = "password";
     private static final String PREF_REGISTRATION_OK = "registration_ok";
     private static final String PREF_RECENT_CONTACT = "recent_contact";
-    private static final String PREF_FAVORATE_CONTACT = "favorate_contact";
+    private static final String PREF_FAVORATE_CONTACT = "favorite_contact";
+    private static final String PREF_COMPANY_CONTACT = "company_contact";
 
 
     public static HashBiMap<String, String> sEmailtoSipBiMap = HashBiMap.create();
     public static HashBiMap<String, String> sEmailtoPhoneBiMap = HashBiMap.create();
-    public static List<Contact> sCompanyContactList = new ArrayList<>();
     public static List<Contact> sPhoneContactList = new ArrayList<>();
     public static List<Contact> sFavoriteContactListCache = new ArrayList<>();
 
@@ -63,9 +63,15 @@ public class UserData {
         return gson.fromJson(json, new TypeToken<List<Contact>>(){}.getType());
     }
 
-    public static List<Contact> getFavorateContactList(Context context) {
+    public static List<Contact> getFavoriteContactList(Context context) {
         Gson gson = new Gson();
         String json = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_FAVORATE_CONTACT, new Gson().toJson(new ArrayList<Contact>()));
+        return gson.fromJson(json, new TypeToken<List<Contact>>(){}.getType());
+    }
+
+    public static List<Contact> getCompanyContactList(Context context){
+        Gson gson = new Gson();
+        String json = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_COMPANY_CONTACT, new Gson().toJson(new ArrayList<Contact>()));
         return gson.fromJson(json, new TypeToken<List<Contact>>(){}.getType());
     }
 
@@ -100,10 +106,16 @@ public class UserData {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_RECENT_CONTACT, json).apply();
     }
 
-    public static void setFavorateContactList(Context context, List<Contact> contacts){
+    public static void setFavoriteContactList(Context context, List<Contact> contacts){
         Gson gson = new Gson();
         String json = gson.toJson(contacts);
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_FAVORATE_CONTACT, json).apply();
+    }
+
+    public static void setCompanyContactList(Context context, List<Contact> contacts){
+        Gson gson = new Gson();
+        String json = gson.toJson(contacts);
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_COMPANY_CONTACT, json).apply();
     }
 
     public static void clean(Context context) {
@@ -114,12 +126,13 @@ public class UserData {
         setPassword(context, null);
         setRegistrationStatus(context, false);
         setRecentContactList(context, new ArrayList<Contact>());
+        setFavoriteContactList(context, new ArrayList<Contact>());
+        setCompanyContactList(context, new ArrayList<Contact>());
 
         sEmailtoSipBiMap.clear();
         sEmailtoPhoneBiMap.clear();
-
-        sCompanyContactList.clear();
         sPhoneContactList.clear();
+
     }
 
     public static void updateRecentContact(Context context, Contact contact) {
@@ -138,7 +151,7 @@ public class UserData {
     }
 
     public static void addFavoriteContact(Context context, Contact contact){
-        List<Contact> list = getFavorateContactList(context);
+        List<Contact> list = getFavoriteContactList(context);
         boolean isExist = false;
 
         Iterator<Contact> i = list.iterator();
@@ -152,7 +165,7 @@ public class UserData {
 
         if(!isExist){
             list.add(0, contact);
-            setFavorateContactList(context, list);
+            setFavoriteContactList(context, list);
         }
         NotificationUtil.favoriteUpdate(context);
         Toast.makeText(context, "已將" + contact.getName() + "加入我的最愛", Toast.LENGTH_SHORT).show();
@@ -161,7 +174,7 @@ public class UserData {
     }
 
     public static void removeFavoriteContact(Context context, Contact contact){
-        List<Contact> list = getFavorateContactList(context);
+        List<Contact> list = getFavoriteContactList(context);
 
         Iterator<Contact> i = list.iterator();
         while (i.hasNext()) {
@@ -172,7 +185,7 @@ public class UserData {
         }
 
         NotificationUtil.favoriteUpdate(context);
-        setFavorateContactList(context, list);
+        setFavoriteContactList(context, list);
         Toast.makeText(context, "已將" + contact.getName() + "移出我的最愛", Toast.LENGTH_SHORT).show();
 
         sFavoriteContactListCache = list;
@@ -180,7 +193,7 @@ public class UserData {
 
     public static boolean isFavoriteContact(Context context, Contact contact){
         if(sFavoriteContactListCache.size() == 0){
-            sFavoriteContactListCache = getFavorateContactList(context);
+            sFavoriteContactListCache = getFavoriteContactList(context);
         }
 
         List<Contact> list = sFavoriteContactListCache;

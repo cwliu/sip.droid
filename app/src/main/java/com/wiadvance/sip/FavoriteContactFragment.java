@@ -42,7 +42,7 @@ public class FavoriteContactFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser && mAdapter != null) {
-            mAdapter.setContactList(UserData.getFavorateContactList(getContext()));
+            mAdapter.setContactList(UserData.getFavoriteContactList(getContext()));
             mAdapter.notifyDataSetChanged();
         }
     }
@@ -73,7 +73,7 @@ public class FavoriteContactFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (mAdapter != null) {
-                mAdapter.setContactList(UserData.getFavorateContactList(getContext()));
+                mAdapter.setContactList(UserData.getFavoriteContactList(getContext()));
                 mAdapter.notifyDataSetChanged();
             }
         }
