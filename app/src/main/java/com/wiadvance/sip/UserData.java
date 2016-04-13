@@ -111,7 +111,7 @@ public class UserData {
         while (i.hasNext()) {
             Contact c = i.next(); // must be called before you can call i.remove()
             if(c.equals(contact)){
-                list.remove(c);
+                i.remove();
             }
         }
 
