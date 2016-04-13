@@ -28,7 +28,7 @@ android {
 
         buildConfigField "String", "MIXPANL_TOKEN", "\"5984645805656c4310c8a8f45f96cb44\""
 
-        buildConfigField "String", "HTTPS_SIP_API_SERVER", "\"http://sipphone-web-staging.azurewebsites.net/api/v1/sips/\""
+        buildConfigField "String", "HTTPS_SIP_API_SERVER", "\"https://sipphone-web-staging.azurewebsites.net/api/v1/sips/\""
 
     }
     buildTypes {
