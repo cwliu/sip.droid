@@ -44,8 +44,7 @@ public class ContactFragment extends Fragment {
 
     private static final String TAG = "ContactFragment";
 
-    public static final String HTTPS_SIP_SERVER_HEROKUAPP_COM_API_V1_SIPS =
-            "https://sip-server.herokuapp.com/api/v1/sips/";
+    public static final String HTTPS_SIP_API_SERVER = BuildConfig.HTTPS_SIP_API_SERVER;
 
     private LinphoneSipManager mWiSipManager;
     private DrawerItemAdapter mDrawerAdapter;
@@ -234,7 +233,7 @@ public class ContactFragment extends Fragment {
                 .build();
 
         Request request = new Request.Builder()
-                .url(HTTPS_SIP_SERVER_HEROKUAPP_COM_API_V1_SIPS)
+                .url(HTTPS_SIP_API_SERVER)
                 .post(body)
                 .build();
 

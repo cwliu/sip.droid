@@ -97,6 +97,9 @@ public class UserData {
         setRegistrationStatus(context, false);
         setRecentContactList(context, new ArrayList<Contact>());
 
+        sEmailtoSipBiMap.clear();
+        sEmailtoPhoneBiMap.clear();
+
         sCompanyContactList.clear();
         sPhoneContactList.clear();
     }
