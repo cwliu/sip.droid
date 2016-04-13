@@ -9,13 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class RecentContactFragment extends Fragment {
-
-    private RecentContactAdapter mAdapter;
+public class FavoriteContactFragment extends Fragment {
 
     public static Fragment newInstance() {
-        return new RecentContactFragment();
+        return new FavoriteContactFragment();
     }
+
+    private FavoriteContactAdapter mAdapter;
 
     @Nullable
     @Override
@@ -25,7 +25,7 @@ public class RecentContactFragment extends Fragment {
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.contacts_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mAdapter = new RecentContactAdapter(getActivity());
+        mAdapter = new FavoriteContactAdapter(getActivity());
         recyclerView.setAdapter(mAdapter);
 
         return rootView;
@@ -35,20 +35,8 @@ public class RecentContactFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser && mAdapter != null) {
-            mAdapter.setContactList(UserData.getRecentContactList(getContext()));
+            mAdapter.setContactList(UserData.getFavorateContactList(getContext()));
             mAdapter.notifyDataSetChanged();
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
     }
 }

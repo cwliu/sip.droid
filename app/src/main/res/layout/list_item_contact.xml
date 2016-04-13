@@ -88,6 +88,34 @@
                     tools:text="David"
                     />
 
+                <FrameLayout
+                    android:id="@+id/favorite_frame_layout"
+                    android:layout_toRightOf="@id/contact_name_text_view"
+                    android:layout_width="wrap_content"
+                    android:padding="4dp"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/is_favorite_image_view"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/star_red_16dp"
+                        android:layout_gravity="center_vertical"
+                        android:visibility="gone"
+                        />
+
+                    <ImageView
+                        android:id="@+id/not_favorite_image_view"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:alpha="0.54"
+                        android:src="@drawable/star_border_black_16dp"
+                        android:layout_gravity="center_vertical"
+                        android:visibility="gone"
+                        />
+
+                </FrameLayout>
+
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="match_parent"

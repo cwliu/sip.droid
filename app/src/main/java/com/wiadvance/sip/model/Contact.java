@@ -1,6 +1,9 @@
 package com.wiadvance.sip.model;
 
+import android.content.Context;
 import android.net.Uri;
+
+import com.wiadvance.sip.UserData;
 
 public class Contact {
 
@@ -9,6 +12,8 @@ public class Contact {
     private String mPhone;
     private String mEmail;
     private String mPhotoUri;
+
+    private boolean isBooleanFavorite;
 
     public Contact(String name) {
         this(name, null);
@@ -89,4 +94,19 @@ public class Contact {
 
         return isEqual;
     }
+
+    public boolean isFavorite(Context context) {
+        if(isBooleanFavorite){
+            return true;
+        }else if(UserData.isFavoriteContact(context, this)){
+            return true;
+        }
+
+        return false;
+    }
+
+    public void setBooleanFavorite(Boolean booleanFavorite) {
+        isBooleanFavorite = booleanFavorite;
+    }
+
 }

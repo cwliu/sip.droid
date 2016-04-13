@@ -34,6 +34,7 @@ import org.linphone.core.LinphoneProxyConfig;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.FormBody;
@@ -89,7 +90,7 @@ public class ContactFragment extends Fragment {
         TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.contacts_tab_layout);
         tabLayout.setupWithViewPager(viewPager);
         if(UserData.getRecentContactList(getContext()).size() == 0){
-            TabLayout.Tab tab = tabLayout.getTabAt(1);
+            TabLayout.Tab tab = tabLayout.getTabAt(2);
             if (tab != null) {
                 tab.select();
             }
@@ -226,6 +227,9 @@ public class ContactFragment extends Fragment {
 
     private void getSipAccounts() {
         OkHttpClient client = new OkHttpClient();
+        OkHttpClient clientWith60sTimeout = client.newBuilder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .build();
 
         FormBody body = new FormBody.Builder()
                 .add("email", UserData.getEmail(getContext()))
@@ -237,7 +241,7 @@ public class ContactFragment extends Fragment {
                 .post(body)
                 .build();
 
-        client.newCall(request).enqueue(new okhttp3.Callback() {
+        clientWith60sTimeout.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.d(TAG, "onFailure() called with: " + "call = [" + call + "], e = [" + e + "]");

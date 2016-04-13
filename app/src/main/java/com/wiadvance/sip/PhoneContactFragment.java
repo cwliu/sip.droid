@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +37,7 @@ public class PhoneContactFragment extends Fragment {
         }
 
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.contacts_recycler_view);
-        recyclerView.setLayoutManager(new WiLinearLayoutManager(getActivity()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         mContactAdapter = new PhoneContactAdapter(getActivity());
         mContactAdapter.setContactList(UserData.sPhoneContactList);
