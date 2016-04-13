@@ -96,13 +96,7 @@ public class Contact {
     }
 
     public boolean isFavorite(Context context) {
-        if(isBooleanFavorite){
-            return true;
-        }else if(UserData.isFavoriteContact(context, this)){
-            return true;
-        }
-
-        return false;
+        return UserData.isFavoriteContact(context, this);
     }
 
     public void setBooleanFavorite(Boolean booleanFavorite) {

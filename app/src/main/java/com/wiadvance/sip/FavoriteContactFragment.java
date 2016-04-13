@@ -1,8 +1,13 @@
 package com.wiadvance.sip;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class FavoriteContactFragment extends Fragment {
+
+    private NotificationReceiver mNotificationReceiver;
 
     public static Fragment newInstance() {
         return new FavoriteContactFragment();
@@ -37,6 +44,38 @@ public class FavoriteContactFragment extends Fragment {
         if (isVisibleToUser && mAdapter != null) {
             mAdapter.setContactList(UserData.getFavorateContactList(getContext()));
             mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        mNotificationReceiver = new NotificationReceiver();
+        LocalBroadcastManager manager = LocalBroadcastManager.getInstance(getContext());
+
+        IntentFilter notify_filter = new IntentFilter(NotificationUtil.ACTION_FAVORITE_NOTIFICATION);
+        manager.registerReceiver(mNotificationReceiver, notify_filter);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        if(mNotificationReceiver != null){
+            LocalBroadcastManager manager = LocalBroadcastManager.getInstance(getContext());
+            manager.unregisterReceiver(mNotificationReceiver);
+        }
+    }
+
+    class NotificationReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (mAdapter != null) {
+                mAdapter.setContactList(UserData.getFavorateContactList(getContext()));
+                mAdapter.notifyDataSetChanged();
+            }
         }
     }
 }

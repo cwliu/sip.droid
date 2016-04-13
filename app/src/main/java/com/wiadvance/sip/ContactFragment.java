@@ -89,7 +89,7 @@ public class ContactFragment extends Fragment {
 
         TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.contacts_tab_layout);
         tabLayout.setupWithViewPager(viewPager);
-        if(UserData.getRecentContactList(getContext()).size() == 0){
+        if(UserData.getFavorateContactList(getContext()).size() == 0){
             TabLayout.Tab tab = tabLayout.getTabAt(2);
             if (tab != null) {
                 tab.select();

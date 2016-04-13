@@ -10,6 +10,7 @@ public class NotificationUtil {
     private static final String TAG = "NotificationUtil";
 
     public static String ACTION_NOTIFICATION = "com.wiadvance.sipdemo.notification";
+    public static String ACTION_FAVORITE_NOTIFICATION = "com.wiadvance.sipdemo.favorite_notification";
     public static String ACTION_CALL_STATUS_CHANGED = "com.wiadvance.sipdemo.call";
 
     public static final String GLOBAL_NOTIFY_MESSAGE = "notify_message";
@@ -30,6 +31,11 @@ public class NotificationUtil {
         intent.putExtra(NOTIFY_CALL_ON, on);
         intent.putExtra(NOTIFY_CALL_STATUS, message);
         intent.putExtra(NOTIFY_CALL_IS_SIP, isSip);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    public static void favoriteUpdate(Context context){
+        Intent intent = new Intent(ACTION_FAVORITE_NOTIFICATION);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 }

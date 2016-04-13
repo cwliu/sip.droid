@@ -29,6 +29,8 @@ public class UserData {
     public static HashBiMap<String, String> sEmailtoPhoneBiMap = HashBiMap.create();
     public static List<Contact> sCompanyContactList = new ArrayList<>();
     public static List<Contact> sPhoneContactList = new ArrayList<>();
+    public static List<Contact> sFavoriteContactListCache = new ArrayList<>();
+
 
 
     public static String getName(Context context) {
@@ -149,10 +151,13 @@ public class UserData {
         }
 
         if(!isExist){
-            list.add(contact);
+            list.add(0, contact);
             setFavorateContactList(context, list);
         }
+        NotificationUtil.favoriteUpdate(context);
         Toast.makeText(context, "已將" + contact.getName() + "加入我的最愛", Toast.LENGTH_SHORT).show();
+
+        sFavoriteContactListCache = list;
     }
 
     public static void removeFavoriteContact(Context context, Contact contact){
@@ -166,12 +171,19 @@ public class UserData {
             }
         }
 
+        NotificationUtil.favoriteUpdate(context);
         setFavorateContactList(context, list);
         Toast.makeText(context, "已將" + contact.getName() + "移出我的最愛", Toast.LENGTH_SHORT).show();
+
+        sFavoriteContactListCache = list;
     }
 
     public static boolean isFavoriteContact(Context context, Contact contact){
-        List<Contact> list = getFavorateContactList(context);
+        if(sFavoriteContactListCache.size() == 0){
+            sFavoriteContactListCache = getFavorateContactList(context);
+        }
+
+        List<Contact> list = sFavoriteContactListCache;
 
         Iterator<Contact> i = list.iterator();
         while (i.hasNext()) {
