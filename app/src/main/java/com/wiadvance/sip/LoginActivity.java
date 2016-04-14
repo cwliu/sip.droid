@@ -170,8 +170,8 @@ public class LoginActivity extends AppCompatActivity {
             // Picasso already started
         }
 
-        picasso.invalidate(Constants.MY_PHOTO_URL);
-        picasso.setLoggingEnabled(false);
+        Picasso.with(this).invalidate(Constants.MY_PHOTO_URL);
+        Picasso.with(this).setLoggingEnabled(false);
     }
 
     private void showConnectErrorUI(String errorMessage) {
