@@ -78,6 +78,10 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
         if(state.equals(LinphoneCall.State.CallEnd)){
             NotificationUtil.notifyCallStatus(mContext, false, null, false);
         }
+
+        if(state.equals(LinphoneCall.State.Error)){
+            NotificationUtil.displayStatus(mContext, state.toString() + ": " + s);
+        }
     }
 
 
