@@ -5,4 +5,5 @@
     <string name="connect_toast_text_error">Sorry, can\'t connect to Office 365: %1$s</string>
     <string name="navigation_drawer_open">open</string>
     <string name="navigation_drawer_close">close</string>
+    <string name="search_hint">Search contact</string>
 </resources>

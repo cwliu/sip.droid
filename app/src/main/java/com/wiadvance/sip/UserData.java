@@ -208,4 +208,11 @@ public class UserData {
 
         return false;
     }
+
+    public static List<Contact> getAllContact(Context context){
+        List list = new ArrayList();
+        list.addAll(sPhoneContactList);
+        list.addAll(getCompanyContactList(context));
+        return list;
+    }
 }

@@ -10,9 +10,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -63,10 +67,10 @@ public class ContactFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setRetainInstance(true);
-
         mWiSipManager = new LinphoneSipManager(getContext());
 
+        setRetainInstance(true);
+        setHasOptionsMenu(true);
     }
 
 
@@ -101,6 +105,8 @@ public class ContactFragment extends Fragment {
     private void setupNavigationDrawer(View rootView) {
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.app_name);
+
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 
         DrawerLayout drawerLayout = (DrawerLayout) rootView.findViewById(R.id.drawer_layout);
         ListView drawerList = (ListView) rootView.findViewById(R.id.left_drawer);
@@ -308,5 +314,24 @@ public class ContactFragment extends Fragment {
         Intent intent = LoginActivity.newIntent(getContext());
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.fragment_sip, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+            case R.id.search_icon:
+                Intent intent = SearchActivity.newIntent(getContext());
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

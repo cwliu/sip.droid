@@ -15,9 +15,7 @@
     <!-- Mixpanel -->
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
     <uses-permission android:name="android.permission.CAMERA"/>
-
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
     <!-- Filter out the device doesn't support sip -->
@@ -40,29 +38,37 @@
             android:value="2c5de1ba077edd775560b40be6ae292a31ca855b"/>
 
         <activity
-            android:name="com.wiadvance.sip.LoginActivity"
+            android:name=".LoginActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
         <activity
-            android:name="com.wiadvance.sip.ContactActivity"
+            android:name=".ContactActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="com.wiadvance.sip.CallReceiverActivity"
-            android:parentActivityName="com.wiadvance.sip.ContactActivity"
+            android:name=".CallReceiverActivity"
+            android:parentActivityName=".ContactActivity"
             android:screenOrientation="portrait">
         </activity>
-
         <activity
-            android:name="com.wiadvance.sip.MakeCallActivity"
+            android:name=".MakeCallActivity"
             android:screenOrientation="portrait"/>
-
         <activity android:name="com.mixpanel.android.surveys.SurveyActivity"/>
 
+        <activity
+            android:name=".SearchActivity"
+            android:parentActivityName=".ContactActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+        </activity>
     </application>
 
 </manifest>
