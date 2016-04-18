@@ -11,6 +11,7 @@ public class NotificationUtil {
 
     public static String ACTION_NOTIFICATION = "com.wiadvance.sipdemo.notification";
     public static String ACTION_FAVORITE_NOTIFICATION = "com.wiadvance.sipdemo.favorite_notification";
+    public static String ACTION_PHONE_CONTACT_LOAD_COMPLETE = "com.wiadvance.sip.phone_contact_load_complete";
     public static String ACTION_CALL_STATUS_CHANGED = "com.wiadvance.sipdemo.call";
 
     public static final String GLOBAL_NOTIFY_MESSAGE = "notify_message";
@@ -36,6 +37,11 @@ public class NotificationUtil {
 
     public static void favoriteUpdate(Context context){
         Intent intent = new Intent(ACTION_FAVORITE_NOTIFICATION);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    public static void phoneContactUpdate(Context context){
+        Intent intent = new Intent(ACTION_PHONE_CONTACT_LOAD_COMPLETE);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 }

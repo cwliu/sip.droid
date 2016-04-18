@@ -43,7 +43,7 @@ public class CompanyContactFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_contact, container, false);
 
-        mLoadingProgress = (ProgressBar) rootView.findViewById(R.id.loading_progress_bar);
+        mLoadingProgress = (ProgressBar) rootView.findViewById(R.id.contacts_loading_progress_bar);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.contacts_recycler_view);
         mAdapter = new CompanyContactAdapter(getActivity());
