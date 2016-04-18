@@ -49,8 +49,6 @@ public class ContactFragment extends Fragment {
 
     private static final String TAG = "ContactFragment";
 
-    public static final String HTTPS_SIP_API_SERVER = BuildConfig.HTTPS_SIP_API_SERVER;
-
     private LinphoneSipManager mWiSipManager;
     private DrawerItemAdapter mDrawerAdapter;
     private LinphoneCoreListenerBase mLinPhoneListener;
@@ -69,7 +67,6 @@ public class ContactFragment extends Fragment {
 
         mWiSipManager = new LinphoneSipManager(getContext());
 
-        setRetainInstance(true);
         setHasOptionsMenu(true);
     }
 
@@ -243,7 +240,7 @@ public class ContactFragment extends Fragment {
                 .build();
 
         Request request = new Request.Builder()
-                .url(HTTPS_SIP_API_SERVER)
+                .url(BuildConfig.HTTPS_SIP_API_SERVER)
                 .post(body)
                 .build();
 
