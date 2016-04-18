@@ -12,8 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
 
 import com.wiadvance.sip.model.Contact;
 
@@ -63,10 +61,10 @@ public class SearchActivity extends AppCompatActivity {
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
 
-        // Remove search icon
-        ImageView searchImage = (ImageView) searchView.findViewById(
-                android.support.v7.appcompat.R.id.search_mag_icon);
-        searchImage.setVisibility(View.GONE);
+//        // Remove search icon
+//        ImageView searchImage = (ImageView) searchView.findViewById(
+//                android.support.v7.appcompat.R.id.search_mag_icon);
+//        searchImage.setVisibility(View.GONE);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
