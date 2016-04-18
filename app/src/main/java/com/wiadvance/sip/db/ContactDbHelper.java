@@ -53,7 +53,6 @@ public class ContactDbHelper {
     public List<Contact> getAllContacts() {
 
         ContactCursorWrapper contactCursorWrapper = queryContacts(null, null);
-
         return getContacts(contactCursorWrapper);
     }
 
@@ -64,6 +63,29 @@ public class ContactDbHelper {
         ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs);
         return getContacts(contactCursorWrapper);
     }
+
+    public List<Contact> getCompanyContacts() {
+        String whereClause = ContactTable.Cols.TYPE + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(Contact.TYPE_COMPANY)};
+
+        ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs);
+        return getContacts(contactCursorWrapper);
+    }
+
+    public void removeContacts() {
+        // TODO
+    }
+
+    public void removePhoneContacts() {
+        mDatabase.delete(ContactTable.NAME,
+                ContactTable.Cols.TYPE + " = ?", new String[]{String.valueOf(Contact.TYPE_PHONE)});
+    }
+
+    public void removeCompanyContacts() {
+        mDatabase.delete(ContactTable.NAME,
+                ContactTable.Cols.TYPE + " = ?", new String[]{String.valueOf(Contact.TYPE_COMPANY)});
+    }
+
 
     @NonNull
     private List<Contact> getContacts(ContactCursorWrapper contactCursorWrapper) {
@@ -88,7 +110,7 @@ public class ContactDbHelper {
         cv.put(ContactTable.Cols.SIP, contact.getSip());
         cv.put(ContactTable.Cols.PHONE, contact.getPhone());
         cv.put(ContactTable.Cols.EMAIL, contact.getEmail());
-        cv.put(ContactTable.Cols.PHONE, contact.getPhone());
+        cv.put(ContactTable.Cols.PHOTO, contact.getPhotoUri());
         cv.put(ContactTable.Cols.TYPE, contact.getType());
 
         return cv;
@@ -106,14 +128,5 @@ public class ContactDbHelper {
         );
         cursor.moveToFirst();
         return new ContactCursorWrapper(cursor);
-    }
-
-    public void removeContacts() {
-        // TODO
-    }
-
-    public void removePhoneContacts() {
-        mDatabase.delete(ContactTable.NAME,
-                ContactTable.Cols.TYPE + " = ?", new String[]{String.valueOf(Contact.TYPE_PHONE)});
     }
 }

@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.squareup.picasso.Picasso;
+import com.wiadvance.sip.db.ContactDbHelper;
 import com.wiadvance.sip.linphone.LinphoneCoreHelper;
 import com.wiadvance.sip.model.Contact;
 
@@ -66,7 +67,7 @@ public class CallReceiverActivity extends AppCompatActivity {
         }
 
 
-        for (Contact c : UserData.getCompanyContactList(this)) {
+        for (Contact c : ContactDbHelper.getInstance(this).getCompanyContacts()) {
             if (caller_address.contains(c.getSip())) {
                 if (c.getEmail() != null) {
                     ImageView avatar = (ImageView) findViewById(R.id.call_receiver_avatar);

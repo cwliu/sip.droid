@@ -70,12 +70,12 @@ public class UserData {
         }.getType());
     }
 
-    public static List<Contact> getCompanyContactList(Context context) {
-        Gson gson = new Gson();
-        String json = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_COMPANY_CONTACT, new Gson().toJson(new ArrayList<Contact>()));
-        return gson.fromJson(json, new TypeToken<List<Contact>>() {
-        }.getType());
-    }
+//    public static List<Contact> getCompanyContactList(Context context) {
+//        Gson gson = new Gson();
+//        String json = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_COMPANY_CONTACT, new Gson().toJson(new ArrayList<Contact>()));
+//        return gson.fromJson(json, new TypeToken<List<Contact>>() {
+//        }.getType());
+//    }
 
 
     public static void setName(Context context, String name) {
@@ -114,11 +114,11 @@ public class UserData {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_FAVORATE_CONTACT, json).apply();
     }
 
-    public static void setCompanyContactList(Context context, List<Contact> contacts) {
-        Gson gson = new Gson();
-        String json = gson.toJson(contacts);
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_COMPANY_CONTACT, json).apply();
-    }
+//    public static void setCompanyContactList(Context context, List<Contact> contacts) {
+//        Gson gson = new Gson();
+//        String json = gson.toJson(contacts);
+//        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_COMPANY_CONTACT, json).apply();
+//    }
 
     public static void clean(Context context) {
         setName(context, null);
@@ -129,7 +129,6 @@ public class UserData {
         setRegistrationStatus(context, false);
         setRecentContactList(context, new ArrayList<Contact>());
         setFavoriteContactList(context, new ArrayList<Contact>());
-        setCompanyContactList(context, new ArrayList<Contact>());
 
         sEmailtoSipBiMap.clear();
         sEmailtoPhoneBiMap.clear();
