@@ -4,11 +4,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,17 +27,26 @@ import com.wiadvance.sip.linphone.LinphoneSipManager;
 import com.wiadvance.sip.model.Contact;
 import com.wiadvance.sip.office365.Constants;
 
-public class MakeCallActivity extends AppCompatActivity {
+public class MakeCallActivity extends AppCompatActivity implements SensorEventListener {
 
+    private static final String TAG = "MakeCallActivity";
 
     private static final String ARG_CONTACT = "ARG_CONTACT";
+
     private LinphoneSipManager mWiSipManager;
     private Contact mCallee;
     private BroadcastReceiver mCallStatusReceiver;
-    private TextView mCallStatus;
+
     private boolean isEndedByCaller;
-    private TextView mCallStatusAnimation;
     private boolean isCalling;
+
+    private TextView mCallStatus;
+    private TextView mCallStatusAnimation;
+    private ImageButton mEndcallButton;
+
+    private SensorManager mSensorManager;
+    private Sensor mProximitySensor;
+    private float originalBrightness;
 
     public static Intent newIntent(Context context, Contact contact) {
         Intent intent = new Intent(context, MakeCallActivity.class);
@@ -54,6 +69,12 @@ public class MakeCallActivity extends AppCompatActivity {
         mWiSipManager = new LinphoneSipManager(this);
         mWiSipManager.makeCall(mCallee);
 
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mProximitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+
+        WindowManager.LayoutParams lp = this.getWindow().getAttributes();
+        originalBrightness = lp.screenBrightness;
+
     }
 
     private void initView() {
@@ -72,9 +93,9 @@ public class MakeCallActivity extends AppCompatActivity {
         Picasso.with(this).load(photoUrl).placeholder(R.drawable.avatar_120dp).into(avatar);
 
 
-        ImageButton endcall = (ImageButton) findViewById(R.id.make_call_end_call_button);
-        if (endcall != null) {
-            endcall.setOnClickListener(new View.OnClickListener() {
+        mEndcallButton = (ImageButton) findViewById(R.id.make_call_end_call_button);
+        if (mEndcallButton != null) {
+            mEndcallButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     isEndedByCaller = true;
@@ -101,12 +122,6 @@ public class MakeCallActivity extends AppCompatActivity {
             }
         };
         dotAnimationHandler.post(task);
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
 
     }
 
@@ -158,6 +173,7 @@ public class MakeCallActivity extends AppCompatActivity {
         LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
         manager.registerReceiver(mCallStatusReceiver, notify_filter);
 
+        mSensorManager.registerListener(this, mProximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
@@ -170,5 +186,35 @@ public class MakeCallActivity extends AppCompatActivity {
         }
 
         mWiSipManager.endAllCall();
+
+        mSensorManager.unregisterListener(this, mProximitySensor);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.values[0] < mProximitySensor.getMaximumRange()) {
+            dimScreen(true);
+        } else {
+            dimScreen(false);
+        }
+    }
+
+    private void dimScreen(boolean dim) {
+        Log.d(TAG, "dimScreen() called with: ");
+
+        WindowManager.LayoutParams lp = this.getWindow().getAttributes();
+        if (dim) {
+            lp.screenBrightness = 0.0f;
+            mEndcallButton.setEnabled(false);
+        } else {
+            lp.screenBrightness = originalBrightness;
+            mEndcallButton.setEnabled(true);
+        }
+        this.getWindow().setAttributes(lp);
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
 }

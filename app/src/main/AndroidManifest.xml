@@ -18,6 +18,10 @@
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
+    <!-- Adjest screen brightness -->
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"/>
+
     <!-- Filter out the device doesn't support sip -->
     <uses-feature android:name="android.hardware.sip.voip"/>
     <uses-feature
