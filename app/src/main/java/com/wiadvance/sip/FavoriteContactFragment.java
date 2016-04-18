@@ -14,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.wiadvance.sip.db.ContactDbHelper;
+
 public class FavoriteContactFragment extends Fragment {
 
     private NotificationReceiver mNotificationReceiver;
@@ -42,7 +44,7 @@ public class FavoriteContactFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser && mAdapter != null) {
-            mAdapter.setContactList(UserData.getFavoriteContactList(getContext()));
+            mAdapter.setContactList(ContactDbHelper.getInstance(getContext()).getFavoriteContacts());
             mAdapter.notifyDataSetChanged();
         }
     }
@@ -73,7 +75,7 @@ public class FavoriteContactFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (mAdapter != null) {
-                mAdapter.setContactList(UserData.getFavoriteContactList(getContext()));
+                mAdapter.setContactList(ContactDbHelper.getInstance(getContext()).getFavoriteContacts());
                 mAdapter.notifyDataSetChanged();
             }
         }

@@ -79,8 +79,8 @@ public class CompanyContactFragment extends Fragment {
     private void updateContactsSipPhone(List<Contact> list) {
         for (Contact c : list) {
             String email = c.getEmail();
-            String phone = UserData.sEmailtoPhoneBiMap.get(email);
-            String sip = UserData.sEmailtoSipBiMap.get(email);
+            String phone = UserData.sEmailToPhoneBiMap.get(email);
+            String sip = UserData.sEmailToSipBiMap.get(email);
 
             if (phone != null) {
                 c.setPhone(phone);

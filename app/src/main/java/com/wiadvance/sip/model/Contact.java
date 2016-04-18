@@ -3,7 +3,7 @@ package com.wiadvance.sip.model;
 import android.content.Context;
 import android.net.Uri;
 
-import com.wiadvance.sip.UserData;
+import com.wiadvance.sip.db.ContactDbHelper;
 
 public class Contact {
 
@@ -105,7 +105,7 @@ public class Contact {
     }
 
     public boolean isFavorite(Context context) {
-        return UserData.isFavoriteContact(context, this);
+        return ContactDbHelper.getInstance(context).isFavoriteContact(this);
     }
 
     public int getType() {
