@@ -52,8 +52,11 @@ public class ContactDbHelper {
     }
 
     public List<Contact> getAllContacts() {
-
-        ContactCursorWrapper contactCursorWrapper = queryContacts(null, null, null);
+        String whereClause = ContactTable.Cols.TYPE + " = ? OR " +
+                ContactTable.Cols.TYPE + " = ? ";
+        String[] whereArgs = new String[] {String.valueOf(Contact.TYPE_COMPANY),
+                String.valueOf(Contact.TYPE_PHONE)};
+        ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, null);
         return getContacts(contactCursorWrapper);
     }
 
