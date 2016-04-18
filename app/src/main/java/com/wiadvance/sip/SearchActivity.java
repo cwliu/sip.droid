@@ -21,6 +21,7 @@ import java.util.List;
 public class SearchActivity extends AppCompatActivity {
 
     private String TAG = "SearchActivity";
+
     private SearchContactAdapter mRecyclerViewAdapter;
     private List<Contact> mSearchResultList = new ArrayList<>();
 
@@ -37,9 +38,11 @@ public class SearchActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.search_activity_contacts_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerViewAdapter = new SearchContactAdapter(this);
-        recyclerView.setAdapter(mRecyclerViewAdapter);
+        if (recyclerView != null) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            mRecyclerViewAdapter = new SearchContactAdapter(this);
+            recyclerView.setAdapter(mRecyclerViewAdapter);
+        }
 
         if(getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
