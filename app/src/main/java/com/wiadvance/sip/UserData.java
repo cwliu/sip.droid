@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.google.common.collect.HashBiMap;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.wiadvance.sip.db.ContactDbHelper;
 import com.wiadvance.sip.model.Contact;
 
 import java.util.ArrayList;
@@ -28,9 +29,7 @@ public class UserData {
 
     public static HashBiMap<String, String> sEmailtoSipBiMap = HashBiMap.create();
     public static HashBiMap<String, String> sEmailtoPhoneBiMap = HashBiMap.create();
-    public static List<Contact> sPhoneContactList = new ArrayList<>();
     public static List<Contact> sFavoriteContactListCache = new ArrayList<>();
-
 
 
     public static String getName(Context context) {
@@ -60,19 +59,22 @@ public class UserData {
     public static List<Contact> getRecentContactList(Context context) {
         Gson gson = new Gson();
         String json = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_RECENT_CONTACT, new Gson().toJson(new ArrayList<Contact>()));
-        return gson.fromJson(json, new TypeToken<List<Contact>>(){}.getType());
+        return gson.fromJson(json, new TypeToken<List<Contact>>() {
+        }.getType());
     }
 
     public static List<Contact> getFavoriteContactList(Context context) {
         Gson gson = new Gson();
         String json = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_FAVORATE_CONTACT, new Gson().toJson(new ArrayList<Contact>()));
-        return gson.fromJson(json, new TypeToken<List<Contact>>(){}.getType());
+        return gson.fromJson(json, new TypeToken<List<Contact>>() {
+        }.getType());
     }
 
-    public static List<Contact> getCompanyContactList(Context context){
+    public static List<Contact> getCompanyContactList(Context context) {
         Gson gson = new Gson();
         String json = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_COMPANY_CONTACT, new Gson().toJson(new ArrayList<Contact>()));
-        return gson.fromJson(json, new TypeToken<List<Contact>>(){}.getType());
+        return gson.fromJson(json, new TypeToken<List<Contact>>() {
+        }.getType());
     }
 
 
@@ -106,13 +108,13 @@ public class UserData {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_RECENT_CONTACT, json).apply();
     }
 
-    public static void setFavoriteContactList(Context context, List<Contact> contacts){
+    public static void setFavoriteContactList(Context context, List<Contact> contacts) {
         Gson gson = new Gson();
         String json = gson.toJson(contacts);
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_FAVORATE_CONTACT, json).apply();
     }
 
-    public static void setCompanyContactList(Context context, List<Contact> contacts){
+    public static void setCompanyContactList(Context context, List<Contact> contacts) {
         Gson gson = new Gson();
         String json = gson.toJson(contacts);
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_COMPANY_CONTACT, json).apply();
@@ -131,8 +133,8 @@ public class UserData {
 
         sEmailtoSipBiMap.clear();
         sEmailtoPhoneBiMap.clear();
-        sPhoneContactList.clear();
 
+        ContactDbHelper.getInstance(context).removeContacts();
     }
 
     public static void updateRecentContact(Context context, Contact contact) {
@@ -141,7 +143,7 @@ public class UserData {
         Iterator<Contact> i = list.iterator();
         while (i.hasNext()) {
             Contact c = i.next(); // must be called before you can call i.remove()
-            if(c.equals(contact)){
+            if (c.equals(contact)) {
                 i.remove();
             }
         }
@@ -150,20 +152,20 @@ public class UserData {
         setRecentContactList(context, list);
     }
 
-    public static void addFavoriteContact(Context context, Contact contact){
+    public static void addFavoriteContact(Context context, Contact contact) {
         List<Contact> list = getFavoriteContactList(context);
         boolean isExist = false;
 
         Iterator<Contact> i = list.iterator();
         while (i.hasNext()) {
             Contact c = i.next(); // must be called before you can call i.remove()
-            if(c.equals(contact)){
+            if (c.equals(contact)) {
                 isExist = true;
                 break;
             }
         }
 
-        if(!isExist){
+        if (!isExist) {
             list.add(0, contact);
             setFavoriteContactList(context, list);
         }
@@ -173,13 +175,13 @@ public class UserData {
         sFavoriteContactListCache = list;
     }
 
-    public static void removeFavoriteContact(Context context, Contact contact){
+    public static void removeFavoriteContact(Context context, Contact contact) {
         List<Contact> list = getFavoriteContactList(context);
 
         Iterator<Contact> i = list.iterator();
         while (i.hasNext()) {
             Contact c = i.next(); // must be called before you can call i.remove()
-            if(c.equals(contact)){
+            if (c.equals(contact)) {
                 i.remove();
             }
         }
@@ -191,8 +193,8 @@ public class UserData {
         sFavoriteContactListCache = list;
     }
 
-    public static boolean isFavoriteContact(Context context, Contact contact){
-        if(sFavoriteContactListCache.size() == 0){
+    public static boolean isFavoriteContact(Context context, Contact contact) {
+        if (sFavoriteContactListCache.size() == 0) {
             sFavoriteContactListCache = getFavoriteContactList(context);
         }
 
@@ -201,7 +203,7 @@ public class UserData {
         Iterator<Contact> i = list.iterator();
         while (i.hasNext()) {
             Contact c = i.next(); // must be called before you can call i.remove()
-            if(c.equals(contact)){
+            if (c.equals(contact)) {
                 return true;
             }
         }
@@ -209,10 +211,7 @@ public class UserData {
         return false;
     }
 
-    public static List<Contact> getAllContact(Context context){
-        List list = new ArrayList();
-        list.addAll(sPhoneContactList);
-        list.addAll(getCompanyContactList(context));
-        return list;
+    public static List<Contact> getAllContact(Context context) {
+        return ContactDbHelper.getInstance(context).getAllContacts();
     }
 }

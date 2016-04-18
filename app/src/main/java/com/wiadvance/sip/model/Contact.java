@@ -12,8 +12,12 @@ public class Contact {
     private String mPhone;
     private String mEmail;
     private String mPhotoUri;
+    private int mType;
 
-    private boolean isBooleanFavorite;
+    public static int TYPE_FAVORITE = 1;
+    public static int TYPE_RECENT = 2;
+    public static int TYPE_PHONE = 3;
+    public static int TYPE_COMPANY = 4;
 
     public Contact(String name) {
         this(name, null);
@@ -60,6 +64,10 @@ public class Contact {
         mPhotoUri = photoUri.toString();
     }
 
+    public void setPhotoUri(String photoUri){
+        mPhotoUri = photoUri;
+    }
+
     public String getPhotoUri() {
         return mPhotoUri;
     }
@@ -99,8 +107,12 @@ public class Contact {
         return UserData.isFavoriteContact(context, this);
     }
 
-    public void setBooleanFavorite(Boolean booleanFavorite) {
-        isBooleanFavorite = booleanFavorite;
+    public int getType() {
+        return mType;
+    }
+
+    public void setType(int type) {
+        mType = type;
     }
 
 }

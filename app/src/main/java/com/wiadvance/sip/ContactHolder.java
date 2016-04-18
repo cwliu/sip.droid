@@ -95,11 +95,11 @@ public class ContactHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View v) {
                if(contact.isFavorite(mContext)){
-                   contact.setBooleanFavorite(false);
+//                   contact.setType();
                    showFavorite(false);
                    UserData.removeFavoriteContact(mContext, contact);
                }else{
-                   contact.setBooleanFavorite(true);
+//                   contact.setBooleanFavorite(true);
                    showFavorite(true);
                    UserData.addFavoriteContact(mContext, contact);
                }

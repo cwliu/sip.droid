@@ -14,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.wiadvance.sip.db.ContactDbHelper;
+
 public class PhoneContactFragment extends Fragment {
 
     private PhoneContactAdapter mContactAdapter;
@@ -34,7 +36,6 @@ public class PhoneContactFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         mContactAdapter = new PhoneContactAdapter(getActivity());
-        mContactAdapter.setContactList(UserData.sPhoneContactList);
         recyclerView.setAdapter(mContactAdapter);
 
         return rootView;
@@ -44,7 +45,9 @@ public class PhoneContactFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        showLoadProgressbar(View.VISIBLE);
+        if (ContactDbHelper.getInstance(getContext()).getPhoneContacts().size() == 0) {
+            setLoadProgressbar(View.VISIBLE);
+        }
 
         Intent intent = FetchPhoneContactService.newIntent(getContext());
         getContext().startService(intent);
@@ -76,14 +79,16 @@ public class PhoneContactFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (mContactAdapter != null) {
+                mContactAdapter.setContactList(
+                        ContactDbHelper.getInstance(getContext()).getPhoneContacts());
                 mContactAdapter.notifyDataSetChanged();
 
-                showLoadProgressbar(View.GONE);
+                setLoadProgressbar(View.GONE);
             }
         }
     }
 
-    private void showLoadProgressbar(int visible) {
+    private void setLoadProgressbar(int visible) {
         mProgressBar.setVisibility(visible);
     }
 }
