@@ -120,7 +120,11 @@ public class CompanyContactFragment extends Fragment {
 
                     List<Contact> list = new ArrayList<>();
                     for (UserRaw.InnerDict user : userRaw.value) {
-                        if (user.mail == null || user.mail.equals(UserData.getEmail(getActivity()))) {
+                        if(getContext() == null){
+                            break;
+                        }
+
+                        if (user.mail == null || user.mail.equals(UserData.getEmail(getContext()))) {
                             continue;
                         }
 
