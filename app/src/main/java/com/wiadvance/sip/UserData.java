@@ -44,13 +44,6 @@ public class UserData {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_REGISTRATION_OK, false);
     }
 
-    public static List<Contact> getRecentContactList(Context context) {
-        Gson gson = new Gson();
-        String json = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_RECENT_CONTACT, new Gson().toJson(new ArrayList<Contact>()));
-        return gson.fromJson(json, new TypeToken<List<Contact>>() {
-        }.getType());
-    }
-
     public static List<Contact> getFavoriteContactList(Context context) {
         Gson gson = new Gson();
         String json = PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_FAVORATE_CONTACT, new Gson().toJson(new ArrayList<Contact>()));
@@ -99,21 +92,6 @@ public class UserData {
         sEmailtoPhoneBiMap.clear();
 
         ContactDbHelper.getInstance(context).removeContacts();
-    }
-
-    public static void updateRecentContact(Context context, Contact contact) {
-        List<Contact> list = getRecentContactList(context);
-
-        Iterator<Contact> i = list.iterator();
-        while (i.hasNext()) {
-            Contact c = i.next(); // must be called before you can call i.remove()
-            if (c.equals(contact)) {
-                i.remove();
-            }
-        }
-
-        list.add(0, contact);
-        setRecentContactList(context, list);
     }
 
     public static void addFavoriteContact(Context context, Contact contact) {

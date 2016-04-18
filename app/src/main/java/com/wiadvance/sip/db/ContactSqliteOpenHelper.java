@@ -16,14 +16,14 @@ public class ContactSqliteOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + ContactDbSchema.ContactTable.NAME + "(" +
-                "_id integer primary key autoincrement, " +
+                ContactDbSchema.ContactTable.Cols.ID + " integer primary key autoincrement, " +
                 ContactDbSchema.ContactTable.Cols.NAME + "," +
                 ContactDbSchema.ContactTable.Cols.SIP + "," +
                 ContactDbSchema.ContactTable.Cols.PHONE + "," +
                 ContactDbSchema.ContactTable.Cols.EMAIL + "," +
                 ContactDbSchema.ContactTable.Cols.PHOTO + "," +
                 ContactDbSchema.ContactTable.Cols.TYPE + " INTEGER DEFAULT 0," +
-                ContactDbSchema.ContactTable.Cols.CREATED_TIME +" DATETIME )"
+                ContactDbSchema.ContactTable.Cols.CREATED_TIME + " DATETIME )"
         );
     }
 

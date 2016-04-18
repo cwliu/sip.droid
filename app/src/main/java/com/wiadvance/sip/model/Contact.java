@@ -13,6 +13,7 @@ public class Contact {
     private String mEmail;
     private String mPhotoUri;
     private int mType;
+    private int mId;
 
     public static int TYPE_FAVORITE = 1;
     public static int TYPE_RECENT = 2;
@@ -115,4 +116,11 @@ public class Contact {
         mType = type;
     }
 
+    public int getId() {
+        return mId;
+    }
+
+    public void setId(int id) {
+        mId = id;
+    }
 }

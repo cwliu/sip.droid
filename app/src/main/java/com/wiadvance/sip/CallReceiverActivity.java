@@ -68,7 +68,7 @@ public class CallReceiverActivity extends AppCompatActivity {
 
 
         for (Contact c : ContactDbHelper.getInstance(this).getCompanyContacts()) {
-            if (caller_address.contains(c.getSip())) {
+            if (c.getSip() != null && caller_address.contains(c.getSip())) {
                 if (c.getEmail() != null) {
                     ImageView avatar = (ImageView) findViewById(R.id.call_receiver_avatar);
                     Picasso.with(this).load(c.getPhotoUri()).placeholder(R.drawable.avatar_120dp).into(avatar);
@@ -78,7 +78,7 @@ public class CallReceiverActivity extends AppCompatActivity {
                     name.setText(c.getName());
                 }
 
-                UserData.updateRecentContact(this, c);
+                ContactDbHelper.getInstance(this).addRecentContact(c);
                 break;
             }
         }
@@ -95,7 +95,7 @@ public class CallReceiverActivity extends AppCompatActivity {
 //                    name.setText(c.getName());
 //                }
 //
-//                UserData.updateRecentContact(this, c);
+//                UserData.addRecentContact(this, c);
 //                break;
 //            }
 //        }

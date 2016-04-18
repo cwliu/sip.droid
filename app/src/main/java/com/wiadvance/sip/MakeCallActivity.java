@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
+import com.wiadvance.sip.db.ContactDbHelper;
 import com.wiadvance.sip.linphone.LinphoneSipManager;
 import com.wiadvance.sip.model.Contact;
 import com.wiadvance.sip.office365.Constants;
@@ -46,7 +47,7 @@ public class MakeCallActivity extends AppCompatActivity {
         String json = getIntent().getStringExtra(ARG_CONTACT);
         mCallee = new Gson().fromJson(json, Contact.class);
 
-        UserData.updateRecentContact(this, mCallee);
+        ContactDbHelper.getInstance(this).addRecentContact(mCallee);
 
         initView();
 

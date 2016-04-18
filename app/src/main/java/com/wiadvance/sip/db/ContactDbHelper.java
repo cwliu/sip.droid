@@ -10,6 +10,7 @@ import com.wiadvance.sip.db.ContactDbSchema.ContactTable;
 import com.wiadvance.sip.model.Contact;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class ContactDbHelper {
@@ -52,24 +53,55 @@ public class ContactDbHelper {
 
     public List<Contact> getAllContacts() {
 
-        ContactCursorWrapper contactCursorWrapper = queryContacts(null, null);
+        ContactCursorWrapper contactCursorWrapper = queryContacts(null, null, null);
         return getContacts(contactCursorWrapper);
     }
 
     public List<Contact> getPhoneContacts() {
         String whereClause = ContactTable.Cols.TYPE + " = ?";
         String[] whereArgs = new String[]{String.valueOf(Contact.TYPE_PHONE)};
+        String orderBy = ContactTable.Cols.NAME + " ASC";
 
-        ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs);
+        ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, orderBy);
         return getContacts(contactCursorWrapper);
     }
 
     public List<Contact> getCompanyContacts() {
         String whereClause = ContactTable.Cols.TYPE + " = ?";
         String[] whereArgs = new String[]{String.valueOf(Contact.TYPE_COMPANY)};
+        String orderBy = ContactTable.Cols.NAME + " ASC";
 
-        ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs);
+        ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, orderBy);
         return getContacts(contactCursorWrapper);
+    }
+
+    public List<Contact> getRecentContacts() {
+        String whereClause = ContactTable.Cols.TYPE + " = ?";
+        String[] whereArgs = new String[]{String.valueOf(Contact.TYPE_RECENT)};
+        String orderBy = ContactTable.Cols.CREATED_TIME + " ASC";
+
+        ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, orderBy);
+        return getContacts(contactCursorWrapper);
+    }
+
+    public void addRecentContact(Contact contact) {
+        List<Contact> list = getRecentContacts();
+
+        Iterator<Contact> i = list.iterator();
+        while (i.hasNext()) {
+            Contact dbContact = i.next();
+            if (dbContact.equals(contact)) {
+                removeContact(dbContact);
+            }
+        }
+
+        contact.setType(Contact.TYPE_RECENT);
+        addContact(contact);
+    }
+
+    private void removeContact(Contact contact) {
+        String dbId = String.valueOf(contact.getId());
+        mDatabase.delete(ContactTable.NAME, ContactTable.Cols.ID+ " = ?", new String[]{dbId});
     }
 
     public void removeContacts() {
@@ -116,7 +148,7 @@ public class ContactDbHelper {
         return cv;
     }
 
-    private static ContactCursorWrapper queryContacts(String whereClause, String[] whereArgs) {
+    private static ContactCursorWrapper queryContacts(String whereClause, String[] whereArgs, String orderBy) {
         Cursor cursor = mDatabase.query(
                 ContactTable.NAME,
                 null,
@@ -124,7 +156,7 @@ public class ContactDbHelper {
                 whereArgs,
                 null,
                 null,
-                null
+                orderBy
         );
         cursor.moveToFirst();
         return new ContactCursorWrapper(cursor);
