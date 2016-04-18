@@ -52,28 +52,22 @@
         <activity
             android:name=".CallReceiverActivity"
             android:parentActivityName=".ContactActivity"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"/>
+
         <activity
             android:name=".MakeCallActivity"
             android:screenOrientation="portrait"/>
+
         <activity android:name="com.mixpanel.android.surveys.SurveyActivity"/>
+
         <activity
             android:name=".SearchActivity"
-            android:parentActivityName=".ContactActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH"/>
-            </intent-filter>
-
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
-        </activity>
+            android:parentActivityName=".ContactActivity"/>
 
         <service
             android:name=".FetchPhoneContactService"
-            android:exported="false">
-        </service>
+            android:exported="false"/>
+
     </application>
 
 </manifest>

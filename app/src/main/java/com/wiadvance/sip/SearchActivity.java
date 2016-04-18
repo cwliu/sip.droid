@@ -1,6 +1,5 @@
 package com.wiadvance.sip;
 
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,7 +24,7 @@ public class SearchActivity extends AppCompatActivity {
     private SearchContactAdapter mRecyclerViewAdapter;
     private List<Contact> mSearchResultList = new ArrayList<>();
 
-    public static Intent newIntent(Context context){
+    public static Intent newIntent(Context context) {
         return new Intent(context, SearchActivity.class);
     }
 
@@ -44,7 +43,7 @@ public class SearchActivity extends AppCompatActivity {
             recyclerView.setAdapter(mRecyclerViewAdapter);
         }
 
-        if(getSupportActionBar() != null){
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
@@ -57,11 +56,7 @@ public class SearchActivity extends AppCompatActivity {
         inflater.inflate(R.menu.activity_search_menu, menu);
 
         MenuItem searchItem = menu.findItem(R.id.search_view);
-        final SearchView searchView = (SearchView) searchItem.getActionView();
-
-        // Get the SearchView and set the searchable configuration
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
 
 //        // Remove search icon
@@ -78,7 +73,7 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 query(newText);
-                return false;
+                return true;
             }
         });
 
@@ -88,15 +83,15 @@ public class SearchActivity extends AppCompatActivity {
     private void query(String text) {
 
         mSearchResultList.clear();
-        for(Contact c: UserData.getAllContact(this)){
-            if(c.getName().toLowerCase().contains(text.toLowerCase())){
+        for (Contact c : UserData.getAllContact(this)) {
+            if (c.getName().toLowerCase().contains(text.toLowerCase())) {
                 mSearchResultList.add(c);
             }
         }
         mRecyclerViewAdapter.notifyDataSetChanged();
     }
 
-    class SearchContactAdapter extends AbstractContactAdapter{
+    class SearchContactAdapter extends AbstractContactAdapter {
 
         public SearchContactAdapter(Context context) {
             super(context);
