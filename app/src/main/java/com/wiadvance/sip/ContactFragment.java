@@ -269,8 +269,6 @@ public class ContactFragment extends Fragment {
                 String sip_domain = sip_data.proxy_address + ":" + sip_data.proxy_port;
                 if (getContext() != null) {
                     UserData.setSip(getContext(), sip_data.sip_account);
-                    UserData.setPassword(getContext(), sip_data.sip_password);
-                    UserData.setDomain(getContext(), sip_domain);
 
                     for (SipApiResponse.SipAccount acc : sip_data.sip_list) {
                         UserData.sEmailtoSipBiMap.forcePut(acc.email, acc.sip_account);
