@@ -78,7 +78,7 @@ public class ContactDbHelper {
     public List<Contact> getRecentContacts() {
         String whereClause = ContactTable.Cols.TYPE + " = ?";
         String[] whereArgs = new String[]{String.valueOf(Contact.TYPE_RECENT)};
-        String orderBy = ContactTable.Cols.CREATED_TIME + " ASC";
+        String orderBy = ContactTable.Cols.CREATED_TIME + " DESC";
 
         ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, orderBy);
         return getContacts(contactCursorWrapper);

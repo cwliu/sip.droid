@@ -16,6 +16,7 @@ public class ContactCursorWrapper extends CursorWrapper {
             return null;
         }
 
+        int id = getInt(getColumnIndex(ContactDbSchema.ContactTable.Cols.ID));
         String name = getString(getColumnIndex(ContactDbSchema.ContactTable.Cols.NAME));
         String sip = getString(getColumnIndex(ContactDbSchema.ContactTable.Cols.SIP));
         String phone = getString(getColumnIndex(ContactDbSchema.ContactTable.Cols.PHONE));
@@ -24,6 +25,7 @@ public class ContactCursorWrapper extends CursorWrapper {
         Integer type = getInt(getColumnIndex(ContactDbSchema.ContactTable.Cols.TYPE));
 
         Contact contact = new Contact(name);
+        contact.setId(id);
         contact.setEmail(email);
         contact.setSip(sip);
         contact.setPhone(phone);

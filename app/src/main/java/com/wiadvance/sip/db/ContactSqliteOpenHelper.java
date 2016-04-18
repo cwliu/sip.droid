@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class ContactSqliteOpenHelper extends SQLiteOpenHelper {
 
     private static String DB_NAME = "sip";
-    private static int DB_VERSION = 1;
+    private static int DB_VERSION = 2;
 
     public ContactSqliteOpenHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -15,6 +15,16 @@ public class ContactSqliteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        createTable(db);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        dropTable(db);
+        createTable(db);
+    }
+
+    private void createTable(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + ContactDbSchema.ContactTable.NAME + "(" +
                 ContactDbSchema.ContactTable.Cols.ID + " integer primary key autoincrement, " +
                 ContactDbSchema.ContactTable.Cols.NAME + "," +
@@ -23,12 +33,12 @@ public class ContactSqliteOpenHelper extends SQLiteOpenHelper {
                 ContactDbSchema.ContactTable.Cols.EMAIL + "," +
                 ContactDbSchema.ContactTable.Cols.PHOTO + "," +
                 ContactDbSchema.ContactTable.Cols.TYPE + " INTEGER DEFAULT 0," +
-                ContactDbSchema.ContactTable.Cols.CREATED_TIME + " DATETIME )"
+                ContactDbSchema.ContactTable.Cols.CREATED_TIME + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP )"
         );
+
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+    private void dropTable(SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + ContactDbSchema.ContactTable.NAME);
     }
 }
