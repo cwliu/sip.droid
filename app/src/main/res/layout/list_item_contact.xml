@@ -67,6 +67,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_margin="16dp"
+                android:layout_gravity="center_vertical"
                 android:src="@drawable/avatar_2_120dp"
                 />
 
