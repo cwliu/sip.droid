@@ -164,6 +164,9 @@ public class LoginActivity extends AppCompatActivity {
                 .listener(new Picasso.Listener() {
                     @Override
                     public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                        if(exception.toString().contains("404 Not Found")){
+                            UserData.sAvatar404Cache.add(uri.toString());
+                        }
                         Log.d(TAG, "onImageLoadFailed() called with: " + "picasso = [" + picasso + "], uri = [" + uri + "], exception = [" + exception + "]");
                     }
                 })

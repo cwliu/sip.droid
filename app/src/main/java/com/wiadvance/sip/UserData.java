@@ -6,6 +6,8 @@ import android.preference.PreferenceManager;
 import com.google.common.collect.HashBiMap;
 import com.wiadvance.sip.db.ContactDbHelper;
 
+import java.util.HashSet;
+
 public class UserData {
 
     private static final String PREF_NAME = "name";
@@ -15,6 +17,8 @@ public class UserData {
 
     public static HashBiMap<String, String> sEmailToSipBiMap = HashBiMap.create();
     public static HashBiMap<String, String> sEmailToPhoneBiMap = HashBiMap.create();
+
+    public static HashSet<String> sAvatar404Cache = new HashSet();
 
     public static String getName(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_NAME, null);

@@ -51,8 +51,12 @@ public class ContactHolder extends RecyclerView.ViewHolder {
         mNameTextView.setText(contact.getName());
 
         int scale = Utils.getDeviceScale(mContext);
-        Picasso.with(mContext).load(contact.getPhotoUri()).resize(40 * scale, 40 * scale)
-                .placeholder(R.drawable.avatar_120dp).into(mAvatar);
+        if(!UserData.sAvatar404Cache.contains(contact.getPhotoUri())){
+            Picasso.with(mContext).load(contact.getPhotoUri()).resize(40 * scale, 40 * scale)
+                    .placeholder(R.drawable.avatar_120dp).into(mAvatar);
+        }else{
+            mAvatar.setImageResource(R.drawable.avatar_120dp);
+        }
 
 
         mPhoneImageview.setOnClickListener(new View.OnClickListener() {
