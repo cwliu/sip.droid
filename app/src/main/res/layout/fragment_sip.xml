@@ -47,6 +47,41 @@
             </android.support.v4.view.ViewPager>
 
         </LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/scan_add_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            app:backgroundTint="@color/green"
+            android:layout_marginBottom="160dp"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/camera_white_green_48dp"/>
+
+        <android.support.design.widget.FloatingActionButton
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/edit_add_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            app:backgroundTint="@color/green"
+            android:layout_marginBottom="88dp"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/edit_white_green_48dp"/>
+
+        <!--android:layout_margin="16dp"-->
+
+        <android.support.design.widget.FloatingActionButton
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/fab"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_gravity="bottom|right"
+            app:backgroundTint="@color/green"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_add_white_48dp"/>
+
     </FrameLayout>
 
     <!-- The navigation drawer -->
@@ -61,5 +96,3 @@
         android:dividerHeight="0dp"/>
 
 </android.support.v4.widget.DrawerLayout>
-
-
