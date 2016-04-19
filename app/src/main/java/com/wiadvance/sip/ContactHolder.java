@@ -50,8 +50,11 @@ public class ContactHolder extends RecyclerView.ViewHolder {
 
         mNameTextView.setText(contact.getName());
 
-        Picasso.with(mContext).load(contact.getPhotoUri())
+        int scale = Utils.getDeviceScale(mContext);
+        Picasso.with(mContext).load(contact.getPhotoUri()).resize(40 * scale, 40 * scale)
                 .placeholder(R.drawable.avatar_120dp).into(mAvatar);
+
+
         mPhoneImageview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,24 +98,24 @@ public class ContactHolder extends RecyclerView.ViewHolder {
         mFavorite_frame_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               if(contact.isFavorite(mContext)){
-                   showFavorite(false);
-                   ContactDbHelper.getInstance(mContext).removeFavoriteContact(contact);
-               }else{
-                   showFavorite(true);
-                   ContactDbHelper.getInstance(mContext).addFavoriteContact(contact);
-               }
+                if (contact.isFavorite(mContext)) {
+                    showFavorite(false);
+                    ContactDbHelper.getInstance(mContext).removeFavoriteContact(contact);
+                } else {
+                    showFavorite(true);
+                    ContactDbHelper.getInstance(mContext).addFavoriteContact(contact);
+                }
             }
         });
 
     }
 
     private void showFavorite(boolean show) {
-        if(show){
+        if (show) {
             mNameTextView.setTextColor(mContext.getResources().getColor(R.color.red));
             mFavoriteImageView.setVisibility(View.VISIBLE);
             mNotFavoriteImageView.setVisibility(View.GONE);
-        }else{
+        } else {
             mNameTextView.setTextColor(mContext.getResources().getColor(R.color.dark_gray));
             mFavoriteImageView.setVisibility(View.GONE);
             mNotFavoriteImageView.setVisibility(View.VISIBLE);

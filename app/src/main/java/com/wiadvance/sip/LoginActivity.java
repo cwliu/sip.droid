@@ -27,6 +27,7 @@ import com.microsoft.aad.adal.AuthenticationContext;
 import com.microsoft.aad.adal.AuthenticationResult;
 import com.microsoft.aad.adal.UserInfo;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -53,7 +54,9 @@ public class LoginActivity extends AppCompatActivity {
     private TextView mLoginAppNameTextView;
     private ImageView mLoginLogoImageView;
 
-    public static Intent newIntent(Context context){
+    public static final int PICASSO_CACHE_SIZE_100_MB = 100 * 1000 * 1000;
+
+    public static Intent newIntent(Context context) {
         return new Intent(context, LoginActivity.class);
     }
 
@@ -154,8 +157,10 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        picassoClient.setCache(new Cache(getCacheDir(), PICASSO_CACHE_SIZE_100_MB));
+        OkHttpDownloader downloader = new OkHttpDownloader(picassoClient);
         Picasso picasso = new Picasso.Builder(this)
-                .downloader(new OkHttpDownloader(picassoClient))
+                .downloader(downloader)
                 .listener(new Picasso.Listener() {
                     @Override
                     public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
@@ -164,14 +169,15 @@ public class LoginActivity extends AppCompatActivity {
                 })
                 .build();
 
-        try{
+        try {
             Picasso.setSingletonInstance(picasso);
-        }catch (IllegalStateException ignored){
+        } catch (IllegalStateException ignored) {
             // Picasso already started
         }
 
         Picasso.with(this).invalidate(Constants.MY_PHOTO_URL);
         Picasso.with(this).setLoggingEnabled(false);
+        Picasso.with(this).setIndicatorsEnabled(false);
     }
 
     private void showConnectErrorUI(String errorMessage) {

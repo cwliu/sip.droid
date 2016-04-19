@@ -54,7 +54,10 @@ public class DrawerItemAdapter extends BaseAdapter {
 
             ImageView userPhotoImageView = (ImageView) rootView.findViewById(R.id.drawer_user_photo);
 
-            Picasso.with(mContext).load(Constants.MY_PHOTO_URL).placeholder(R.drawable.avatar_120dp)
+            int scale = Utils.getDeviceScale(mContext);
+            Picasso.with(mContext).load(Constants.MY_PHOTO_URL)
+                    .resize(120 * scale, 120 * scale)
+                    .placeholder(R.drawable.avatar_120dp)
                     .into(userPhotoImageView);
 
             if (UserData.getRegistrationStatus(mContext)) {
