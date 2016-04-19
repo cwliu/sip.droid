@@ -48,8 +48,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginBottom="16dp"
                 android:layout_marginTop="16dp"
-                android:paddingRight="16dp"
                 android:alpha="0.38"
+                android:paddingRight="16dp"
                 android:src="@drawable/sms_black_40dp"/>
 
         </RelativeLayout>
@@ -58,74 +58,65 @@
         <!-- Surface View Start -->
         <LinearLayout
             android:id="@+id/surview_view"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/list_item_avatar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="16dp"
+                android:src="@drawable/avatar_2_120dp"
+                />
+
+            <TextView
+                android:id="@+id/contact_name_text_view"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                >
+                android:layout_weight="1"
+                android:ellipsize="marquee"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:textColor="@color/dark_gray"
+                android:textSize="16sp"
+                tools:text="David David David David David David David"
+                />
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/list_item_avatar"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="16dp"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/avatar_2_120dp"
-                    />
-
-                <TextView
-                    android:id="@+id/contact_name_text_view"
-                    android:layout_toRightOf="@+id/list_item_avatar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_centerVertical="true"
-                    android:gravity="center_vertical"
-                    android:textColor="@color/dark_gray"
-                    android:textSize="16sp"
-                    tools:text="David"
-                    />
-
-                <FrameLayout
-                    android:id="@+id/favorite_frame_layout"
-                    android:layout_toRightOf="@id/contact_name_text_view"
-                    android:layout_width="wrap_content"
-                    android:padding="4dp"
-                    android:layout_height="match_parent">
-
-                    <ImageView
-                        android:id="@+id/is_favorite_image_view"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/star_red_16dp"
-                        android:layout_gravity="center_vertical"
-                        android:visibility="gone"
-                        />
-
-                    <ImageView
-                        android:id="@+id/not_favorite_image_view"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:alpha="0.54"
-                        android:src="@drawable/star_border_black_16dp"
-                        android:layout_gravity="center_vertical"
-                        android:visibility="gone"
-                        />
-
-                </FrameLayout>
+            <FrameLayout
+                android:id="@+id/favorite_frame_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:padding="4dp">
 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentRight="true"
-                    android:layout_margin="16dp"
-                    android:alpha="0.12"
-                    android:src="@drawable/right_outline_black_20dp"
+                    android:id="@+id/is_favorite_image_view"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/star_red_16dp"
+                    android:visibility="gone"
                     />
 
-            </RelativeLayout>
+                <ImageView
+                    android:id="@+id/not_favorite_image_view"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="center_vertical"
+
+                    android:alpha="0.54"
+                    android:src="@drawable/star_border_black_16dp"
+                    />
+
+            </FrameLayout>
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:layout_margin="16dp"
+                android:alpha="0.12"
+                android:src="@drawable/right_outline_black_20dp"
+                />
 
         </LinearLayout>
 
