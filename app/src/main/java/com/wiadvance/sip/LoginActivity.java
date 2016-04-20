@@ -68,10 +68,7 @@ public class LoginActivity extends AppCompatActivity {
 
         initializeViews();
 
-        checkPermissions(
-                this,
-                android.Manifest.permission.RECORD_AUDIO
-        );
+        checkPermissions(this, android.Manifest.permission.RECORD_AUDIO);
 
         MixpanelAPI mixpanel = MixpanelAPI.getInstance(this, BuildConfig.MIXPANL_TOKEN);
         mixpanel.track(TAG, null);

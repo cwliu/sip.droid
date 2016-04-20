@@ -19,8 +19,7 @@
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
     <!-- Adjest screen brightness -->
-    <uses-permission
-        android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
 
     <!-- Filter out the device doesn't support sip -->
     <uses-feature android:name="android.hardware.sip.voip"/>
@@ -57,13 +56,10 @@
             android:name=".CallReceiverActivity"
             android:parentActivityName=".ContactActivity"
             android:screenOrientation="portrait"/>
-
         <activity
             android:name=".MakeCallActivity"
             android:screenOrientation="portrait"/>
-
         <activity android:name="com.mixpanel.android.surveys.SurveyActivity"/>
-
         <activity
             android:name=".SearchActivity"
             android:parentActivityName=".ContactActivity"/>
@@ -72,6 +68,11 @@
             android:name=".FetchPhoneContactService"
             android:exported="false"/>
 
+        <activity
+            android:name=".AddContactActivity"
+            android:parentActivityName=".ContactActivity"
+            >
+        </activity>
     </application>
 
 </manifest>

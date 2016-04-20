@@ -73,12 +73,34 @@ public class ContactFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_sip, container, false);
 
+        setupNavigationDrawer(rootView);
+        setupFloatingActionButton(rootView);
+        setupViewPager(rootView);
+
+        return rootView;
+    }
+
+    private void setupViewPager(View rootView) {
+        ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.contacts_view_pager);
+        viewPager.setAdapter(new ContactPagerAdapter(getFragmentManager()));
+
+        TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.contacts_tab_layout);
+        tabLayout.setupWithViewPager(viewPager);
+
+        if (ContactDbHelper.getInstance(getContext()).getFavoriteContacts().size() == 0) {
+            TabLayout.Tab tab = tabLayout.getTabAt(2); // go to phone contact
+            if (tab != null) {
+                tab.select();
+            }
+        }
+    }
+
+    private void setupFloatingActionButton(View rootView) {
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,34 +109,40 @@ public class ContactFragment extends Fragment {
             }
         });
 
+        FloatingActionButton addContactFab = (FloatingActionButton) rootView.findViewById(
+                R.id.add_contact_fab);
+
+        addContactFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = AddContactActivity.newIntent(getContext());
+                startActivity(intent);
+            }
+        });
+
+        FloatingActionButton scanAddContactFab = (FloatingActionButton) rootView.findViewById(
+                R.id.scan_contact_fab);
+
+        scanAddContactFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
+
+    private void setupNavigationDrawer(View rootView) {
         List<DrawerItem> items = new ArrayList<>();
         items.add(new DrawerItem("Header", R.drawable.ic_info_outline_black_24dp));
         items.add(new DrawerItem("Information", R.drawable.ic_info_outline_black_24dp));
         items.add(new DrawerItem("Logout", R.drawable.ic_exit_to_app_black_24dp));
+
         mDrawerAdapter = new DrawerItemAdapter(getContext(), items);
 
-        setupNavigationDrawer(rootView);
-
-        ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.contacts_view_pager);
-        viewPager.setAdapter(new ContactPagerAdapter(getFragmentManager()));
-
-        TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.contacts_tab_layout);
-        tabLayout.setupWithViewPager(viewPager);
-
-        if(ContactDbHelper.getInstance(getContext()).getFavoriteContacts().size() == 0){
-            TabLayout.Tab tab = tabLayout.getTabAt(2); // go to phone contact
-            if (tab != null) {
-                tab.select();
-            }
-        }
-        return rootView;
-    }
-
-    private void setupNavigationDrawer(View rootView) {
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.app_name);
 
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
         DrawerLayout drawerLayout = (DrawerLayout) rootView.findViewById(R.id.drawer_layout);
         ListView drawerList = (ListView) rootView.findViewById(R.id.left_drawer);
@@ -166,15 +194,15 @@ public class ContactFragment extends Fragment {
                     case 2:
 
                         AlertDialog.Builder logoutBuilder = new AlertDialog.Builder(getContext())
-                            .setTitle("Logout")
-                            .setMessage("Are you sure you want to logout?")
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    logout();
-                                }
-                            })
-                            .setNegativeButton("No", null);
+                                .setTitle("Logout")
+                                .setMessage("Are you sure you want to logout?")
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        logout();
+                                    }
+                                })
+                                .setNegativeButton("No", null);
                         logoutBuilder.create().show();
                         break;
                 }
@@ -331,7 +359,7 @@ public class ContactFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.search_icon:
                 Intent intent = SearchActivity.newIntent(getContext());
                 startActivity(intent);
