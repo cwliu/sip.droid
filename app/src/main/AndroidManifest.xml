@@ -72,7 +72,11 @@
             android:name=".AddContactActivity"
             android:parentActivityName=".ContactActivity">
         </activity>
-        <activity android:name=".ScanActivity">
+
+        <activity
+            android:name=".ScanActivity"
+            android:screenOrientation="portrait"
+            >
         </activity>
     </application>
 

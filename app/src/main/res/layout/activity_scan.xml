@@ -24,4 +24,18 @@
         android:layout_centerHorizontal="true"
         android:text="take a photo"
         />
+
+    <ScrollView
+        android:layout_below="@id/scan_take_photo_button"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/scan_result_textview"
+            android:layout_width="match_parent"
+            android:textIsSelectable="true"
+            android:layout_height="match_parent"/>
+
+    </ScrollView>
+
 </RelativeLayout>
