@@ -22,7 +22,7 @@
         android:layout_margin="20dp"
         android:layout_below="@id/scan_image_imageview"
         android:layout_centerHorizontal="true"
-        android:text="take a photo"
+        android:text="@string/take_namecard_photo"
         />
 
     <ScrollView
