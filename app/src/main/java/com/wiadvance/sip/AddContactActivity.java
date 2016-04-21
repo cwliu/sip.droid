@@ -9,8 +9,7 @@ import android.support.v7.widget.Toolbar;
 public class AddContactActivity extends AppCompatActivity {
 
     public static Intent newIntent(Context context) {
-        Intent intent = new Intent(context, AddContactActivity.class);
-        return intent;
+        return new Intent(context, AddContactActivity.class);
     }
 
     @Override
@@ -19,7 +18,10 @@ public class AddContactActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_contact);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.add_contact_toolbar);
-        toolbar.setTitle(R.string.app_name);
-
+        if (toolbar != null) {
+            toolbar.setTitle(R.string.app_name);
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 }

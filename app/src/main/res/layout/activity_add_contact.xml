@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GridLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:columnCount="2"
     tools:context="com.wiadvance.sip.AddContactActivity">
-
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/add_contact_toolbar"
         android:layout_width="match_parent"
         android:layout_height="56dp"
+        android:layout_columnSpan="2"
         android:background="@color/colorPrimary"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
@@ -63,4 +63,5 @@
         android:layout_gravity="bottom"
         android:text="新增"
         />
+
 </GridLayout>
