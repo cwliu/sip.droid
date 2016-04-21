@@ -57,6 +57,8 @@ public class AddContactActivity extends AppCompatActivity {
                     ContactDbHelper.getInstance(getApplicationContext()).addContact(c);
 
                     Toast.makeText(getApplicationContext(), "已成功將 " + c.getName() + " 加到通訊錄", LENGTH_LONG).show();
+
+                    NotificationUtil.phoneContactUpdate(getApplicationContext());
                     finish();
                 }
             });
