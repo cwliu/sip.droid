@@ -10,10 +10,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -23,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import ezvcard.Ezvcard;
 import ezvcard.VCard;
+import ezvcard.property.Telephone;
 import okhttp3.Call;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -200,18 +203,25 @@ public class ScanActivity extends AppCompatActivity {
 
                         VCard vcard = Ezvcard.parse(bodyString).first();
                         String name = null;
-                        if(vcard.getFormattedName() != null){
+                        if (vcard.getFormattedName() != null) {
                             name = vcard.getFormattedName().getValue();
                         }
 
                         String phone = null;
-                        if(vcard.getTelephoneNumbers().size() != 0){
+                        String listString = "辨識到的\n姓名:\n" + name + "\n電話:\n";
+                        if (vcard.getTelephoneNumbers().size() != 0) {
                             phone = vcard.getTelephoneNumbers().get(0).getText();
+                            for (Telephone s : vcard.getTelephoneNumbers()) {
+                                listString += s.getText() + " " + TextUtils.join(", ", s.getTypes()) + "\n";
+                            }
                         }
+                        NotificationUtil.displayStatus(ScanActivity.this, listString);
+                        TextView view = (TextView) findViewById(R.id.scan_result_textview);
+                        view.setText(listString);
 
-                        if(name == null && phone == null){
+                        if (name == null && phone == null) {
                             NotificationUtil.displayStatus(ScanActivity.this, "名片辨識失敗");
-                        }else{
+                        } else {
                             Intent intent = AddContactActivity.newIntent(ScanActivity.this, name, phone);
                             startActivity(intent);
                         }
