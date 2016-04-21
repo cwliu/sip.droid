@@ -105,7 +105,7 @@ public class ContactFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "test", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "To do", Toast.LENGTH_SHORT).show();
             }
         });
 
