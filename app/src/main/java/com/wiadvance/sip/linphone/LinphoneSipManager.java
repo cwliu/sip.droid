@@ -117,7 +117,7 @@ public class LinphoneSipManager extends WiSipManager {
 
                     String sipNumber = contact.getSip();
                     if (sipNumber == null) {
-                        NotificationUtil.displayStatus(mContext, "This user has no sip number");
+//                        NotificationUtil.displayStatus(mContext, "This user has no sip number");
                     } else {
                         NotificationUtil.notifyCallStatus(mContext, true, "SIP Dialing", true);
                         mHasConnected = call(sipNumber, true);

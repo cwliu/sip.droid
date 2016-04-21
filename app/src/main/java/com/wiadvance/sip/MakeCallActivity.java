@@ -1,5 +1,6 @@
 package com.wiadvance.sip;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -35,7 +36,6 @@ public class MakeCallActivity extends AppCompatActivity implements SensorEventLi
 
     private LinphoneSipManager mWiSipManager;
     private Contact mCallee;
-    private BroadcastReceiver mCallStatusReceiver;
 
     private boolean isEndedByCaller;
     private boolean isCalling;
@@ -67,7 +67,6 @@ public class MakeCallActivity extends AppCompatActivity implements SensorEventLi
         initView();
 
         mWiSipManager = new LinphoneSipManager(this);
-        mWiSipManager.makeCall(mCallee);
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mProximitySensor = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
@@ -108,6 +107,7 @@ public class MakeCallActivity extends AppCompatActivity implements SensorEventLi
         isCalling = true;
         final Handler dotAnimationHandler = new Handler();
         Runnable task = new Runnable() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void run() {
                 String s = mCallStatusAnimation.getText().toString();
@@ -129,51 +129,14 @@ public class MakeCallActivity extends AppCompatActivity implements SensorEventLi
     public void onStart() {
         super.onStart();
 
-        mCallStatusReceiver = new BroadcastReceiver() {
 
-            @Override
-            public void onReceive(final Context context, Intent intent) {
-                boolean on = intent.getBooleanExtra(NotificationUtil.NOTIFY_CALL_ON, false);
-                if (on) {
-                    isCalling = true;
-                    String status = intent.getStringExtra(NotificationUtil.NOTIFY_CALL_STATUS);
-                    if (status != null) {
-                        mCallStatus.setText(status);
-                    }
-
-                    boolean isSip = intent.getBooleanExtra(NotificationUtil.NOTIFY_CALL_IS_SIP, true);
-                    if (status != null && !isSip) {
-                        findViewById(R.id.sip_phone_icon_imageView).setVisibility(View.GONE);
-                    }
-
-                } else {
-                    isCalling = false;
-                    if (mWiSipManager.triedSip()) {
-                        mCallStatus.setText("Call Ended");
-
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (mWiSipManager.isHasConnected()) {
-                                    Toast.makeText(context, "Call ended", Toast.LENGTH_SHORT).show();
-                                } else if (isEndedByCaller) {
-                                    //Nothing need to do
-                                } else {
-                                    Toast.makeText(context, "No one answered the phone", Toast.LENGTH_SHORT).show();
-                                }
-
-                                finish();
-                            }
-                        }, 1200);
-                    }
-                }
-            }
-        };
         IntentFilter notify_filter = new IntentFilter(NotificationUtil.ACTION_CALL_STATUS_CHANGED);
         LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
         manager.registerReceiver(mCallStatusReceiver, notify_filter);
 
         mSensorManager.registerListener(this, mProximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
+
+        mWiSipManager.makeCall(mCallee);
     }
 
     @Override
@@ -217,4 +180,48 @@ public class MakeCallActivity extends AppCompatActivity implements SensorEventLi
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
+
+    private BroadcastReceiver mCallStatusReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(final Context context, Intent intent) {
+            boolean on = intent.getBooleanExtra(NotificationUtil.NOTIFY_CALL_ON, false);
+            if (on) {
+                isCalling = true;
+                String status = intent.getStringExtra(NotificationUtil.NOTIFY_CALL_STATUS);
+                if (status != null) {
+                    mCallStatus.setText(status);
+                }
+
+                boolean isSip = intent.getBooleanExtra(NotificationUtil.NOTIFY_CALL_IS_SIP, true);
+                if (status != null && !isSip) {
+                    View v = findViewById(R.id.sip_phone_icon_imageView);
+                    if(v != null){
+                        v.setVisibility(View.GONE);
+                    }
+                }
+
+            } else {
+                isCalling = false;
+                if (mWiSipManager.triedSip()) {
+                    mCallStatus.setText(R.string.call_end);
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mWiSipManager.isHasConnected()) {
+                                Toast.makeText(context, R.string.call_end, Toast.LENGTH_SHORT).show();
+                            } else if (isEndedByCaller) {
+                                //Nothing need to do
+                            } else {
+                                Toast.makeText(context, "No one answered the phone", Toast.LENGTH_SHORT).show();
+                            }
+
+                            finish();
+                        }
+                    }, 1200);
+                }
+            }
+        }
+    };
 }
