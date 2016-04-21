@@ -30,30 +30,31 @@
         />
 
     <TextView
-        android:id="@+id/add_contact_email_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Email:"
-        />
-
-    <EditText
-        android:id="@+id/add_contact_email_edittext"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
-        />
-
-    <TextView
-        android:id="@+id/add_contact_photo_textview"
+        android:id="@+id/add_contact_phone_textview"
         android:layout_height="wrap_content"
         android:text="Phone:"
         />
 
     <EditText
-        android:id="@+id/add_contact_photo_edittext"
+        android:id="@+id/add_contact_phone_edittext"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
+        android:inputType="phone"
         />
+
+    <!--<TextView-->
+        <!--android:id="@+id/add_contact_email_textview"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Email:"-->
+        <!--/>-->
+
+    <!--<EditText-->
+        <!--android:id="@+id/add_contact_email_edittext"-->
+        <!--android:layout_width="250dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:inputType="textEmailAddress"-->
+        <!--/>-->
 
     <Button
         android:id="@+id/add_contact_create_button"

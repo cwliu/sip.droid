@@ -65,8 +65,20 @@ public class ContactDbHelper {
     }
 
     public List<Contact> getPhoneContacts() {
+        String whereClause = ContactTable.Cols.TYPE + " = ? OR " +
+                ContactTable.Cols.TYPE + " = ? ";
+        String[] whereArgs = new String[]{String.valueOf(Contact.TYPE_PHONE),
+                String.valueOf(Contact.TYPE_PHONE_MANUAL)};
+
+        String orderBy = ContactTable.Cols.NAME + " ASC";
+
+        ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, orderBy);
+        return getContacts(contactCursorWrapper);
+    }
+
+    public List<Contact> getPhoneManualContacts() {
         String whereClause = ContactTable.Cols.TYPE + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(Contact.TYPE_PHONE)};
+        String[] whereArgs = new String[]{String.valueOf(Contact.TYPE_PHONE_MANUAL)};
         String orderBy = ContactTable.Cols.NAME + " ASC";
 
         ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, orderBy);

@@ -19,6 +19,7 @@ public class Contact {
     public static int TYPE_RECENT = 2;
     public static int TYPE_PHONE = 3;
     public static int TYPE_COMPANY = 4;
+    public static int TYPE_PHONE_MANUAL = 5;
 
     public Contact(String name) {
         this(name, null);
@@ -65,7 +66,7 @@ public class Contact {
         mPhotoUri = photoUri.toString();
     }
 
-    public void setPhotoUri(String photoUri){
+    public void setPhotoUri(String photoUri) {
         mPhotoUri = photoUri;
     }
 

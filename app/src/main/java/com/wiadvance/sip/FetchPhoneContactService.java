@@ -21,7 +21,7 @@ public class FetchPhoneContactService extends IntentService {
         super("FetchPhoneContactService");
     }
 
-    public static Intent newIntent(Context context){
+    public static Intent newIntent(Context context) {
         return new Intent(context, FetchPhoneContactService.class);
     }
 
@@ -33,39 +33,40 @@ public class FetchPhoneContactService extends IntentService {
 
         String orderBy = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME;
         Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, orderBy);
-        if (phones != null) {
-            {
-                int i = 1;
-                String lastName = "";
-                try {
-                    while (phones.moveToNext()) {
-                        String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-
-                        if (name.equals(lastName)) {
-                            name = lastName + "-" + ++i;
-                        } else {
-                            lastName = name;
-                            i = 1;
-                        }
-
-                        String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                        Contact c = new Contact(name);
-                        c.setPhone(phoneNumber);
-                        Uri uri = getPhotoUri(phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)));
-                        if (uri != null) {
-                            c.setPhotoUri(uri);
-                        }
-                        c.setType(Contact.TYPE_PHONE);
-                        contactList.add(c);
-                    }
-                } finally {
-                    phones.close();
-                }
-            }
+        if (phones == null) {
+            return;
         }
 
-//        UserData.sPhoneContactList.clear();
-//        UserData.sPhoneContactList.addAll(contactList);
+        int phone_index = 1;
+        String lastName = "";
+        try {
+            while (phones.moveToNext()) {
+                String name = phones.getString(phones.getColumnIndex(
+                        ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+
+                if (name.equals(lastName)) {
+                    name = lastName + "-" + ++phone_index;
+                } else {
+                    lastName = name;
+                    phone_index = 1;
+                }
+
+                String phoneNumber = phones.getString(
+                        phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+
+                Contact c = new Contact(name);
+                c.setPhone(phoneNumber);
+                Uri uri = getPhotoUri(phones.getString(
+                        phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)));
+                if (uri != null) {
+                    c.setPhotoUri(uri);
+                }
+                c.setType(Contact.TYPE_PHONE);
+                contactList.add(c);
+            }
+        } finally {
+            phones.close();
+        }
 
         ContactDbHelper.getInstance(this).removePhoneContacts();
         ContactDbHelper.getInstance(this).addContactList(contactList);
