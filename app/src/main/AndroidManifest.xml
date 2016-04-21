@@ -14,9 +14,9 @@
 
     <!-- Mixpanel -->
     <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
     <!-- Adjest screen brightness -->
     <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
@@ -70,8 +70,9 @@
 
         <activity
             android:name=".AddContactActivity"
-            android:parentActivityName=".ContactActivity"
-            >
+            android:parentActivityName=".ContactActivity">
+        </activity>
+        <activity android:name=".ScanActivity">
         </activity>
     </application>
 

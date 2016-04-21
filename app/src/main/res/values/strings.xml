@@ -7,4 +7,6 @@
     <string name="navigation_drawer_close">close</string>
     <string name="search_hint">Search contact</string>
     <string name="call_end">Call Ended</string>
+    <string name="no_camera_app">無可拍照的應用程式</string>
+    <string name="create_image_failed">建立檔案錯誤</string>
 </resources>

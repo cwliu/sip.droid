@@ -127,6 +127,8 @@ public class ContactFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
+                Intent intent = ScanActivity.newIntent(getContext());
+                startActivity(intent);
             }
         });
     }
