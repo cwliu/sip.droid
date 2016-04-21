@@ -46,34 +46,29 @@ dependencies {
     // Azure Active Directory Library
     compile 'com.microsoft.aad:adal:1.1.7'
     compile 'com.android.support:recyclerview-v7:23.2.1'
-
     // Retrofit + custom HTTP
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
     compile 'com.squareup.okhttp:okhttp:2.4.0'
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'com.google.code.gson:gson:2.6.2'
-
     // Crashlytics
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
     // Mixpanel
     compile 'com.mixpanel.android:mixpanel-android:4.8.0'
-
     // Circular image ivew
     compile 'de.hdodenhof:circleimageview:2.0.0'
-
     // Image cache
     compile 'com.squareup.picasso:picasso:2.5.2'
-
     // For using bimap
     compile 'com.google.guava:guava:19.0'
-
     // For swipelayout
     compile 'com.android.support:support-v4:23.2.1'
-    compile "com.daimajia.swipelayout:library:1.2.0@aar"
-
+    compile 'com.daimajia.swipelayout:library:1.2.0@aar'
     // For snackbar
     compile 'com.android.support:design:23.2.1'
+
+
 }

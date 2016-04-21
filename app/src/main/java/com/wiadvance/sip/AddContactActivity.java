@@ -17,8 +17,18 @@ import static android.widget.Toast.LENGTH_LONG;
 
 public class AddContactActivity extends AppCompatActivity {
 
+    private static final String ARG_NAME = "ARG_NAME";
+    private static final String ARG_PHONE = "ARG_PHONE";
+
     public static Intent newIntent(Context context) {
         return new Intent(context, AddContactActivity.class);
+    }
+
+    public static Intent newIntent(Context context, String name, String phone) {
+        Intent intent = new Intent(context, AddContactActivity.class);
+        intent.putExtra(ARG_NAME, name);
+        intent.putExtra(ARG_PHONE, phone);
+        return intent;
     }
 
     @Override
@@ -26,13 +36,22 @@ public class AddContactActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_contact);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.add_contact_toolbar);
-        if (toolbar != null) {
-            toolbar.setTitle(R.string.app_name);
-            setSupportActionBar(toolbar);
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            }
+        setupToolbar();
+        setupViewEvents();
+    }
+
+    private void setupViewEvents() {
+
+        final EditText nameEditText = (EditText) findViewById(R.id.add_contact_name_edittext);
+        final EditText phoneEditText = (EditText) findViewById(R.id.add_contact_phone_edittext);
+
+        String name = getIntent().getStringExtra(ARG_NAME);
+        if (nameEditText != null) {
+            nameEditText.setText(name);
+        }
+        String phone = getIntent().getStringExtra(ARG_PHONE);
+        if (phoneEditText != null) {
+            phoneEditText.setText(phone);
         }
 
         Button button = (Button) findViewById(R.id.add_contact_create_button);
@@ -40,8 +59,6 @@ public class AddContactActivity extends AppCompatActivity {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    EditText nameEditText = (EditText) findViewById(R.id.add_contact_name_edittext);
-                    EditText phoneEditText = (EditText) findViewById(R.id.add_contact_phone_edittext);
 
                     String name = nameEditText != null ? nameEditText.getText().toString() : null;
                     String phone = phoneEditText != null ? phoneEditText.getText().toString() : null;
@@ -62,6 +79,14 @@ public class AddContactActivity extends AppCompatActivity {
                     finish();
                 }
             });
+        }
+    }
+
+    private void setupToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.add_contact_toolbar);
+        if (toolbar != null) {
+            toolbar.setTitle(R.string.app_name);
+            setSupportActionBar(toolbar);
         }
     }
 }

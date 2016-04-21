@@ -57,9 +57,14 @@ public class ContactDbHelper {
 
     public List<Contact> getAllContacts() {
         String whereClause = ContactTable.Cols.TYPE + " = ? OR " +
-                ContactTable.Cols.TYPE + " = ? ";
-        String[] whereArgs = new String[]{String.valueOf(Contact.TYPE_COMPANY),
-                String.valueOf(Contact.TYPE_PHONE)};
+                ContactTable.Cols.TYPE + " = ? OR " +
+                ContactTable.Cols.TYPE + " = ?";
+
+        String[] whereArgs = new String[]{
+                String.valueOf(Contact.TYPE_COMPANY),
+                String.valueOf(Contact.TYPE_PHONE),
+                String.valueOf(Contact.TYPE_PHONE_MANUAL)
+        };
         ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, null);
         return getContacts(contactCursorWrapper);
     }

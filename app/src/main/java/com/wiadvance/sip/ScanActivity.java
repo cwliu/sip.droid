@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -22,6 +21,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import ezvcard.Ezvcard;
+import ezvcard.VCard;
 import okhttp3.Call;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -143,11 +144,19 @@ public class ScanActivity extends AppCompatActivity {
                 .readTimeout(60, TimeUnit.SECONDS)
                 .build();
 
+
+        final View progress_bar = findViewById(R.id.add_contact_progress_bar);
+        if (progress_bar == null) {
+            return;
+        }
+        progress_bar.setVisibility(View.VISIBLE);
+        progress_bar.bringToFront();
+
         RequestBody requestBody = null;
         try {
             requestBody = RequestBody.create(MediaType.parse("image/jpg"), createImageFile(mResizeImageFileName));
         } catch (IOException e) {
-            Log.e(TAG, "namecardRecognition: ", e);
+            Log.e(TAG, "Name card recognition error:", e);
             return;
         }
 
@@ -165,6 +174,10 @@ public class ScanActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.d(TAG, "onFailure() called with: " + "call = [" + call + "], e = [" + e + "]");
+                progress_bar.setVisibility(View.GONE);
+                NotificationUtil.displayStatus(ScanActivity.this,
+                        getString(R.string.bcr_error) + e);
+                return;
             }
 
             @SuppressLint("SetTextI18n")
@@ -172,17 +185,36 @@ public class ScanActivity extends AppCompatActivity {
             public void onResponse(Call call, final okhttp3.Response response) throws IOException {
                 Log.d(TAG, "onResponse() called with: " + "call = [" + call + "], response = [" + response + "]");
 
-                final String rawBodyString = response.body().string();
+                final String bodyString = response.body().string();
+
+                if (!response.isSuccessful()) {
+                    NotificationUtil.displayStatus(ScanActivity.this,
+                            getString(R.string.bcr_error) + response.body().string());
+                    return;
+                }
 
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        TextView textView = (TextView) findViewById(R.id.scan_result_textview);
-                        Log.d(TAG, rawBodyString);
-                        if (textView != null) {
-                            textView.setText(response.code() + "\n" + rawBodyString);
+                        progress_bar.setVisibility(View.GONE);
+
+                        VCard vcard = Ezvcard.parse(bodyString).first();
+                        String name = null;
+                        if(vcard.getFormattedName() != null){
+                            name = vcard.getFormattedName().getValue();
                         }
 
+                        String phone = null;
+                        if(vcard.getTelephoneNumbers().size() != 0){
+                            phone = vcard.getTelephoneNumbers().get(0).getText();
+                        }
+
+                        if(name == null && phone == null){
+                            NotificationUtil.displayStatus(ScanActivity.this, "名片辨識失敗");
+                        }else{
+                            Intent intent = AddContactActivity.newIntent(ScanActivity.this, name, phone);
+                            startActivity(intent);
+                        }
                     }
                 });
             }

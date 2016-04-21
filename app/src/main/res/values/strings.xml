@@ -9,4 +9,5 @@
     <string name="call_end">Call Ended</string>
     <string name="no_camera_app">無可拍照的應用程式</string>
     <string name="create_image_failed">建立檔案錯誤</string>
+    <string name="bcr_error">名片辨識發生錯誤</string>
 </resources>

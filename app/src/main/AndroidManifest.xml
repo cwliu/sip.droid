@@ -69,15 +69,12 @@
             android:exported="false"/>
 
         <activity
-            android:name=".AddContactActivity"
-            android:parentActivityName=".ContactActivity">
-        </activity>
+            android:name=".AddContactActivity"/>
 
         <activity
             android:name=".ScanActivity"
-            android:screenOrientation="portrait"
-            >
-        </activity>
+            android:screenOrientation="portrait"/>
+
     </application>
 
 </manifest>
