@@ -39,6 +39,11 @@
         <item name="android:textSize">12pt</item>
     </style>
 
+    <style name="textSub" parent="textRegular">
+        <item name="android:textSize">14sp</item>
+        <item name="android:alpha">0.54</item>
+    </style>
+
     <style name="button" parent="@style/Widget.AppCompat.Button">
         <!--<item name="android:background">@android:color/white</item>-->
         <!--<item name="android:textColor">@color/blue</item>-->
