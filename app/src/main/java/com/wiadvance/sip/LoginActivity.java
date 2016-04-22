@@ -64,14 +64,16 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
-        setContentView(R.layout.activity_login);
 
+        setContentView(R.layout.activity_login);
         initializeViews();
 
-        checkPermissions(this, android.Manifest.permission.RECORD_AUDIO);
+        AuthenticationManager.getInstance().setContextActivity(this);
 
         MixpanelAPI mixpanel = MixpanelAPI.getInstance(this, BuildConfig.MIXPANL_TOKEN);
         mixpanel.track(TAG, null);
+
+        checkPermissions(this, android.Manifest.permission.RECORD_AUDIO);
     }
 
     private void initializeViews() {
@@ -102,15 +104,16 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLoginButtonClick(View view) {
         Log.d(TAG, "onLoginButtonClick() called with: " + "view = [" + view + "]");
-        showLoading(true);
+        login();
+    }
 
+    private void login() {
+        showLoading(true);
         checkO365Config();
-        setupPicasso();
         o365login();
     }
 
     private void o365login() {
-        AuthenticationManager.getInstance().setContextActivity(this);
         AuthenticationManager.getInstance().connect(new AuthenticationCallback<AuthenticationResult>() {
             @Override
             public void onSuccess(AuthenticationResult result) {
@@ -161,7 +164,7 @@ public class LoginActivity extends AppCompatActivity {
                 .listener(new Picasso.Listener() {
                     @Override
                     public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                        if(exception.toString().contains("404 Not Found")){
+                        if (exception.toString().contains("404 Not Found")) {
                             UserData.sAvatar404Cache.add(uri.toString());
                         }
                         Log.d(TAG, "onImageLoadFailed() called with: " + "picasso = [" + picasso + "], uri = [" + uri + "], exception = [" + exception + "]");
@@ -218,6 +221,10 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (AuthenticationManager.getInstance().isConnected()) {
+            login();
+        }
     }
 
     private boolean checkPermissions(Context context, String... permissions) {

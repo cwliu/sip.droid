@@ -271,7 +271,7 @@ public class AuthenticationManager {
         return true;
     }
 
-    private boolean isConnected() {
+    public boolean isConnected() {
         SharedPreferences settings = this
                 .mContextActivity
                 .getSharedPreferences(PREFERENCES_FILENAME, Context.MODE_PRIVATE);
