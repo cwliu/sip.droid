@@ -32,7 +32,7 @@ public class PhoneContactFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_contact, container, false);
 
         mProgressBar = rootView.findViewById(R.id.contacts_loading_progress_bar);
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.contacts_recycler_view);
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.contacts_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         mContactAdapter = new PhoneContactAdapter(getActivity());

@@ -84,6 +84,82 @@ public class ContactFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        try {
+            LinphoneCore lc = LinphoneCoreHelper.getLinphoneCoreInstance(getContext());
+            mLinPhoneListener = new LinphoneCoreListenerBase() {
+                @Override
+                public void registrationState(LinphoneCore lc, LinphoneProxyConfig cfg, LinphoneCore.RegistrationState state, final String message) {
+
+                    if (state.equals(LinphoneCore.RegistrationState.RegistrationOk)) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mDrawerAdapter != null) {
+                                    mDrawerAdapter.notifyDataSetChanged();
+                                }
+                            }
+                        });
+                    }
+
+                    if (state.equals(LinphoneCore.RegistrationState.RegistrationFailed)) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mDrawerAdapter != null) {
+                                    mDrawerAdapter.notifyDataSetChanged();
+                                }
+                                NotificationUtil.displayStatus(getContext(), "Sip registration error: " + message);
+                            }
+                        });
+                    }
+                }
+            };
+            lc.addListener(mLinPhoneListener);
+
+        } catch (LinphoneCoreException e) {
+            e.printStackTrace();
+        }
+
+        getSipAccounts();
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        try {
+            LinphoneCore lc = LinphoneCoreHelper.getLinphoneCoreInstance(getContext());
+            lc.removeListener(mLinPhoneListener);
+
+        } catch (LinphoneCoreException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.fragment_sip, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.search_icon:
+                Intent intent = SearchActivity.newIntent(getContext());
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     private void setupViewPager(View rootView) {
         ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.contacts_view_pager);
         viewPager.setAdapter(new ContactPagerAdapter(getFragmentManager()));
@@ -145,7 +221,9 @@ public class ContactFragment extends Fragment {
 
     private void setupNavigationDrawer(View rootView) {
         List<DrawerItem> items = new ArrayList<>();
+
         items.add(new DrawerItem("Header", R.drawable.ic_info_outline_black_24dp));
+        items.add(new DrawerItem("History", R.drawable.ic_history_black_24dp));
         items.add(new DrawerItem("Information", R.drawable.ic_info_outline_black_24dp));
         items.add(new DrawerItem("Logout", R.drawable.ic_exit_to_app_black_24dp));
 
@@ -153,7 +231,6 @@ public class ContactFragment extends Fragment {
 
         Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.app_name);
-
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
         DrawerLayout drawerLayout = (DrawerLayout) rootView.findViewById(R.id.drawer_layout);
@@ -164,8 +241,7 @@ public class ContactFragment extends Fragment {
                 (DrawerLayout) rootView.findViewById(R.id.drawer_layout),
                 toolbar,
                 R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close
-        ) {
+                R.string.navigation_drawer_close) {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
@@ -181,103 +257,10 @@ public class ContactFragment extends Fragment {
         drawerLayout.setDrawerListener(drawerToggle);
 
         drawerList.setAdapter(mDrawerAdapter);
-
         drawerList.setBackgroundColor(getResources().getColor(R.color.beige));
-
-        drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch (position) {
-                    case 1:
-                        int versionCode = BuildConfig.VERSION_CODE;
-                        String versionName = BuildConfig.VERSION_NAME;
-
-                        final String message = "Version: " + versionName + "." + versionCode + "\n"
-                                + "Sip Number: " + UserData.getSip(getContext()) + "\n"
-                                + "Email: " + UserData.getEmail(getContext()) + "\n";
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder(
-                                getContext()).setTitle("Information")
-                                .setMessage(message)
-                                .setPositiveButton("ok", null);
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-                        break;
-                    case 2:
-
-                        AlertDialog.Builder logoutBuilder = new AlertDialog.Builder(getContext())
-                                .setTitle("Logout")
-                                .setMessage("Are you sure you want to logout?")
-                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        logout();
-                                    }
-                                })
-                                .setNegativeButton("No", null);
-                        logoutBuilder.create().show();
-                        break;
-                }
-            }
-        });
+        drawerList.setOnItemClickListener(mDrawerItemClickListener);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        try {
-            LinphoneCore lc = LinphoneCoreHelper.getLinphoneCoreInstance(getContext());
-            mLinPhoneListener = new LinphoneCoreListenerBase() {
-                @Override
-                public void registrationState(LinphoneCore lc, LinphoneProxyConfig cfg, LinphoneCore.RegistrationState state, final String message) {
-
-                    if (state.equals(LinphoneCore.RegistrationState.RegistrationOk)) {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (mDrawerAdapter != null) {
-                                    mDrawerAdapter.notifyDataSetChanged();
-                                }
-                            }
-                        });
-                    }
-
-                    if (state.equals(LinphoneCore.RegistrationState.RegistrationFailed)) {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (mDrawerAdapter != null) {
-                                    mDrawerAdapter.notifyDataSetChanged();
-                                }
-                                NotificationUtil.displayStatus(getContext(), "Sip registration error: " + message);
-                            }
-                        });
-                    }
-                }
-            };
-            lc.addListener(mLinPhoneListener);
-
-        } catch (LinphoneCoreException e) {
-            e.printStackTrace();
-        }
-
-        getSipAccounts();
-
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        try {
-            LinphoneCore lc = LinphoneCoreHelper.getLinphoneCoreInstance(getContext());
-            lc.removeListener(mLinPhoneListener);
-
-        } catch (LinphoneCoreException e) {
-            e.printStackTrace();
-        }
-    }
 
     private void getSipAccounts() {
         OkHttpClient client = new OkHttpClient();
@@ -362,22 +345,44 @@ public class ContactFragment extends Fragment {
         startActivity(intent);
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.fragment_sip, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
+    private AdapterView.OnItemClickListener mDrawerItemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            switch (position) {
+                case 1:
+                    Intent intent = CallLogActivity.newIntent(getContext());
+                    startActivity(intent);
+                    break;
+                case 2:
+                    int versionCode = BuildConfig.VERSION_CODE;
+                    String versionName = BuildConfig.VERSION_NAME;
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+                    final String message = "Version: " + versionName + "." + versionCode + "\n"
+                            + "Sip Number: " + UserData.getSip(getContext()) + "\n"
+                            + "Email: " + UserData.getEmail(getContext()) + "\n";
 
-        switch (item.getItemId()) {
-            case R.id.search_icon:
-                Intent intent = SearchActivity.newIntent(getContext());
-                startActivity(intent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(
+                            getContext()).setTitle("Information")
+                            .setMessage(message)
+                            .setPositiveButton("ok", null);
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                    break;
+                case 3:
+
+                    AlertDialog.Builder logoutBuilder = new AlertDialog.Builder(getContext())
+                            .setTitle("Logout")
+                            .setMessage("Are you sure you want to logout?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    logout();
+                                }
+                            })
+                            .setNegativeButton("No", null);
+                    logoutBuilder.create().show();
+                    break;
+            }
         }
-    }
+    };
 }

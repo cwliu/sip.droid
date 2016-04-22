@@ -46,7 +46,7 @@ public class CompanyContactFragment extends Fragment {
 
         mLoadingProgress = (ProgressBar) rootView.findViewById(R.id.contacts_loading_progress_bar);
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.contacts_recycler_view);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.contacts_recyclerview);
         mAdapter = new CompanyContactAdapter(getActivity());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mAdapter);

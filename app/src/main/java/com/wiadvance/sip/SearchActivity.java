@@ -3,11 +3,7 @@ package com.wiadvance.sip;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,37 +14,21 @@ import com.wiadvance.sip.model.Contact;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AbstractToolbarContactActivity {
 
-    private String TAG = "SearchActivity";
-
-    private SearchContactAdapter mRecyclerViewAdapter;
     private List<Contact> mSearchResultList = new ArrayList<>();
+    private SearchContactAdapter mRecyclerViewAdapter;
 
     public static Intent newIntent(Context context) {
         return new Intent(context, SearchActivity.class);
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mRecyclerViewAdapter = new SearchContactAdapter(this);
+
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.search_activity_toolbar);
-        setSupportActionBar(toolbar);
-
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.search_activity_contacts_recycler_view);
-        if (recyclerView != null) {
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            mRecyclerViewAdapter = new SearchContactAdapter(this);
-            recyclerView.setAdapter(mRecyclerViewAdapter);
-        }
-
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
-        }
-
     }
 
     @Override
@@ -89,7 +69,17 @@ public class SearchActivity extends AppCompatActivity {
                 mSearchResultList.add(c);
             }
         }
-        mRecyclerViewAdapter.notifyDataSetChanged();
+        getRecyclerViewAdapter().notifyDataSetChanged();
+    }
+
+    @Override
+    int getLayout() {
+        return R.layout.activity_search;
+    }
+
+    @Override
+    public AbstractContactAdapter getRecyclerViewAdapter() {
+        return mRecyclerViewAdapter;
     }
 
     class SearchContactAdapter extends AbstractContactAdapter {

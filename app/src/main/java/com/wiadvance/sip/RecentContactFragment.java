@@ -24,7 +24,7 @@ public class RecentContactFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_contact, container, false);
 
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.contacts_recycler_view);
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.contacts_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         mAdapter = new RecentContactAdapter(getActivity());
