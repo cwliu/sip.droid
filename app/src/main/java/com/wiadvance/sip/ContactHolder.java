@@ -1,7 +1,6 @@
 package com.wiadvance.sip;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -51,21 +50,19 @@ public class ContactHolder extends RecyclerView.ViewHolder {
         mNameTextView.setText(contact.getName());
 
         int scale = Utils.getDeviceScale(mContext);
-        if(!UserData.sAvatar404Cache.contains(contact.getPhotoUri())){
+        if (!UserData.sAvatar404Cache.contains(contact.getPhotoUri())) {
             Picasso.with(mContext).load(contact.getPhotoUri()).resize(40 * scale, 40 * scale)
                     .placeholder(R.drawable.avatar_120dp).into(mAvatar);
-        }else{
+        } else {
             mAvatar.setImageResource(R.drawable.avatar_120dp);
         }
-
 
         mPhoneImageview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                call(contact);
+                PhoneUtils.call(mContext, contact);
             }
         });
-
 
         mRootItemSwipeLayoutView.setLeftSwipeEnabled(false);
         mRootItemSwipeLayoutView.setRightSwipeEnabled(false);
@@ -73,7 +70,7 @@ public class ContactHolder extends RecyclerView.ViewHolder {
             @Override
             public boolean onLongClick(View v) {
                 if (!isSwiping) {
-                    call(contact);
+                    PhoneUtils.call(mContext, contact);
                 }
                 return true;
             }
@@ -135,10 +132,5 @@ public class ContactHolder extends RecyclerView.ViewHolder {
             mRootItemSwipeLayoutView.open(true);
             isButtonDisplayed = true;
         }
-    }
-
-    private void call(Contact contact) {
-        Intent intent = MakeCallActivity.newIntent(mContext, contact);
-        mContext.startActivity(intent);
     }
 }

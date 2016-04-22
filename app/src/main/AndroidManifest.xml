@@ -77,6 +77,6 @@
         <activity
             android:name=".CallLogActivity"
             android:parentActivityName=".ContactActivity"/>
-        
+
     </application>
 </manifest>
