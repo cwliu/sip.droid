@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.wiadvance.sip.db.ContactDbHelper;
 import com.wiadvance.sip.model.Contact;
 
 import java.util.ArrayList;
@@ -22,27 +23,32 @@ public class CallLogActivity extends AbstractToolbarContactActivity {
     protected void onCreate(Bundle savedInstanceState) {
         mRecyclerViewAdapter = new CallLogAdapter(this);
 
-        setContentView(R.layout.activity_histoy);
+        setContentView(R.layout.activity_calllog);
 
         super.onCreate(savedInstanceState);
     }
 
     @Override
     int getLayout() {
-        return R.layout.activity_histoy;
+        return R.layout.activity_calllog;
     }
 
     @Override
     public AbstractContactAdapter getRecyclerViewAdapter() {
-        return null;
+        return mRecyclerViewAdapter;
     }
 
     class CallLogAdapter extends AbstractContactAdapter {
 
         public CallLogAdapter(Context context) {
             super(context);
-//            mSearchResultList.addAll(ContactDbHelper.getInstance(SearchActivity.this).getAllContacts());
+            mCallLogList.addAll(ContactDbHelper.getInstance(CallLogActivity.this).getAllContacts());
             setContactList(mCallLogList);
+        }
+
+        @Override
+        public int getLayout() {
+            return R.layout.list_item_calllog;
         }
     }
 }

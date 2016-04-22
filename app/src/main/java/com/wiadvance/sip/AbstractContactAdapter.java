@@ -33,7 +33,7 @@ abstract public class AbstractContactAdapter extends RecyclerView.Adapter<Contac
 
     @Override
     public ContactHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rootView = LayoutInflater.from(mContext).inflate(R.layout.list_item_contact, parent, false);
+        View rootView = LayoutInflater.from(mContext).inflate(getLayout(), parent, false);
         return new ContactHolder(mContext, rootView);
     }
 
@@ -45,5 +45,9 @@ abstract public class AbstractContactAdapter extends RecyclerView.Adapter<Contac
     @Override
     public int getItemCount() {
         return getContactList().size();
+    }
+
+    public int getLayout() {
+        return R.layout.list_item_contact;
     }
 }
