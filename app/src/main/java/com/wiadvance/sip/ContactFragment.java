@@ -22,7 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -101,16 +100,30 @@ public class ContactFragment extends Fragment {
     }
 
     private void setupFloatingActionButton(View rootView) {
-        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        final FloatingActionButton fab_open = (FloatingActionButton) rootView.findViewById(R.id.fab_open);
+        final FloatingActionButton fab_close = (FloatingActionButton) rootView.findViewById(R.id.fab_close);
+        final FloatingActionButton addContactFab = (FloatingActionButton) rootView.findViewById(R.id.add_contact_fab);
+        final FloatingActionButton scanAddContactFab = (FloatingActionButton) rootView.findViewById(R.id.scan_contact_fab);
+
+        fab_open.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "To do", Toast.LENGTH_SHORT).show();
+                fab_open.setVisibility(View.GONE);
+                fab_close.setVisibility(View.VISIBLE);
+                addContactFab.setVisibility(View.VISIBLE);
+                scanAddContactFab.setVisibility(View.VISIBLE);
             }
         });
 
-        FloatingActionButton addContactFab = (FloatingActionButton) rootView.findViewById(
-                R.id.add_contact_fab);
+        fab_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fab_open.setVisibility(View.VISIBLE);
+                fab_close.setVisibility(View.GONE);
+                addContactFab.setVisibility(View.GONE);
+                scanAddContactFab.setVisibility(View.GONE);
+            }
+        });
 
         addContactFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,9 +132,6 @@ public class ContactFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
-        FloatingActionButton scanAddContactFab = (FloatingActionButton) rootView.findViewById(
-                R.id.scan_contact_fab);
 
         scanAddContactFab.setOnClickListener(new View.OnClickListener() {
             @Override

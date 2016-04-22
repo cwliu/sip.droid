@@ -59,6 +59,7 @@
             android:src="@drawable/camera_white_green_48dp"
             app:backgroundTint="@color/white"
             app:fabSize="mini"
+            android:visibility="gone"
             app:borderWidth="0dp"/>
 
         <android.support.design.widget.FloatingActionButton
@@ -72,18 +73,32 @@
             android:scaleType="centerCrop"
             app:fabSize="mini"
             android:src="@drawable/edit_white_green_48dp"
+            android:visibility="gone"
             app:backgroundTint="@color/white"/>
 
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
+            android:id="@+id/fab_open"
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:layout_gravity="bottom|right"
             android:layout_margin="16dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_add_white_48dp"
+            android:visibility="visible"
             app:backgroundTint="@color/green"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_close"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="16dp"
+            android:scaleType="centerCrop"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:visibility="gone"
+            app:backgroundTint="@color/green"/>
+
 
     </FrameLayout>
 
