@@ -21,7 +21,7 @@ abstract class AbstractToolbarContactActivity extends AppCompatActivity {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.contacts_recyclerview);
         if (recyclerView != null) {
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recyclerView.setAdapter(getRecyclerViewAdapter());
+            recyclerView.setAdapter(createRecyclerViewAdapter());
         }
 
         if (getSupportActionBar() != null) {
@@ -33,5 +33,5 @@ abstract class AbstractToolbarContactActivity extends AppCompatActivity {
     @LayoutRes
     abstract int getLayout();
 
-    abstract public AbstractContactAdapter getRecyclerViewAdapter();
+    abstract public AbstractContactAdapter createRecyclerViewAdapter();
 }

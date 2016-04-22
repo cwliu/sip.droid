@@ -5,14 +5,14 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.wiadvance.sip.db.ContactDbHelper;
-import com.wiadvance.sip.model.Contact;
+import com.wiadvance.sip.model.CallLogEntry;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CallLogActivity extends AbstractToolbarContactActivity {
 
-    private final List<Contact> mCallLogList = new ArrayList<>();
+    private final List<CallLogEntry> mCallLogList = new ArrayList<>();
     private CallLogAdapter mRecyclerViewAdapter;
 
     public static Intent newIntent(Context context){
@@ -21,11 +21,16 @@ public class CallLogActivity extends AbstractToolbarContactActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mRecyclerViewAdapter = new CallLogAdapter(this);
-
-        setContentView(R.layout.activity_calllog);
-
         super.onCreate(savedInstanceState);
+
+        CallLogEntry call = new CallLogEntry();
+        call.contact = ContactDbHelper.getInstance(this).getPhoneContacts().get(0);
+        mCallLogList.add(call);
+        mCallLogList.add(call);
+        mCallLogList.add(call);
+        mCallLogList.add(call);
+        mCallLogList.add(call);
+
     }
 
     @Override
@@ -34,21 +39,29 @@ public class CallLogActivity extends AbstractToolbarContactActivity {
     }
 
     @Override
-    public AbstractContactAdapter getRecyclerViewAdapter() {
-        return mRecyclerViewAdapter;
+    public AbstractContactAdapter createRecyclerViewAdapter() {
+        return new CallLogAdapter(this);
     }
 
     class CallLogAdapter extends AbstractContactAdapter {
 
         public CallLogAdapter(Context context) {
             super(context);
-            mCallLogList.addAll(ContactDbHelper.getInstance(CallLogActivity.this).getAllContacts());
-            setContactList(mCallLogList);
         }
 
         @Override
         public int getLayout() {
             return R.layout.list_item_calllog;
+        }
+
+        @Override
+        public int getItemCount() {
+            return mCallLogList.size();
+        }
+
+        @Override
+        public void onBindViewHolder(ContactHolder holder, int position) {
+            holder.bindCallLogContactViewHolder(mCallLogList.get(position));
         }
     }
 }

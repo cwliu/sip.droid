@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.daimajia.swipe.SwipeLayout;
 import com.squareup.picasso.Picasso;
 import com.wiadvance.sip.db.ContactDbHelper;
+import com.wiadvance.sip.model.CallLogEntry;
 import com.wiadvance.sip.model.Contact;
 
 public class ContactHolder extends RecyclerView.ViewHolder {
@@ -45,8 +46,18 @@ public class ContactHolder extends RecyclerView.ViewHolder {
 
     }
 
-    public void bindViewHolder(final Contact contact) {
+    public void bindContactViewHolder(final Contact contact) {
+        bindContact(contact);
+    }
 
+    public void bindCallLogContactViewHolder(CallLogEntry log){
+        bindContact(log.contact);
+
+        // show status
+        // show icon
+    }
+
+    private void bindContact(final Contact contact) {
         mNameTextView.setText(contact.getName());
 
         int scale = Utils.getDeviceScale(mContext);
@@ -108,7 +119,6 @@ public class ContactHolder extends RecyclerView.ViewHolder {
                 }
             }
         });
-
     }
 
     private void showFavorite(boolean show) {

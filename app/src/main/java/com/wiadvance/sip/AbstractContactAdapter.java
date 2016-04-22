@@ -39,7 +39,7 @@ abstract public class AbstractContactAdapter extends RecyclerView.Adapter<Contac
 
     @Override
     public void onBindViewHolder(ContactHolder holder, int position) {
-        holder.bindViewHolder(getContactList().get(position));
+        holder.bindContactViewHolder(getContactList().get(position));
     }
 
     @Override

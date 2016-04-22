@@ -69,7 +69,7 @@ public class SearchActivity extends AbstractToolbarContactActivity {
                 mSearchResultList.add(c);
             }
         }
-        getRecyclerViewAdapter().notifyDataSetChanged();
+        createRecyclerViewAdapter().notifyDataSetChanged();
     }
 
     @Override
@@ -78,7 +78,7 @@ public class SearchActivity extends AbstractToolbarContactActivity {
     }
 
     @Override
-    public AbstractContactAdapter getRecyclerViewAdapter() {
+    public AbstractContactAdapter createRecyclerViewAdapter() {
         return mRecyclerViewAdapter;
     }
 
