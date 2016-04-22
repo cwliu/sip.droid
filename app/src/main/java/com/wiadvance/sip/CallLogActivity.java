@@ -24,13 +24,12 @@ public class CallLogActivity extends AbstractToolbarContactActivity {
         super.onCreate(savedInstanceState);
 
         CallLogEntry call = new CallLogEntry();
-        call.contact = ContactDbHelper.getInstance(this).getPhoneContacts().get(0);
+        call.setContact(ContactDbHelper.getInstance(this).getPhoneContacts().get(0));
         mCallLogList.add(call);
         mCallLogList.add(call);
         mCallLogList.add(call);
         mCallLogList.add(call);
         mCallLogList.add(call);
-
     }
 
     @Override

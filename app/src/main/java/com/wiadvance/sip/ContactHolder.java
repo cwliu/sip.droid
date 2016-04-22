@@ -51,7 +51,7 @@ public class ContactHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindCallLogContactViewHolder(CallLogEntry log){
-        bindContact(log.contact);
+        bindContact(log.getContact());
 
         // show status
         // show icon
