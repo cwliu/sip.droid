@@ -7,12 +7,16 @@ public class CallLogEntry {
     public static int TYPE_OUTGOING_CALL_ANSWERED = 1;
     public static int TYPE_OUTGOING_CALL_NO_ANSWER = 2;
     public static int TYPE_INCOMING_CALL_ANSWERED = 3;
-    public static int TYPE_IMCOMING_CALL_NO_ANSWER = 4;
+    public static int TYPE_INCOMING_CALL_NO_ANSWER = 4;
 
     private Contact contact;
     private Date callTime;
     private int callDurationInSeconds;
     private int callType;
+
+    public CallLogEntry() {
+        contact = new Contact("Unknown");
+    }
 
     public Contact getContact() {
         return contact;

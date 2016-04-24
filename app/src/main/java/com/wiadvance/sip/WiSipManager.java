@@ -12,7 +12,7 @@ public abstract class WiSipManager {
 
     public abstract void makeCall(Contact contact);
 
-    public abstract void endCurrentCall();
+    public abstract void endCall();
 
     public abstract void listenIncomingCall();
 

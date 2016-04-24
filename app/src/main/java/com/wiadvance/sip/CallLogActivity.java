@@ -3,19 +3,17 @@ package com.wiadvance.sip;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 
-import com.wiadvance.sip.db.ContactDbHelper;
 import com.wiadvance.sip.model.CallLogEntry;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CallLogActivity extends AbstractToolbarContactActivity {
 
-    private final List<CallLogEntry> mCallLogList = new ArrayList<>();
-    private CallLogAdapter mRecyclerViewAdapter;
+    private List<CallLogEntry> mCallLogList;
 
-    public static Intent newIntent(Context context){
+    public static Intent newIntent(Context context) {
         return new Intent(context, CallLogActivity.class);
     }
 
@@ -23,13 +21,12 @@ public class CallLogActivity extends AbstractToolbarContactActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        CallLogEntry call = new CallLogEntry();
-        call.setContact(ContactDbHelper.getInstance(this).getPhoneContacts().get(0));
-        mCallLogList.add(call);
-        mCallLogList.add(call);
-        mCallLogList.add(call);
-        mCallLogList.add(call);
-        mCallLogList.add(call);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            toolbar.setTitle("History");
+        }
+
+        mCallLogList = UserData.sCallLogEntryList;
     }
 
     @Override

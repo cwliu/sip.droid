@@ -10,6 +10,7 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.wiadvance.sip.BuildConfig;
 import com.wiadvance.sip.CallReceiverActivity;
 import com.wiadvance.sip.NotificationUtil;
+import com.wiadvance.sip.UserData;
 import com.wiadvance.sip.WiSipManager;
 import com.wiadvance.sip.model.Contact;
 
@@ -207,12 +208,12 @@ public class LinphoneSipManager extends WiSipManager {
         }).start();
     }
 
-    public void endCurrentCall() {
-        mIsCalling = false;
-    }
+    public void endCall() {
+        if(mIsCalling){
+            UserData.sCallLogEntryList.add(UserData.sCurrentLogEntry);
+        }
 
-    public void endAllCall() {
-        endCurrentCall();
+        mIsCalling = false;
         mCancelAllCall = true;
     }
 

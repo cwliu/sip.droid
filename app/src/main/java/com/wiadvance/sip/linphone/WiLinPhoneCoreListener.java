@@ -9,6 +9,7 @@ import com.wiadvance.sip.BuildConfig;
 import com.wiadvance.sip.CallReceiverActivity;
 import com.wiadvance.sip.NotificationUtil;
 import com.wiadvance.sip.UserData;
+import com.wiadvance.sip.model.CallLogEntry;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,6 +60,10 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
         if(s.contains("Registration") && !s.contains("successful")){
             mixpanel.track("REGISTER-FAIL", props);
         }
+
+        if(s.contains("Call answered by")){
+            UserData.sCurrentLogEntry.setCallType(CallLogEntry.TYPE_OUTGOING_CALL_ANSWERED);
+        }
     }
     
     @Override
@@ -71,8 +76,26 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
             mContext.startActivity(intent);
         }
 
+        if(state.equals(LinphoneCall.State.OutgoingInit)){
+            UserData.sCurrentLogEntry = new CallLogEntry();
+            UserData.sCurrentLogEntry.setCallType(CallLogEntry.TYPE_OUTGOING_CALL_NO_ANSWER);
+        }
+
         if(state.equals(LinphoneCall.State.OutgoingRinging)){
-            NotificationUtil.notifyCallStatus(mContext, true, "Ringing" , true);
+            NotificationUtil.notifyCallStatus(mContext, true, null, true);
+        }
+
+        if(state.equals(LinphoneCall.State.IncomingReceived)){
+            UserData.sCurrentLogEntry = new CallLogEntry();
+            UserData.sCurrentLogEntry.setCallType(CallLogEntry.TYPE_INCOMING_CALL_NO_ANSWER);
+        }
+
+        if(state.equals(LinphoneCall.State.Connected)){
+            if(UserData.sCurrentLogEntry.getCallType() == CallLogEntry.TYPE_INCOMING_CALL_NO_ANSWER){
+                UserData.sCurrentLogEntry.setCallType(CallLogEntry.TYPE_INCOMING_CALL_ANSWERED);
+            }else{
+                UserData.sCurrentLogEntry.setCallType(CallLogEntry.TYPE_OUTGOING_CALL_ANSWERED);
+            }
         }
 
         if(state.equals(LinphoneCall.State.CallEnd)){

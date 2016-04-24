@@ -98,7 +98,7 @@ public class MakeCallActivity extends AppCompatActivity implements SensorEventLi
                 @Override
                 public void onClick(View v) {
                     isEndedByCaller = true;
-                    mWiSipManager.endAllCall();
+                    mWiSipManager.endCall();
                     finish();
                 }
             });
@@ -148,7 +148,7 @@ public class MakeCallActivity extends AppCompatActivity implements SensorEventLi
             manager.unregisterReceiver(mCallStatusReceiver);
         }
 
-        mWiSipManager.endAllCall();
+        mWiSipManager.endCall();
 
         mSensorManager.unregisterListener(this, mProximitySensor);
     }

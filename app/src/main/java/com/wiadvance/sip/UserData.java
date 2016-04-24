@@ -5,8 +5,11 @@ import android.preference.PreferenceManager;
 
 import com.google.common.collect.HashBiMap;
 import com.wiadvance.sip.db.ContactDbHelper;
+import com.wiadvance.sip.model.CallLogEntry;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 public class UserData {
 
@@ -19,6 +22,9 @@ public class UserData {
     public static HashBiMap<String, String> sEmailToPhoneBiMap = HashBiMap.create();
 
     public static HashSet<String> sAvatar404Cache = new HashSet<>();
+
+    public static List<CallLogEntry> sCallLogEntryList = new ArrayList<>();
+    public static CallLogEntry sCurrentLogEntry = new CallLogEntry();
 
     public static String getName(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_NAME, null);

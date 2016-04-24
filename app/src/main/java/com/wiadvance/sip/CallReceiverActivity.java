@@ -51,6 +51,7 @@ public class CallReceiverActivity extends AppCompatActivity implements SensorEve
     private float originalBrightness;
 
     private ImageButton mEndCallButton;
+    private TextView mCallStatus;
 
     public static Intent newLinephoneIntnet(Context context, String caller) {
         Intent intent = new Intent(context, CallReceiverActivity.class);
@@ -122,6 +123,7 @@ public class CallReceiverActivity extends AppCompatActivity implements SensorEve
         originalBrightness = lp.screenBrightness;
 
         mEndCallButton = (ImageButton) findViewById(R.id.end_call_button);
+        mCallStatus = (TextView) findViewById(R.id.call_status);
     }
 
     @Override
@@ -166,6 +168,8 @@ public class CallReceiverActivity extends AppCompatActivity implements SensorEve
         }
 
         mSensorManager.unregisterListener(this, mProximitySensor);
+
+        UserData.sCallLogEntryList.add(UserData.sCurrentLogEntry);
     }
 
     public void onEndCallButtonClick(View view) {
@@ -198,7 +202,8 @@ public class CallReceiverActivity extends AppCompatActivity implements SensorEve
             Log.d(TAG, "Find a incoming call, number: " + address1.asStringUriOnly());
             try {
                 mLc.acceptCallWithParams(mLinephoneCall, params);
-                NotificationUtil.displayStatus(this, "Call is established");
+                mCallStatus.setText(R.string.call_established_msg);
+
             } catch (LinphoneCoreException e) {
                 Log.e(TAG, "Accept Call exception: ", e);
                 NotificationUtil.displayStatus(this, "Failed to accept the call");

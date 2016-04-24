@@ -11,4 +11,5 @@
     <string name="create_image_failed">建立檔案錯誤</string>
     <string name="bcr_error">名片辨識發生錯誤</string>
     <string name="take_namecard_photo">對準名片拍照</string>
+    <string name="call_established_msg">Established</string>
 </resources>
