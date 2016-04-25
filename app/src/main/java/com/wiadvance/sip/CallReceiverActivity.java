@@ -76,7 +76,7 @@ public class CallReceiverActivity extends AppCompatActivity implements SensorEve
 
         TextView name = (TextView) findViewById(R.id.call_receiver_sip);
         if (name != null) {
-            name.setText(LinphoneUtils.getUsernameFromAddress(callerAddress.toString()));
+            name.setText(LinphoneUtils.getUsernameFromAddress(callerAddress));
         }
 
         Contact matchContact = PhoneUtils.getCompanyContactBySipAddress(this, callerAddress);
@@ -92,24 +92,6 @@ public class CallReceiverActivity extends AppCompatActivity implements SensorEve
             }
             ContactDbHelper.getInstance(this).addRecentContact(matchContact);
         }
-
-        // TODO
-//        for(Contact c: UserData.sPhoneContactList){
-//            if(caller_address.contains(c.getPhone())){
-//                if(c.getEmail() != null){
-//                    ImageView avatar = (ImageView) findViewById(R.id.call_receiver_avatar);
-//                    Picasso.with(this).load(c.getPhotoUri()).placeholder(R.drawable.avatar_120dp).into(avatar);
-//                }
-//
-//                if (name != null) {
-//                    name.setText(c.getName());
-//                }
-//
-//                UserData.addRecentContact(this, c);
-//                break;
-//            }
-//        }
-
 
         MixpanelAPI mixpanel = MixpanelAPI.getInstance(this, BuildConfig.MIXPANL_TOKEN);
         mixpanel.track(TAG, null);
