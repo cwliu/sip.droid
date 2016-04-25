@@ -8,12 +8,12 @@ import com.wiadvance.sip.db.AppDbSchema.CallLogTable;
 import com.wiadvance.sip.db.AppDbSchema.ContactTable;
 import com.wiadvance.sip.db.AppDbSchema.RegularContactTable;
 
-public class GWSQLiteOpenHelper extends SQLiteOpenHelper {
+public class AppSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static String DB_NAME = "sip";
-    private static int DB_VERSION = 4;
+    private static int DB_VERSION = 6;
 
-    public GWSQLiteOpenHelper(Context context) {
+    public AppSQLiteOpenHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
 
@@ -52,7 +52,7 @@ public class GWSQLiteOpenHelper extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE " + RegularContactTable.NAME + "(" +
                 RegularContactTable.Cols.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                RegularContactTable.Cols.CONTACT + " INTEGER," +
+                RegularContactTable.Cols.CONTACT + " INTEGER NOT NULL," +
                 RegularContactTable.Cols.COUNT + " INTEGER," +
                 RegularContactTable.Cols.UPDATED_TIME + " INTEGER," +
                 "FOREIGN KEY(" + RegularContactTable.Cols.CONTACT + ") REFERENCES " +

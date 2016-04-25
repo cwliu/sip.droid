@@ -17,7 +17,6 @@ public class Contact {
     private int mId;
 
     public static int TYPE_FAVORITE = 1;
-    public static int TYPE_RECENT = 2;
     public static int TYPE_PHONE = 3;
     public static int TYPE_COMPANY = 4;
     public static int TYPE_PHONE_MANUAL = 5;

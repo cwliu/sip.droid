@@ -26,7 +26,7 @@ public class ContactTableHelper {
     private Context mContext;
 
     private ContactTableHelper(Context context) {
-        mDatabase = new GWSQLiteOpenHelper(context).getWritableDatabase();
+        mDatabase = new AppSQLiteOpenHelper(context).getWritableDatabase();
         mContext = context;
     }
 
@@ -154,14 +154,14 @@ public class ContactTableHelper {
         return getContacts(contactCursorWrapper);
     }
 
-    public List<Contact> getRecentContacts() {
-        String whereClause = Cols.TYPE + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(Contact.TYPE_RECENT)};
-        String orderBy = "datetime(" + Cols.CREATED_TIME + ") DESC";
-
-        ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, orderBy);
-        return getContacts(contactCursorWrapper);
-    }
+//    public List<Contact> getRecentContacts() {
+//        String whereClause = Cols.TYPE + " = ?";
+//        String[] whereArgs = new String[]{String.valueOf(Contact.TYPE_RECENT)};
+//        String orderBy = "datetime(" + Cols.CREATED_TIME + ") DESC";
+//
+//        ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, orderBy);
+//        return getContacts(contactCursorWrapper);
+//    }
 
     public List<Contact> getFavoriteContacts() {
         String whereClause = Cols.TYPE + " = ?";
@@ -172,26 +172,26 @@ public class ContactTableHelper {
         return getContacts(contactCursorWrapper);
     }
 
-    public void addRecentContact(Contact contact) {
-        List<Contact> list = getRecentContacts();
+//    public void addRecentContact(Contact contact) {
+//        List<Contact> list = getRecentContacts();
+//
+//        // FIX ME
+//        Iterator<Contact> i = list.iterator();
+//        while (i.hasNext()) {
+//            Contact dbContact = i.next();
+//            if (dbContact.equals(contact)) {
+//                removeContactById(dbContact.getId());
+//            }
+//        }
+//
+//        contact.setType(Contact.TYPE_RECENT);
+//        addContact(contact);
+//    }
 
-        // FIX ME
-        Iterator<Contact> i = list.iterator();
-        while (i.hasNext()) {
-            Contact dbContact = i.next();
-            if (dbContact.equals(contact)) {
-                removeContactById(dbContact.getId());
-            }
-        }
-
-        contact.setType(Contact.TYPE_RECENT);
-        addContact(contact);
-    }
-
-    private void removeContactById(int id) {
-        String dbId = String.valueOf(id);
-        mDatabase.delete(ContactTable.NAME, Cols.ID + " = ?", new String[]{dbId});
-    }
+//    private void removeContactById(int id) {
+//        String dbId = String.valueOf(id);
+//        mDatabase.delete(ContactTable.NAME, Cols.ID + " = ?", new String[]{dbId});
+//    }
 
     public void removeAllContacts() {
         mDatabase.delete(ContactTable.NAME, null, null);

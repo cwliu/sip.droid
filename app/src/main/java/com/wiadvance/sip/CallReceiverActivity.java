@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.squareup.picasso.Picasso;
-import com.wiadvance.sip.db.ContactTableHelper;
+import com.wiadvance.sip.db.RegularContactTableHelper;
 import com.wiadvance.sip.linphone.LinphoneCoreHelper;
 import com.wiadvance.sip.model.Contact;
 
@@ -91,7 +91,7 @@ public class CallReceiverActivity extends AppCompatActivity implements SensorEve
             if (name != null) {
                 name.setText(matchContact.getName());
             }
-            ContactTableHelper.getInstance(this).addRecentContact(matchContact);
+            RegularContactTableHelper.getInstance(this).addContactCountByOne(matchContact);
         }
 
         MixpanelAPI mixpanel = MixpanelAPI.getInstance(this, BuildConfig.MIXPANL_TOKEN);

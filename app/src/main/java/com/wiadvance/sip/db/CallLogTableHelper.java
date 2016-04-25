@@ -24,7 +24,7 @@ public class CallLogTableHelper {
     private Context mContext;
 
     private CallLogTableHelper(Context context) {
-        mDatabase = new GWSQLiteOpenHelper(context).getWritableDatabase();
+        mDatabase = new AppSQLiteOpenHelper(context).getWritableDatabase();
         mContext = context;
     }
 

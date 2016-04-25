@@ -34,7 +34,7 @@ public class AppDbSchema {
 
         public static final class Cols{
             public static final String ID = "_id";
-            public static final String CONTACT = "count";
+            public static final String CONTACT = "contact";
             public static final String COUNT = "count";
             public static final String UPDATED_TIME = "updated_time";
         }

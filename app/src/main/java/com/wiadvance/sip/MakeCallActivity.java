@@ -23,7 +23,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
-import com.wiadvance.sip.db.ContactTableHelper;
+import com.wiadvance.sip.db.RegularContactTableHelper;
 import com.wiadvance.sip.linphone.LinphoneSipManager;
 import com.wiadvance.sip.model.Contact;
 import com.wiadvance.sip.office365.Constants;
@@ -62,7 +62,7 @@ public class MakeCallActivity extends AppCompatActivity implements SensorEventLi
         String json = getIntent().getStringExtra(ARG_CONTACT);
         mCallee = new Gson().fromJson(json, Contact.class);
 
-        ContactTableHelper.getInstance(this).addRecentContact(mCallee);
+        RegularContactTableHelper.getInstance(this).addContactCountByOne(mCallee);
 
         initView();
 

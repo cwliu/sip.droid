@@ -15,7 +15,7 @@ public class ContactPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return FavoriteContactFragment.newInstance();
             case 1:
-                return RecentContactFragment.newInstance();
+                return RegularContactFragment.newInstance();
             case 2:
                 return PhoneContactFragment.newInstance();
             default:
