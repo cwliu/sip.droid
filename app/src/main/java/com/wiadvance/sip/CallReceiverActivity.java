@@ -53,7 +53,7 @@ public class CallReceiverActivity extends AppCompatActivity implements SensorEve
     private ImageButton mEndCallButton;
     private TextView mCallStatus;
 
-    public static Intent newLinephoneIntnet(Context context, String caller) {
+    public static Intent newIntent(Context context, String caller) {
         Intent intent = new Intent(context, CallReceiverActivity.class);
         intent.putExtra(ARG_CALLER_NUM, caller);
         return intent;
@@ -72,27 +72,25 @@ public class CallReceiverActivity extends AppCompatActivity implements SensorEve
             throw new RuntimeException("Can't get linphone core");
         }
 
-        String caller_address = getIntent().getStringExtra(ARG_CALLER_NUM);
+        String callerAddress = getIntent().getStringExtra(ARG_CALLER_NUM);
+
         TextView name = (TextView) findViewById(R.id.call_receiver_sip);
         if (name != null) {
-            name.setText(LinphoneUtils.getUsernameFromAddress(caller_address));
+            name.setText(LinphoneUtils.getUsernameFromAddress(callerAddress.toString()));
         }
 
-
-        for (Contact c : ContactDbHelper.getInstance(this).getCompanyContacts()) {
-            if (c.getSip() != null && caller_address.contains(c.getSip())) {
-                if (c.getEmail() != null) {
-                    ImageView avatar = (ImageView) findViewById(R.id.call_receiver_avatar);
-                    Picasso.with(this).load(c.getPhotoUri()).placeholder(R.drawable.avatar_120dp).into(avatar);
-                }
-
-                if (name != null) {
-                    name.setText(c.getName());
-                }
-
-                ContactDbHelper.getInstance(this).addRecentContact(c);
-                break;
+        Contact matchContact = PhoneUtils.getCompanyContactBySipAddress(this, callerAddress);
+        if(matchContact != null){
+            // Set Office 365 Avatar
+            if (matchContact.getEmail() != null) {
+                ImageView avatar = (ImageView) findViewById(R.id.call_receiver_avatar);
+                Picasso.with(this).load(matchContact.getPhotoUri()).placeholder(R.drawable.avatar_120dp).into(avatar);
             }
+
+            if (name != null) {
+                name.setText(matchContact.getName());
+            }
+            ContactDbHelper.getInstance(this).addRecentContact(matchContact);
         }
 
         // TODO
@@ -169,7 +167,7 @@ public class CallReceiverActivity extends AppCompatActivity implements SensorEve
 
         mSensorManager.unregisterListener(this, mProximitySensor);
 
-        UserData.sCallLogEntryList.add(UserData.sCurrentLogEntry);
+        UserData.sCallLogEntryList.add(0, UserData.sCurrentLogEntry);
     }
 
     public void onEndCallButtonClick(View view) {

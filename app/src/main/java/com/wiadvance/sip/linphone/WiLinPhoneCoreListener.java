@@ -75,8 +75,9 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
             UserData.sCurrentLogEntry = new CallLogEntry();
             UserData.sCurrentLogEntry.setCallType(CallLogEntry.TYPE_INCOMING_CALL_NO_ANSWER);
 
-            String caller = call.getRemoteAddress().toString();
-            Intent intent = CallReceiverActivity.newLinephoneIntnet(mContext, caller);
+            Intent intent = CallReceiverActivity.newIntent(mContext,
+                    call.getRemoteAddress().toString());
+
             mContext.startActivity(intent);
         }
 
@@ -102,9 +103,7 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
         if(state.equals(LinphoneCall.State.Error)){
             NotificationUtil.displayStatus(mContext, state.toString() + ": " + s);
         }
-
     }
-
 
     @Override
     public void registrationState(LinphoneCore core, LinphoneProxyConfig config, LinphoneCore.RegistrationState state, String s) {
