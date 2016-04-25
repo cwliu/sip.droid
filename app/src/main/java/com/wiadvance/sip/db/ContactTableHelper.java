@@ -51,6 +51,7 @@ public class ContactTableHelper {
         cv.put(Cols.EMAIL, contact.getEmail());
         cv.put(Cols.PHOTO, contact.getPhotoUri());
         cv.put(Cols.TYPE, contact.getType());
+        cv.put(Cols.ANDROID_CONTACT_ID, contact.getAndroidContactId()); // Optional
 
         return cv;
     }
@@ -100,6 +101,20 @@ public class ContactTableHelper {
         String whereClause = Cols.EMAIL + " = ? ";
 
         String[] whereArgs = new String[]{String.valueOf(email)};
+        ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, null);
+
+        List<Contact> contacts = getContacts(contactCursorWrapper);
+        if (contacts.size() == 0) {
+            return null;
+        } else {
+            return contacts.get(0);
+        }
+    }
+
+    private Contact getContactByAndroidContactId(String id) {
+        String whereClause = Cols.ANDROID_CONTACT_ID + " = ? ";
+
+        String[] whereArgs = new String[]{String.valueOf(id)};
         ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, null);
 
         List<Contact> contacts = getContacts(contactCursorWrapper);
@@ -273,6 +288,18 @@ public class ContactTableHelper {
         String[] whereArgs = new String[]{c.getEmail(), String.valueOf(Contact.TYPE_COMPANY)};
 
         Contact contact = getContactByEmail(c.getEmail());
+        if (contact == null) {
+            addContact(c);
+        } else {
+            mDatabase.update(ContactTable.NAME, getContentsValue(c), whereClause, whereArgs);
+        }
+    }
+
+    public void updatePhoneContactByAndroidContactId(Contact c) {
+        String whereClause = Cols.ANDROID_CONTACT_ID + " = ? AND " + Cols.TYPE + " = ?";
+        String[] whereArgs = new String[]{c.getAndroidContactId(), String.valueOf(Contact.TYPE_PHONE)};
+
+        Contact contact = getContactByAndroidContactId(c.getAndroidContactId());
         if (contact == null) {
             addContact(c);
         } else {

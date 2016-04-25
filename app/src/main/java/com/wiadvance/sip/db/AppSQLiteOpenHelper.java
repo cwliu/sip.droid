@@ -11,7 +11,7 @@ import com.wiadvance.sip.db.AppDbSchema.RegularContactTable;
 public class AppSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static String DB_NAME = "sip";
-    private static int DB_VERSION = 6;
+    private static int DB_VERSION = 7;
 
     public AppSQLiteOpenHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -37,6 +37,7 @@ public class AppSQLiteOpenHelper extends SQLiteOpenHelper {
                 ContactTable.Cols.EMAIL + "," +
                 ContactTable.Cols.PHOTO + "," +
                 ContactTable.Cols.TYPE + " INTEGER DEFAULT 0," +
+                ContactTable.Cols.ANDROID_CONTACT_ID + "," +
                 ContactTable.Cols.CREATED_TIME + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP )"
         );
 
@@ -47,7 +48,7 @@ public class AppSQLiteOpenHelper extends SQLiteOpenHelper {
                 CallLogTable.Cols.CALL_TYPE + " INTEGER," +
                 CallLogTable.Cols.CONTACT + " INTEGER," +
                 "FOREIGN KEY(" + CallLogTable.Cols.CONTACT + ") REFERENCES " +
-                ContactTable.NAME + "(" + ContactTable.Cols.ID + ") )"
+                ContactTable.NAME + "(" + ContactTable.Cols.ID + ") ON DELETE CASCADE )"
         );
 
         db.execSQL("CREATE TABLE " + RegularContactTable.NAME + "(" +
@@ -56,7 +57,7 @@ public class AppSQLiteOpenHelper extends SQLiteOpenHelper {
                 RegularContactTable.Cols.COUNT + " INTEGER," +
                 RegularContactTable.Cols.UPDATED_TIME + " INTEGER," +
                 "FOREIGN KEY(" + RegularContactTable.Cols.CONTACT + ") REFERENCES " +
-                ContactTable.NAME + "(" + ContactTable.Cols.ID + ") )"
+                ContactTable.NAME + "(" + ContactTable.Cols.ID + ") ON DELETE CASCADE )"
         );
     }
 

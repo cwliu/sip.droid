@@ -11,9 +11,6 @@ import android.provider.ContactsContract;
 import com.wiadvance.sip.db.ContactTableHelper;
 import com.wiadvance.sip.model.Contact;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class FetchPhoneContactService extends IntentService {
 
@@ -28,8 +25,6 @@ public class FetchPhoneContactService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-
-        List<Contact> contactList = new ArrayList<>();
 
         String orderBy = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME;
         Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, orderBy);
@@ -56,20 +51,20 @@ public class FetchPhoneContactService extends IntentService {
 
                 Contact c = new Contact(name);
                 c.setPhone(phoneNumber);
-                Uri uri = getPhotoUri(phones.getString(
-                        phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)));
+                String androidContactId = phones.getString(
+                        phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID));
+                Uri uri = getPhotoUri(androidContactId);
                 if (uri != null) {
                     c.setPhotoUri(uri);
                 }
                 c.setType(Contact.TYPE_PHONE);
-                contactList.add(c);
+                c.setAndroidContactId(androidContactId);
+                ContactTableHelper.getInstance(this).updatePhoneContactByAndroidContactId(c);
             }
         } finally {
             phones.close();
         }
 
-        ContactTableHelper.getInstance(this).removePhoneContacts();
-        ContactTableHelper.getInstance(this).addContactList(contactList);
 
         NotificationUtil.phoneContactUpdate(this);
     }

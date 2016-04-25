@@ -14,6 +14,8 @@ public class AppDbSchema {
             public static final String PHOTO = "photo";
             public static final String TYPE = "type";
             public static final String CREATED_TIME = "create_time";
+            public static final String ANDROID_CONTACT_ID = "android_contact_id";
+
         }
     }
 

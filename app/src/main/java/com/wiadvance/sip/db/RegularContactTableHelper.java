@@ -65,7 +65,8 @@ public class RegularContactTableHelper {
     }
 
     public List<Contact> getRegularContactList(){
-        String orderBy = AppDbSchema.RegularContactTable.Cols.COUNT + " DESC";
+        String orderBy = AppDbSchema.RegularContactTable.Cols.COUNT + " DESC, " +
+                AppDbSchema.RegularContactTable.Cols.UPDATED_TIME + " DESC";
 
         RegularCursorWrapper cursorWrapper = query(null, null, orderBy);
         List<Contact> contacts = new ArrayList<>();
@@ -100,6 +101,7 @@ public class RegularContactTableHelper {
             addRegularContact(newRc);
         } else {
             rc.setCount(rc.getCount() +1);
+            rc.setUpdatedTime(new Date());
             mDatabase.update(AppDbSchema.RegularContactTable.NAME, getContentsValue(rc), whereClause, whereArgs);
         }
     }

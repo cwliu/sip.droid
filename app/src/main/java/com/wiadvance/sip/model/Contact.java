@@ -13,6 +13,8 @@ public class Contact {
     private String mPhone;
     private String mEmail;
     private String mPhotoUri;
+
+    private String mAndroidContactId;
     private int mType;
     private int mId;
 
@@ -124,4 +126,13 @@ public class Contact {
     public void setId(int id) {
         mId = id;
     }
+
+    public String getAndroidContactId() {
+        return mAndroidContactId;
+    }
+
+    public void setAndroidContactId(String androidContactId) {
+        mAndroidContactId = androidContactId;
+    }
+
 }
