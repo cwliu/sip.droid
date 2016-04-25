@@ -15,6 +15,7 @@ import com.wiadvance.sip.model.Contact;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.linphone.LinphoneUtils;
 import org.linphone.core.LinphoneAddress;
 import org.linphone.core.LinphoneCall;
 import org.linphone.core.LinphoneCallStats;
@@ -71,14 +72,14 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
     @Override
     public void callState(LinphoneCore core, LinphoneCall call, LinphoneCall.State state, String s) {
         Log.d(TAG, "callState() called with: " + "core = [" + core + "], call = [" + call + "], state = [" + state + "], s = [" + s + "]");
+        String targetUsername = LinphoneUtils.getUsernameFromAddress(call.getRemoteAddress().toString());
 
         if(state.equals(LinphoneCall.State.IncomingReceived)) {
 
             UserData.sCurrentLogEntry = new CallLogEntry();
             UserData.sCurrentLogEntry.setCallType(CallLogEntry.TYPE_INCOMING_CALL_NO_ANSWER);
 
-            Contact contact = PhoneUtils.getCompanyContactBySipAddress(mContext,
-                    call.getRemoteAddress().toString());
+            Contact contact = PhoneUtils.getCompanyContactByAccount(mContext, targetUsername);
             if(contact != null){
                 UserData.sCurrentLogEntry.setContact(contact);
             }
@@ -93,8 +94,7 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
             UserData.sCurrentLogEntry = new CallLogEntry();
             UserData.sCurrentLogEntry.setCallType(CallLogEntry.TYPE_OUTGOING_CALL_NO_ANSWER);
 
-            Contact contact = PhoneUtils.getCompanyContactBySipAddress(mContext,
-                    call.getRemoteAddress().toString());
+            Contact contact = PhoneUtils.getCompanyContactByAccount(mContext, targetUsername);
             if(contact != null){
                 UserData.sCurrentLogEntry.setContact(contact);
             }

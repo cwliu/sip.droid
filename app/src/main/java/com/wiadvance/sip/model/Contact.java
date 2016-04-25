@@ -3,6 +3,7 @@ package com.wiadvance.sip.model;
 import android.content.Context;
 import android.net.Uri;
 
+import com.wiadvance.sip.PhoneUtils;
 import com.wiadvance.sip.db.ContactDbHelper;
 
 public class Contact {
@@ -35,7 +36,7 @@ public class Contact {
     }
 
     public String getPhone() {
-        return mPhone;
+        return PhoneUtils.normalizedPhone(mPhone);
     }
 
     public void setName(String name) {

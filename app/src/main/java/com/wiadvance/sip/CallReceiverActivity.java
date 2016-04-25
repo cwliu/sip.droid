@@ -79,7 +79,8 @@ public class CallReceiverActivity extends AppCompatActivity implements SensorEve
             name.setText(LinphoneUtils.getUsernameFromAddress(callerAddress));
         }
 
-        Contact matchContact = PhoneUtils.getCompanyContactBySipAddress(this, callerAddress);
+        String callerUsername = LinphoneUtils.getUsernameFromAddress(callerAddress);
+        Contact matchContact = PhoneUtils.getCompanyContactByAccount(this, callerUsername);
         if(matchContact != null){
             // Set Office 365 Avatar
             if (matchContact.getEmail() != null) {
