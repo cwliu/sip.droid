@@ -57,23 +57,28 @@ public class ContactHolder extends RecyclerView.ViewHolder {
 
         ImageView callStatusImageView = (ImageView) mRootItemView.findViewById
                 (R.id.call_status_image_view);
+        TextView callMsgTextView = (TextView) mRootItemView.findViewById(R.id.call_msg);
 
         TextView callTimeTextView = (TextView) mRootItemView.findViewById(R.id.call_time);
-        String callTime = String.format(
-                mContext.getResources().getString(R.string.call_time),
-                log.getCallTimeString()
-        );
+        String callTime = String.format(mContext.getResources().getString(R.string.call_time), log.getCallTimeString());
         callTimeTextView.setText(callTime);
+
+        String callDurationTime = mContext.getResources().getQuantityString(R.plurals.call_duration_time, log.getCallDurationInSeconds(), log.getCallDurationInSeconds());
 
         if (log.getCallType() == CallLogEntry.TYPE_INCOMING_CALL_ANSWERED) {
             callStatusImageView.setImageResource(R.drawable.call_received_blue_16dp);
+            callMsgTextView.setText(log.getCallDurationInSeconds());
+            callMsgTextView.setText(callDurationTime);
+
         } else if (log.getCallType() == CallLogEntry.TYPE_INCOMING_CALL_NO_ANSWER) {
             callStatusImageView.setImageResource(R.drawable.call_missed_red_16dp);
+
         } else if (log.getCallType() == CallLogEntry.TYPE_OUTGOING_CALL_ANSWERED){
             callStatusImageView.setImageResource(R.drawable.call_made_green_16dp);
+            callMsgTextView.setText(callDurationTime);
+
         } else{
             // outgoing call not answered
-            TextView callMsgTextView = (TextView) mRootItemView.findViewById(R.id.call_msg);
             callMsgTextView.setText(R.string.no_answer_msg);
             callStatusImageView.setImageResource(R.drawable.call_made_green_16dp);
         }

@@ -8,6 +8,7 @@ import com.wiadvance.sip.db.ContactDbHelper;
 import com.wiadvance.sip.model.CallLogEntry;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -68,5 +69,11 @@ public class UserData {
         sEmailToPhoneBiMap.clear();
 
         ContactDbHelper.getInstance(context).removeAllContacts();
+    }
+
+    public static void recordCallLog() {
+        long seconds = (new Date().getTime() - sCurrentLogEntry.getCallTime().getTime())/1000;
+        sCurrentLogEntry.setCallDurationInSeconds((int) seconds);
+        sCallLogEntryList.add(0, sCurrentLogEntry);
     }
 }
