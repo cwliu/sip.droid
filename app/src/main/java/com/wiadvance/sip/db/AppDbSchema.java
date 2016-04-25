@@ -29,8 +29,8 @@ public class AppDbSchema {
         }
     }
 
-    public static final class FrequentlyContactTable{
-        public static final String NAME = "frequently_contacts";
+    public static final class RegularContactTable {
+        public static final String NAME = "regular_contacts";
 
         public static final class Cols{
             public static final String ID = "_id";
