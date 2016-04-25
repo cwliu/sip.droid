@@ -4,8 +4,8 @@ import android.content.Context;
 import android.preference.PreferenceManager;
 
 import com.google.common.collect.HashBiMap;
-import com.wiadvance.sip.db.CallLogDbHelper;
-import com.wiadvance.sip.db.ContactDbHelper;
+import com.wiadvance.sip.db.CallLogTableHelper;
+import com.wiadvance.sip.db.ContactTableHelper;
 import com.wiadvance.sip.model.CallLogEntry;
 
 import java.util.Date;
@@ -66,13 +66,13 @@ public class UserData {
         sEmailToSipBiMap.clear();
         sEmailToPhoneBiMap.clear();
 
-        ContactDbHelper.getInstance(context).removeAllContacts();
+        ContactTableHelper.getInstance(context).removeAllContacts();
     }
 
     public static void recordCallLog(Context context) {
         long seconds = (new Date().getTime() - sCurrentLogEntry.getCallTime().getTime())/1000;
         sCurrentLogEntry.setCallDurationInSeconds((int) seconds);
 
-        CallLogDbHelper.getInstance(context).addCallLog(sCurrentLogEntry);
+        CallLogTableHelper.getInstance(context).addCallLog(sCurrentLogEntry);
     }
 }

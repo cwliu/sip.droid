@@ -14,7 +14,7 @@ import android.widget.ProgressBar;
 
 import com.microsoft.aad.adal.AuthenticationCallback;
 import com.microsoft.aad.adal.AuthenticationResult;
-import com.wiadvance.sip.db.ContactDbHelper;
+import com.wiadvance.sip.db.ContactTableHelper;
 import com.wiadvance.sip.model.Contact;
 import com.wiadvance.sip.model.UserRaw;
 import com.wiadvance.sip.office365.AuthenticationManager;
@@ -68,7 +68,7 @@ public class CompanyContactFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        if (ContactDbHelper.getInstance(getContext()).getCompanyContacts().size() == 0) {
+        if (ContactTableHelper.getInstance(getContext()).getCompanyContacts().size() == 0) {
             showLoading(true);
         }
 
@@ -78,7 +78,7 @@ public class CompanyContactFragment extends Fragment {
 
     private void updateContactsSipPhone(List<Contact> list) {
 
-        ContactDbHelper dbHelper = ContactDbHelper.getInstance(getContext());
+        ContactTableHelper dbHelper = ContactTableHelper.getInstance(getContext());
         for (Contact c : list) {
             String email = c.getEmail();
             String phone = UserData.sEmailToPhoneBiMap.get(email);
@@ -100,7 +100,7 @@ public class CompanyContactFragment extends Fragment {
                 @Override
                 public void run() {
                     mAdapter.setContactList(
-                            ContactDbHelper.getInstance(getContext()).getCompanyContacts());
+                            ContactTableHelper.getInstance(getContext()).getCompanyContacts());
                     mAdapter.notifyDataSetChanged();
                 }
             });

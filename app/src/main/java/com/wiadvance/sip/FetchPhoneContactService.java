@@ -8,7 +8,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 
-import com.wiadvance.sip.db.ContactDbHelper;
+import com.wiadvance.sip.db.ContactTableHelper;
 import com.wiadvance.sip.model.Contact;
 
 import java.util.ArrayList;
@@ -68,8 +68,8 @@ public class FetchPhoneContactService extends IntentService {
             phones.close();
         }
 
-        ContactDbHelper.getInstance(this).removePhoneContacts();
-        ContactDbHelper.getInstance(this).addContactList(contactList);
+        ContactTableHelper.getInstance(this).removePhoneContacts();
+        ContactTableHelper.getInstance(this).addContactList(contactList);
 
         NotificationUtil.phoneContactUpdate(this);
     }

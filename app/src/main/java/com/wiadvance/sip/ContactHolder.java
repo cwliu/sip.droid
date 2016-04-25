@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.daimajia.swipe.SwipeLayout;
 import com.squareup.picasso.Picasso;
-import com.wiadvance.sip.db.ContactDbHelper;
+import com.wiadvance.sip.db.ContactTableHelper;
 import com.wiadvance.sip.model.CallLogEntry;
 import com.wiadvance.sip.model.Contact;
 
@@ -141,10 +141,10 @@ public class ContactHolder extends RecyclerView.ViewHolder {
             public void onClick(View v) {
                 if (contact.isFavorite(mContext)) {
                     showFavorite(false);
-                    ContactDbHelper.getInstance(mContext).removeFavoriteContact(contact);
+                    ContactTableHelper.getInstance(mContext).removeFavoriteContact(contact);
                 } else {
                     showFavorite(true);
-                    ContactDbHelper.getInstance(mContext).addFavoriteContact(contact);
+                    ContactTableHelper.getInstance(mContext).addFavoriteContact(contact);
                 }
             }
         });

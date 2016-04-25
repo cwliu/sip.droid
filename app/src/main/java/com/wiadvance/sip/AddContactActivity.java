@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.wiadvance.sip.db.ContactDbHelper;
+import com.wiadvance.sip.db.ContactTableHelper;
 import com.wiadvance.sip.model.Contact;
 
 import static android.widget.Toast.LENGTH_LONG;
@@ -71,7 +71,7 @@ public class AddContactActivity extends AppCompatActivity {
                     Contact c = new Contact(name);
                     c.setPhone(phone);
                     c.setType(Contact.TYPE_PHONE_MANUAL);
-                    ContactDbHelper.getInstance(getApplicationContext()).addContact(c);
+                    ContactTableHelper.getInstance(getApplicationContext()).addContact(c);
 
                     Toast.makeText(getApplicationContext(), "已成功將 " + c.getName() + " 加到通訊錄", LENGTH_LONG).show();
 

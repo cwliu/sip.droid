@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.wiadvance.sip.db.ContactDbHelper;
+import com.wiadvance.sip.db.ContactTableHelper;
 
 public class RecentContactFragment extends Fragment {
 
@@ -37,7 +37,7 @@ public class RecentContactFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser && mAdapter != null) {
-            mAdapter.setContactList(ContactDbHelper.getInstance(getContext()).getRecentContacts());
+            mAdapter.setContactList(ContactTableHelper.getInstance(getContext()).getRecentContacts());
             mAdapter.notifyDataSetChanged();
         }
     }

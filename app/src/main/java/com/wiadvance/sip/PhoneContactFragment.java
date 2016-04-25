@@ -14,7 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.wiadvance.sip.db.ContactDbHelper;
+import com.wiadvance.sip.db.ContactTableHelper;
 
 public class PhoneContactFragment extends Fragment {
 
@@ -45,7 +45,7 @@ public class PhoneContactFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        if (ContactDbHelper.getInstance(getContext()).getPhoneContacts().size() == 0) {
+        if (ContactTableHelper.getInstance(getContext()).getPhoneContacts().size() == 0) {
             setLoadProgressbar(View.VISIBLE);
         }
 
@@ -80,7 +80,7 @@ public class PhoneContactFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             if (mContactAdapter != null) {
                 mContactAdapter.setContactList(
-                        ContactDbHelper.getInstance(getContext()).getPhoneContacts());
+                        ContactTableHelper.getInstance(getContext()).getPhoneContacts());
                 mContactAdapter.notifyDataSetChanged();
 
                 setLoadProgressbar(View.GONE);

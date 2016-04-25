@@ -2,12 +2,12 @@ package com.wiadvance.sip;
 
 import android.content.Context;
 
-import com.wiadvance.sip.db.ContactDbHelper;
+import com.wiadvance.sip.db.ContactTableHelper;
 
 public class RecentContactAdapter extends AbstractContactAdapter {
     public RecentContactAdapter(Context context) {
         super(context);
 
-        setContactList(ContactDbHelper.getInstance(context).getRecentContacts());
+        setContactList(ContactTableHelper.getInstance(context).getRecentContacts());
     }
 }

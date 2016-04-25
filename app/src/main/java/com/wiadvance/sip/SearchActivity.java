@@ -8,7 +8,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.wiadvance.sip.db.ContactDbHelper;
+import com.wiadvance.sip.db.ContactTableHelper;
 import com.wiadvance.sip.model.Contact;
 
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ public class SearchActivity extends AbstractToolbarContactActivity {
     private void query(String text) {
 
         mSearchResultList.clear();
-        for (Contact c : ContactDbHelper.getInstance(this).getAllContacts()) {
+        for (Contact c : ContactTableHelper.getInstance(this).getAllContacts()) {
             if (c.getName().toLowerCase().contains(text.toLowerCase())) {
                 mSearchResultList.add(c);
             }
@@ -86,7 +86,7 @@ public class SearchActivity extends AbstractToolbarContactActivity {
 
         public SearchContactAdapter(Context context) {
             super(context);
-            mSearchResultList.addAll(ContactDbHelper.getInstance(SearchActivity.this).getAllContacts());
+            mSearchResultList.addAll(ContactTableHelper.getInstance(SearchActivity.this).getAllContacts());
             setContactList(mSearchResultList);
         }
     }

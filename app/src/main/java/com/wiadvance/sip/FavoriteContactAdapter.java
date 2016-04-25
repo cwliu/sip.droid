@@ -2,13 +2,13 @@ package com.wiadvance.sip;
 
 import android.content.Context;
 
-import com.wiadvance.sip.db.ContactDbHelper;
+import com.wiadvance.sip.db.ContactTableHelper;
 
 public class FavoriteContactAdapter extends AbstractContactAdapter {
 
     public FavoriteContactAdapter(Context context) {
         super(context);
 
-        setContactList(ContactDbHelper.getInstance(context).getFavoriteContacts());
+        setContactList(ContactTableHelper.getInstance(context).getFavoriteContacts());
     }
 }

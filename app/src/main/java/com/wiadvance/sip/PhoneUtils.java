@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.wiadvance.sip.db.ContactDbHelper;
+import com.wiadvance.sip.db.ContactTableHelper;
 import com.wiadvance.sip.model.Contact;
 
 public class PhoneUtils {
@@ -16,7 +16,7 @@ public class PhoneUtils {
 
     public static Contact getCompanyContactByAccount(Context context, String account) {
 
-        for (Contact c : ContactDbHelper.getInstance(context).getAllContacts()) {
+        for (Contact c : ContactTableHelper.getInstance(context).getAllContacts()) {
             String sipUsername = c.getSip();
             if (sipUsername != null && account.equals(sipUsername)) {
                 return c;

@@ -17,24 +17,24 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ContactDbHelper {
+public class ContactTableHelper {
 
     private static final Object lock = new Object();
 
     private static SQLiteDatabase mDatabase;
-    private static ContactDbHelper sDbHelper;
+    private static ContactTableHelper sDbHelper;
     private Context mContext;
 
-    private ContactDbHelper(Context context) {
+    private ContactTableHelper(Context context) {
         mDatabase = new GWSQLiteOpenHelper(context).getWritableDatabase();
         mContext = context;
     }
 
-    public static ContactDbHelper getInstance(Context context) {
+    public static ContactTableHelper getInstance(Context context) {
         if (sDbHelper == null) {
             synchronized (lock) {
                 if (sDbHelper == null) {
-                    sDbHelper = new ContactDbHelper(context);
+                    sDbHelper = new ContactTableHelper(context);
                 }
                 return sDbHelper;
             }

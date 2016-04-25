@@ -14,25 +14,25 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class CallLogDbHelper {
+public class CallLogTableHelper {
 
     private static final Object lock = new Object();
 
-    private static CallLogDbHelper sDbHelper;
+    private static CallLogTableHelper sDbHelper;
 
     private static SQLiteDatabase mDatabase;
     private Context mContext;
 
-    private CallLogDbHelper(Context context) {
+    private CallLogTableHelper(Context context) {
         mDatabase = new GWSQLiteOpenHelper(context).getWritableDatabase();
         mContext = context;
     }
 
-    public static CallLogDbHelper getInstance(Context context) {
+    public static CallLogTableHelper getInstance(Context context) {
         if (sDbHelper == null) {
             synchronized (lock) {
                 if (sDbHelper == null) {
-                    sDbHelper = new CallLogDbHelper(context);
+                    sDbHelper = new CallLogTableHelper(context);
                 }
                 return sDbHelper;
             }
@@ -118,7 +118,7 @@ public class CallLogDbHelper {
             log.setCallDurationInSeconds(callDuration);
             log.setCallType(callType);
 
-            Contact contact = ContactDbHelper.getInstance(mContext).getContactById(contact_id);
+            Contact contact = ContactTableHelper.getInstance(mContext).getContactById(contact_id);
             log.setContact(contact);
             return log;
         }
