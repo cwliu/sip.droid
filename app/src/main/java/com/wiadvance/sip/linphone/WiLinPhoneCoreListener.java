@@ -8,8 +8,10 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.wiadvance.sip.BuildConfig;
 import com.wiadvance.sip.CallReceiverActivity;
 import com.wiadvance.sip.NotificationUtil;
+import com.wiadvance.sip.PhoneUtils;
 import com.wiadvance.sip.UserData;
 import com.wiadvance.sip.model.CallLogEntry;
+import com.wiadvance.sip.model.Contact;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -75,15 +77,27 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
             UserData.sCurrentLogEntry = new CallLogEntry();
             UserData.sCurrentLogEntry.setCallType(CallLogEntry.TYPE_INCOMING_CALL_NO_ANSWER);
 
+            Contact contact = PhoneUtils.getCompanyContactBySipAddress(mContext,
+                    call.getRemoteAddress().toString());
+            if(contact != null){
+                UserData.sCurrentLogEntry.setContact(contact);
+            }
+
             Intent intent = CallReceiverActivity.newIntent(mContext,
                     call.getRemoteAddress().toString());
 
             mContext.startActivity(intent);
         }
 
-        if(state.equals(LinphoneCall.State.OutgoingRinging)){
+        if(state.equals(LinphoneCall.State.OutgoingInit)){
             UserData.sCurrentLogEntry = new CallLogEntry();
             UserData.sCurrentLogEntry.setCallType(CallLogEntry.TYPE_OUTGOING_CALL_NO_ANSWER);
+
+            Contact contact = PhoneUtils.getCompanyContactBySipAddress(mContext,
+                    call.getRemoteAddress().toString());
+            if(contact != null){
+                UserData.sCurrentLogEntry.setContact(contact);
+            }
 
             NotificationUtil.notifyCallStatus(mContext, true, null, true);
         }

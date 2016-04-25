@@ -1,6 +1,8 @@
 package com.wiadvance.sip.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class CallLogEntry {
 
@@ -16,6 +18,7 @@ public class CallLogEntry {
 
     public CallLogEntry() {
         contact = new Contact("Unknown");
+        callTime = new Date();
     }
 
     public Contact getContact() {
@@ -48,5 +51,10 @@ public class CallLogEntry {
 
     public void setCallType(int callType) {
         this.callType = callType;
+    }
+
+    public String getCallTimeString(){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault());
+        return sdf.format(getCallTime());
     }
 }

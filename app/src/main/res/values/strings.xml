@@ -12,4 +12,6 @@
     <string name="bcr_error">名片辨識發生錯誤</string>
     <string name="take_namecard_photo">對準名片拍照</string>
     <string name="call_established_msg">Established</string>
+    <string name="call_time">%1$s</string>
+    <string name="no_answer_msg">, no answer</string>
 </resources>

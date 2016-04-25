@@ -105,13 +105,24 @@
                     tools:text="David David David David David David David"
                     />
 
-                <TextView
-                    style="@style/textSub"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="25mins ago Call, no answer"
-
-                    />
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/call_time"
+                        style="@style/textSub"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="25 mins ago call"
+                        />
+                    <TextView
+                        android:id="@+id/call_msg"
+                        android:layout_toRightOf="@id/call_time"
+                        style="@style/textSub"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""/>
+                </RelativeLayout>
 
             </LinearLayout>
 

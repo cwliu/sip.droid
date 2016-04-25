@@ -115,16 +115,14 @@ public class LinphoneSipManager extends WiSipManager {
             @Override
             public void run() {
                 try {
-
                     String sipNumber = contact.getSip();
-                    if (sipNumber == null) {
-//                        NotificationUtil.displayStatus(mContext, "This user has no sip number");
-                    } else {
+                    if (sipNumber != null) {
                         NotificationUtil.notifyCallStatus(mContext, true, "SIP Dialing", true);
                         mHasConnected = call(sipNumber, true);
                     }
 
                     if (mCancelAllCall) {
+                        UserData.sCallLogEntryList.add(0, UserData.sCurrentLogEntry);
                         NotificationUtil.notifyCallStatus(mContext, false, null, false);
                         return;
                     }
@@ -143,6 +141,8 @@ public class LinphoneSipManager extends WiSipManager {
                     e.printStackTrace();
                     Log.e(TAG, "LinphoneCoreException", e);
                 }
+
+                UserData.sCallLogEntryList.add(0, UserData.sCurrentLogEntry);
             }
 
             private boolean call(String account, Boolean hasMaxWaitTime) throws LinphoneCoreException {
@@ -209,10 +209,6 @@ public class LinphoneSipManager extends WiSipManager {
     }
 
     public void endCall() {
-        if(mIsCalling){
-            UserData.sCallLogEntryList.add(UserData.sCurrentLogEntry);
-        }
-
         mIsCalling = false;
         mCancelAllCall = true;
     }
