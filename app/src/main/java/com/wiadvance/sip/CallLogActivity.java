@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
+import com.wiadvance.sip.db.CallLogDbHelper;
 import com.wiadvance.sip.model.CallLogEntry;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class CallLogActivity extends AbstractToolbarContactActivity {
             toolbar.setTitle("History");
         }
 
-        mCallLogList = UserData.sCallLogEntryList;
+        mCallLogList = CallLogDbHelper.getInstance(this).getAllCallLogs();
     }
 
     @Override

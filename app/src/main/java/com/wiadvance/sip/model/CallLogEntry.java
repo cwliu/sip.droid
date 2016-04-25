@@ -11,6 +11,7 @@ public class CallLogEntry {
     public static int TYPE_INCOMING_CALL_ANSWERED = 3;
     public static int TYPE_INCOMING_CALL_NO_ANSWER = 4;
 
+    private int id;
     private Contact contact;
     private Date callTime;
     private int callDurationInSeconds;
@@ -19,6 +20,14 @@ public class CallLogEntry {
     public CallLogEntry() {
         contact = new Contact("Unknown");
         callTime = new Date();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public Contact getContact() {

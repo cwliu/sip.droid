@@ -3,12 +3,14 @@ package com.wiadvance.sip.db;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorWrapper;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import com.wiadvance.sip.NotificationUtil;
 import com.wiadvance.sip.db.ContactDbSchema.ContactTable;
+import com.wiadvance.sip.db.ContactDbSchema.ContactTable.Cols;
 import com.wiadvance.sip.model.Contact;
 
 import java.util.ArrayList;
@@ -24,7 +26,7 @@ public class ContactDbHelper {
     private Context mContext;
 
     private ContactDbHelper(Context context) {
-        mDatabase = new ContactSqliteOpenHelper(context).getWritableDatabase();
+        mDatabase = new GWSQLiteOpenHelper(context).getWritableDatabase();
         mContext = context;
     }
 
@@ -41,6 +43,32 @@ public class ContactDbHelper {
         }
     }
 
+    private static ContentValues getContentsValue(Contact contact) {
+        ContentValues cv = new ContentValues();
+        cv.put(Cols.NAME, contact.getName());
+        cv.put(Cols.SIP, contact.getSip());
+        cv.put(Cols.PHONE, contact.getPhone());
+        cv.put(Cols.EMAIL, contact.getEmail());
+        cv.put(Cols.PHOTO, contact.getPhotoUri());
+        cv.put(Cols.TYPE, contact.getType());
+
+        return cv;
+    }
+
+    private ContactCursorWrapper queryContacts(String whereClause, String[] whereArgs, String orderBy) {
+        Cursor cursor = mDatabase.query(
+                ContactTable.NAME,
+                null,
+                whereClause,
+                whereArgs,
+                null,
+                null,
+                orderBy
+        );
+        cursor.moveToFirst();
+        return new ContactCursorWrapper(cursor);
+    }
+
     public void addContact(Contact contact) {
         ContentValues cv = getContentsValue(contact);
 
@@ -49,16 +77,24 @@ public class ContactDbHelper {
 
     public void addContactList(List<Contact> contactList) {
 
-        // TODO
+        // TODO Bulk insert
         for (Contact c : contactList) {
             addContact(c);
         }
     }
 
+    public Contact getContactById(int contact_id) {
+        String whereClause = Cols.ID + " = ? ";
+
+        String[] whereArgs = new String[]{String.valueOf(contact_id)};
+        ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, null);
+        return getContacts(contactCursorWrapper).get(0);
+    }
+
     public List<Contact> getAllContacts() {
-        String whereClause = ContactTable.Cols.TYPE + " = ? OR " +
-                ContactTable.Cols.TYPE + " = ? OR " +
-                ContactTable.Cols.TYPE + " = ?";
+        String whereClause = Cols.TYPE + " = ? OR " +
+                Cols.TYPE + " = ? OR " +
+                Cols.TYPE + " = ?";
 
         String[] whereArgs = new String[]{
                 String.valueOf(Contact.TYPE_COMPANY),
@@ -70,48 +106,48 @@ public class ContactDbHelper {
     }
 
     public List<Contact> getPhoneContacts() {
-        String whereClause = ContactTable.Cols.TYPE + " = ? OR " +
-                ContactTable.Cols.TYPE + " = ? ";
+        String whereClause = Cols.TYPE + " = ? OR " +
+                Cols.TYPE + " = ? ";
         String[] whereArgs = new String[]{String.valueOf(Contact.TYPE_PHONE),
                 String.valueOf(Contact.TYPE_PHONE_MANUAL)};
 
-        String orderBy = ContactTable.Cols.NAME + " ASC";
+        String orderBy = Cols.NAME + " ASC";
 
         ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, orderBy);
         return getContacts(contactCursorWrapper);
     }
 
     public List<Contact> getPhoneManualContacts() {
-        String whereClause = ContactTable.Cols.TYPE + " = ?";
+        String whereClause = Cols.TYPE + " = ?";
         String[] whereArgs = new String[]{String.valueOf(Contact.TYPE_PHONE_MANUAL)};
-        String orderBy = ContactTable.Cols.NAME + " ASC";
+        String orderBy = Cols.NAME + " ASC";
 
         ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, orderBy);
         return getContacts(contactCursorWrapper);
     }
 
     public List<Contact> getCompanyContacts() {
-        String whereClause = ContactTable.Cols.TYPE + " = ?";
+        String whereClause = Cols.TYPE + " = ?";
         String[] whereArgs = new String[]{String.valueOf(Contact.TYPE_COMPANY)};
-        String orderBy = ContactTable.Cols.NAME + " ASC";
+        String orderBy = Cols.NAME + " ASC";
 
         ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, orderBy);
         return getContacts(contactCursorWrapper);
     }
 
     public List<Contact> getRecentContacts() {
-        String whereClause = ContactTable.Cols.TYPE + " = ?";
+        String whereClause = Cols.TYPE + " = ?";
         String[] whereArgs = new String[]{String.valueOf(Contact.TYPE_RECENT)};
-        String orderBy = "datetime(" + ContactTable.Cols.CREATED_TIME + ") DESC";
+        String orderBy = "datetime(" + Cols.CREATED_TIME + ") DESC";
 
         ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, orderBy);
         return getContacts(contactCursorWrapper);
     }
 
     public List<Contact> getFavoriteContacts() {
-        String whereClause = ContactTable.Cols.TYPE + " = ?";
+        String whereClause = Cols.TYPE + " = ?";
         String[] whereArgs = new String[]{String.valueOf(Contact.TYPE_FAVORITE)};
-        String orderBy = ContactTable.Cols.NAME + " ASC";
+        String orderBy = Cols.NAME + " ASC";
 
         ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, orderBy);
         return getContacts(contactCursorWrapper);
@@ -134,7 +170,7 @@ public class ContactDbHelper {
 
     private void removeContactById(int id) {
         String dbId = String.valueOf(id);
-        mDatabase.delete(ContactTable.NAME, ContactTable.Cols.ID + " = ?", new String[]{dbId});
+        mDatabase.delete(ContactTable.NAME, Cols.ID + " = ?", new String[]{dbId});
     }
 
     public void removeAllContacts() {
@@ -143,12 +179,12 @@ public class ContactDbHelper {
 
     public void removePhoneContacts() {
         mDatabase.delete(ContactTable.NAME,
-                ContactTable.Cols.TYPE + " = ?", new String[]{String.valueOf(Contact.TYPE_PHONE)});
+                Cols.TYPE + " = ?", new String[]{String.valueOf(Contact.TYPE_PHONE)});
     }
 
     public void removeCompanyContacts() {
         mDatabase.delete(ContactTable.NAME,
-                ContactTable.Cols.TYPE + " = ?", new String[]{String.valueOf(Contact.TYPE_COMPANY)});
+                Cols.TYPE + " = ?", new String[]{String.valueOf(Contact.TYPE_COMPANY)});
     }
 
     @NonNull
@@ -168,31 +204,6 @@ public class ContactDbHelper {
         return contacts;
     }
 
-    private static ContentValues getContentsValue(Contact contact) {
-        ContentValues cv = new ContentValues();
-        cv.put(ContactTable.Cols.NAME, contact.getName());
-        cv.put(ContactTable.Cols.SIP, contact.getSip());
-        cv.put(ContactTable.Cols.PHONE, contact.getPhone());
-        cv.put(ContactTable.Cols.EMAIL, contact.getEmail());
-        cv.put(ContactTable.Cols.PHOTO, contact.getPhotoUri());
-        cv.put(ContactTable.Cols.TYPE, contact.getType());
-
-        return cv;
-    }
-
-    private static ContactCursorWrapper queryContacts(String whereClause, String[] whereArgs, String orderBy) {
-        Cursor cursor = mDatabase.query(
-                ContactTable.NAME,
-                null,
-                whereClause,
-                whereArgs,
-                null,
-                null,
-                orderBy
-        );
-        cursor.moveToFirst();
-        return new ContactCursorWrapper(cursor);
-    }
 
     public void addFavoriteContact(Contact contact) {
 
@@ -220,7 +231,7 @@ public class ContactDbHelper {
 
     public void removeFavoriteContact(Contact contact) {
 
-        String whereClause = ContactTable.Cols.NAME + " = ? AND " + ContactTable.Cols.TYPE + " = ?";
+        String whereClause = Cols.NAME + " = ? AND " + Cols.TYPE + " = ?";
         String[] whereArgs = new String[]{contact.getName(), String.valueOf(Contact.TYPE_FAVORITE)};
         mDatabase.delete(ContactTable.NAME, whereClause, whereArgs);
 
@@ -235,5 +246,36 @@ public class ContactDbHelper {
             }
         }
         return false;
+    }
+
+    class ContactCursorWrapper extends CursorWrapper {
+        public ContactCursorWrapper(Cursor cursor) {
+            super(cursor);
+        }
+
+        public Contact getContact() {
+
+            if (getCount() == 0) {
+                return null;
+            }
+
+            int id = getInt(getColumnIndex(Cols.ID));
+            String name = getString(getColumnIndex(Cols.NAME));
+            String sip = getString(getColumnIndex(Cols.SIP));
+            String phone = getString(getColumnIndex(Cols.PHONE));
+            String email = getString(getColumnIndex(Cols.EMAIL));
+            String photo = getString(getColumnIndex(Cols.PHOTO));
+            Integer type = getInt(getColumnIndex(Cols.TYPE));
+
+            Contact contact = new Contact(name);
+            contact.setId(id);
+            contact.setEmail(email);
+            contact.setSip(sip);
+            contact.setPhone(phone);
+            contact.setPhotoUri(photo);
+            contact.setType(type);
+
+            return contact;
+        }
     }
 }
