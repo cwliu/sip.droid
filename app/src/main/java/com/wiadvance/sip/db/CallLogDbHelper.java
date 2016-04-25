@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.CursorWrapper;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.wiadvance.sip.db.CallLogDbSchema.CallLogTable.Cols;
+import com.wiadvance.sip.db.AppDbSchema.CallLogTable.Cols;
 import com.wiadvance.sip.model.CallLogEntry;
 import com.wiadvance.sip.model.Contact;
 
@@ -57,7 +57,7 @@ public class CallLogDbHelper {
 
     private CallLogCursorWrapper query(String whereClause, String[] whereArgs, String orderBy) {
         Cursor cursor = mDatabase.query(
-                CallLogDbSchema.CallLogTable.NAME,
+                AppDbSchema.CallLogTable.NAME,
                 null,
                 whereClause,
                 whereArgs,
@@ -92,7 +92,7 @@ public class CallLogDbHelper {
     public void addCallLog(CallLogEntry log) {
         ContentValues cv = getContentsValue(log);
 
-        mDatabase.insert(CallLogDbSchema.CallLogTable.NAME, null, cv);
+        mDatabase.insert(AppDbSchema.CallLogTable.NAME, null, cv);
     }
 
     class CallLogCursorWrapper extends CursorWrapper {
@@ -105,11 +105,11 @@ public class CallLogDbHelper {
                 return null;
             }
 
-            int id = getInt(getColumnIndex(Cols.ID));
-            int callTime = getInt(getColumnIndex(Cols.CALL_TIME));
-            int callDuration = getInt(getColumnIndex(Cols.CALL_DURATION));
-            int callType = getInt(getColumnIndex(Cols.CALL_TYPE));
-            int contact_id = getInt(getColumnIndex(Cols.CONTACT));
+            int id = getInt(getColumnIndex(AppDbSchema.CallLogTable.Cols.ID));
+            int callTime = getInt(getColumnIndex(AppDbSchema.CallLogTable.Cols.CALL_TIME));
+            int callDuration = getInt(getColumnIndex(AppDbSchema.CallLogTable.Cols.CALL_DURATION));
+            int callType = getInt(getColumnIndex(AppDbSchema.CallLogTable.Cols.CALL_TYPE));
+            int contact_id = getInt(getColumnIndex(AppDbSchema.CallLogTable.Cols.CONTACT));
 
 
             CallLogEntry log = new CallLogEntry();

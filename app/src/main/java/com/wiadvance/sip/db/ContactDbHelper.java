@@ -9,8 +9,8 @@ import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import com.wiadvance.sip.NotificationUtil;
-import com.wiadvance.sip.db.ContactDbSchema.ContactTable;
-import com.wiadvance.sip.db.ContactDbSchema.ContactTable.Cols;
+import com.wiadvance.sip.db.AppDbSchema.ContactTable;
+import com.wiadvance.sip.db.AppDbSchema.ContactTable.Cols;
 import com.wiadvance.sip.model.Contact;
 
 import java.util.ArrayList;
@@ -175,6 +175,7 @@ public class ContactDbHelper {
     public void addRecentContact(Contact contact) {
         List<Contact> list = getRecentContacts();
 
+        // FIX ME
         Iterator<Contact> i = list.iterator();
         while (i.hasNext()) {
             Contact dbContact = i.next();

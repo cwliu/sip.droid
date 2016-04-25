@@ -4,13 +4,14 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.wiadvance.sip.db.CallLogDbSchema.CallLogTable;
-import com.wiadvance.sip.db.ContactDbSchema.ContactTable;
+import com.wiadvance.sip.db.AppDbSchema.CallLogTable;
+import com.wiadvance.sip.db.AppDbSchema.ContactTable;
+import com.wiadvance.sip.db.AppDbSchema.FrequentlyContactTable;
 
 public class GWSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static String DB_NAME = "sip";
-    private static int DB_VERSION = 3;
+    private static int DB_VERSION = 4;
 
     public GWSQLiteOpenHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -48,9 +49,19 @@ public class GWSQLiteOpenHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY(" + CallLogTable.Cols.CONTACT + ") REFERENCES " +
                 ContactTable.NAME + "(" + ContactTable.Cols.ID + ") )"
         );
+
+        db.execSQL("CREATE TABLE " + FrequentlyContactTable.NAME + "(" +
+                FrequentlyContactTable.Cols.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                FrequentlyContactTable.Cols.CONTACT + " INTEGER," +
+                FrequentlyContactTable.Cols.COUNT + " INTEGER," +
+                FrequentlyContactTable.Cols.UPDATED_TIME + " INTEGER," +
+                "FOREIGN KEY(" + FrequentlyContactTable.Cols.CONTACT + ") REFERENCES " +
+                ContactTable.NAME + "(" + ContactTable.Cols.ID + ") )"
+        );
     }
 
     private void dropTable(SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + FrequentlyContactTable.NAME);
         db.execSQL("DROP TABLE IF EXISTS " + CallLogTable.NAME);
         db.execSQL("DROP TABLE IF EXISTS " + ContactTable.NAME);
     }
