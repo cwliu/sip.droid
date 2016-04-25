@@ -71,23 +71,20 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
         Log.d(TAG, "callState() called with: " + "core = [" + core + "], call = [" + call + "], state = [" + state + "], s = [" + s + "]");
 
         if(state.equals(LinphoneCall.State.IncomingReceived)) {
+
+            UserData.sCurrentLogEntry = new CallLogEntry();
+            UserData.sCurrentLogEntry.setCallType(CallLogEntry.TYPE_INCOMING_CALL_NO_ANSWER);
+
             String caller = call.getRemoteAddress().toString();
             Intent intent = CallReceiverActivity.newLinephoneIntnet(mContext, caller);
             mContext.startActivity(intent);
         }
 
-        if(state.equals(LinphoneCall.State.OutgoingInit)){
+        if(state.equals(LinphoneCall.State.OutgoingRinging)){
             UserData.sCurrentLogEntry = new CallLogEntry();
             UserData.sCurrentLogEntry.setCallType(CallLogEntry.TYPE_OUTGOING_CALL_NO_ANSWER);
-        }
 
-        if(state.equals(LinphoneCall.State.OutgoingRinging)){
             NotificationUtil.notifyCallStatus(mContext, true, null, true);
-        }
-
-        if(state.equals(LinphoneCall.State.IncomingReceived)){
-            UserData.sCurrentLogEntry = new CallLogEntry();
-            UserData.sCurrentLogEntry.setCallType(CallLogEntry.TYPE_INCOMING_CALL_NO_ANSWER);
         }
 
         if(state.equals(LinphoneCall.State.Connected)){
@@ -105,6 +102,7 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
         if(state.equals(LinphoneCall.State.Error)){
             NotificationUtil.displayStatus(mContext, state.toString() + ": " + s);
         }
+
     }
 
 

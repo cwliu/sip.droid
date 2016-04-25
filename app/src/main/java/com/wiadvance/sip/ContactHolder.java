@@ -17,6 +17,7 @@ public class ContactHolder extends RecyclerView.ViewHolder {
 
     private static final String TAG = "ContactHolder";
 
+    private final View mRootItemView;
     private final TextView mNameTextView;
     private final ImageView mPhoneImageview;
     private final ImageView mAvatar;
@@ -34,6 +35,8 @@ public class ContactHolder extends RecyclerView.ViewHolder {
         super(itemView);
 
         mContext = context;
+        mRootItemView = itemView;
+
         mRootItemSwipeLayoutView = (SwipeLayout) itemView.findViewById(R.id.swipe_layout);
         mNameTextView = (TextView) itemView.findViewById(R.id.contact_name_text_view);
         mPhoneImageview = (ImageView) itemView.findViewById(R.id.phone_icon_image_view);
@@ -43,18 +46,26 @@ public class ContactHolder extends RecyclerView.ViewHolder {
         mFavoriteImageView = (ImageView) itemView.findViewById(R.id.is_favorite_image_view);
         mNotFavoriteImageView = (ImageView) itemView.findViewById(R.id.not_favorite_image_view);
         mFavorite_frame_layout = (FrameLayout) itemView.findViewById(R.id.favorite_frame_layout);
-
     }
 
     public void bindContactViewHolder(final Contact contact) {
         bindContact(contact);
     }
 
-    public void bindCallLogContactViewHolder(CallLogEntry log){
+    public void bindCallLogContactViewHolder(CallLogEntry log) {
         bindContact(log.getContact());
 
+        ImageView callStatusImageView = (ImageView) mRootItemView.findViewById
+                (R.id.call_status_image_view);
+
+        if (log.getCallType() == CallLogEntry.TYPE_INCOMING_CALL_ANSWERED) {
+            callStatusImageView.setImageResource(R.drawable.call_received_blue_16dp);
+        } else if (log.getCallType() == CallLogEntry.TYPE_INCOMING_CALL_NO_ANSWER) {
+            callStatusImageView.setImageResource(R.drawable.call_missed_red_16dp);
+        } else{
+            callStatusImageView.setImageResource(R.drawable.call_made_green_16dp);
+        }
         // show status
-        // show icon
     }
 
     private void bindContact(final Contact contact) {

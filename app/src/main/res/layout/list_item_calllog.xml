@@ -76,6 +76,7 @@
                     />
                 
                <ImageView
+                   android:id="@+id/call_status_image_view"
                    android:layout_width="16dp"
                    android:layout_height="16dp"
                    android:src="@drawable/call_missed_red_16dp"
