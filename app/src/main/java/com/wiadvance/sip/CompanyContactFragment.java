@@ -77,6 +77,8 @@ public class CompanyContactFragment extends Fragment {
     }
 
     private void updateContactsSipPhone(List<Contact> list) {
+
+        ContactDbHelper dbHelper = ContactDbHelper.getInstance(getContext());
         for (Contact c : list) {
             String email = c.getEmail();
             String phone = UserData.sEmailToPhoneBiMap.get(email);
@@ -90,11 +92,8 @@ public class CompanyContactFragment extends Fragment {
                 c.setSip(sip);
             }
             c.setType(Contact.TYPE_COMPANY);
+            dbHelper.updateCompanyContactByEmail(c);
         }
-
-
-        ContactDbHelper.getInstance(getContext()).removeCompanyContacts();
-        ContactDbHelper.getInstance(getContext()).addContactList(list);
 
         if (getActivity() != null) {
             getActivity().runOnUiThread(new Runnable() {

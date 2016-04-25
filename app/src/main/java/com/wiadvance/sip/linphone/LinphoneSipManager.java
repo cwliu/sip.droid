@@ -122,7 +122,7 @@ public class LinphoneSipManager extends WiSipManager {
                     }
 
                     if (mCancelAllCall) {
-                        UserData.recordCallLog();
+                        UserData.recordCallLog(mContext);
                         NotificationUtil.notifyCallStatus(mContext, false, null, false);
                         return;
                     }
@@ -142,7 +142,7 @@ public class LinphoneSipManager extends WiSipManager {
                     Log.e(TAG, "LinphoneCoreException", e);
                 }
 
-                UserData.recordCallLog();
+                UserData.recordCallLog(mContext);
             }
 
             private boolean call(String account, Boolean hasMaxWaitTime) throws LinphoneCoreException {

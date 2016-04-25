@@ -106,7 +106,7 @@ public class CallLogDbHelper {
             }
 
             int id = getInt(getColumnIndex(Cols.ID));
-            int calltime = getInt(getColumnIndex(Cols.CALL_TIME));
+            int callTime = getInt(getColumnIndex(Cols.CALL_TIME));
             int callDuration = getInt(getColumnIndex(Cols.CALL_DURATION));
             int callType = getInt(getColumnIndex(Cols.CALL_TYPE));
             int contact_id = getInt(getColumnIndex(Cols.CONTACT));
@@ -114,7 +114,7 @@ public class CallLogDbHelper {
 
             CallLogEntry log = new CallLogEntry();
             log.setId(id);
-            log.setCallTime(new Date(calltime));
+            log.setCallTime(new Date(callTime));
             log.setCallDurationInSeconds(callDuration);
             log.setCallType(callType);
 

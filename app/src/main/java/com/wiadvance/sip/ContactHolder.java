@@ -53,7 +53,9 @@ public class ContactHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindCallLogContactViewHolder(CallLogEntry log) {
-        bindContact(log.getContact());
+        if (log.getContact() != null) {
+            bindContact(log.getContact());
+        }
 
         ImageView callStatusImageView = (ImageView) mRootItemView.findViewById
                 (R.id.call_status_image_view);
@@ -73,11 +75,11 @@ public class ContactHolder extends RecyclerView.ViewHolder {
         } else if (log.getCallType() == CallLogEntry.TYPE_INCOMING_CALL_NO_ANSWER) {
             callStatusImageView.setImageResource(R.drawable.call_missed_red_16dp);
 
-        } else if (log.getCallType() == CallLogEntry.TYPE_OUTGOING_CALL_ANSWERED){
+        } else if (log.getCallType() == CallLogEntry.TYPE_OUTGOING_CALL_ANSWERED) {
             callStatusImageView.setImageResource(R.drawable.call_made_green_16dp);
             callMsgTextView.setText(callDurationTime);
 
-        } else{
+        } else {
             // outgoing call not answered
             callMsgTextView.setText(R.string.no_answer_msg);
             callStatusImageView.setImageResource(R.drawable.call_made_green_16dp);
@@ -85,7 +87,7 @@ public class ContactHolder extends RecyclerView.ViewHolder {
     }
 
     private void bindContact(final Contact contact) {
-        mNameTextView.setText(contact.getName());
+        mNameTextView.setText(contact.getId() + "/" + contact.getName() + contact.getType());
 
         int scale = Utils.getDeviceScale(mContext);
         if (!UserData.sAvatar404Cache.contains(contact.getPhotoUri())) {

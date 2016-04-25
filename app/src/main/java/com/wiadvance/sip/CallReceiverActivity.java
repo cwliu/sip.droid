@@ -150,7 +150,7 @@ public class CallReceiverActivity extends AppCompatActivity implements SensorEve
 
         mSensorManager.unregisterListener(this, mProximitySensor);
 
-        UserData.recordCallLog();
+        UserData.recordCallLog(this);
     }
 
     public void onEndCallButtonClick(View view) {

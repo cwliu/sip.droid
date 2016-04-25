@@ -283,7 +283,7 @@ public class ContactFragment extends Fragment {
             public void onFailure(Call call, IOException e) {
                 Log.d(TAG, "onFailure() called with: " + "call = [" + call + "], e = [" + e + "]");
                 NotificationUtil.displayStatus(getContext(),
-                        "Sip backend server error: " + e.getMessage());
+                        "Backend error: " + e.getMessage());
             }
 
             @Override
@@ -292,7 +292,7 @@ public class ContactFragment extends Fragment {
 
                 if (!response.isSuccessful()) {
                     NotificationUtil.displayStatus(getContext(),
-                            "Sip backend server error: " + response.body().string());
+                            "Backend error: " + response.body().string());
                     return;
                 }
 

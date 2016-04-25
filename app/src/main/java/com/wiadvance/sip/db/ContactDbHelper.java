@@ -88,7 +88,26 @@ public class ContactDbHelper {
 
         String[] whereArgs = new String[]{String.valueOf(contact_id)};
         ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, null);
-        return getContacts(contactCursorWrapper).get(0);
+        List<Contact> contacts = getContacts(contactCursorWrapper);
+        if (contacts.size() == 0) {
+            return null;
+        } else {
+            return contacts.get(0);
+        }
+    }
+
+    public Contact getContactByEmail(String email) {
+        String whereClause = Cols.EMAIL + " = ? ";
+
+        String[] whereArgs = new String[]{String.valueOf(email)};
+        ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, null);
+
+        List<Contact> contacts = getContacts(contactCursorWrapper);
+        if (contacts.size() == 0) {
+            return null;
+        } else {
+            return contacts.get(0);
+        }
     }
 
     public List<Contact> getAllContacts() {
@@ -246,6 +265,18 @@ public class ContactDbHelper {
             }
         }
         return false;
+    }
+
+    public void updateCompanyContactByEmail(Contact c) {
+        String whereClause = Cols.EMAIL + " = ? AND " + Cols.TYPE + " = ?";
+        String[] whereArgs = new String[]{c.getEmail(), String.valueOf(Contact.TYPE_COMPANY)};
+
+        Contact contact = getContactByEmail(c.getEmail());
+        if (contact == null) {
+            addContact(c);
+        } else {
+            mDatabase.update(ContactTable.NAME, getContentsValue(c), whereClause, whereArgs);
+        }
     }
 
     class ContactCursorWrapper extends CursorWrapper {

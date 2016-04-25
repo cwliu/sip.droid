@@ -4,13 +4,12 @@ import android.content.Context;
 import android.preference.PreferenceManager;
 
 import com.google.common.collect.HashBiMap;
+import com.wiadvance.sip.db.CallLogDbHelper;
 import com.wiadvance.sip.db.ContactDbHelper;
 import com.wiadvance.sip.model.CallLogEntry;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 
 public class UserData {
 
@@ -24,7 +23,6 @@ public class UserData {
 
     public static HashSet<String> sAvatar404Cache = new HashSet<>();
 
-    public static List<CallLogEntry> sCallLogEntryList = new ArrayList<>();
     public static CallLogEntry sCurrentLogEntry = new CallLogEntry();
 
     public static String getName(Context context) {
@@ -71,9 +69,10 @@ public class UserData {
         ContactDbHelper.getInstance(context).removeAllContacts();
     }
 
-    public static void recordCallLog() {
+    public static void recordCallLog(Context context) {
         long seconds = (new Date().getTime() - sCurrentLogEntry.getCallTime().getTime())/1000;
         sCurrentLogEntry.setCallDurationInSeconds((int) seconds);
-        sCallLogEntryList.add(0, sCurrentLogEntry);
+
+        CallLogDbHelper.getInstance(context).addCallLog(sCurrentLogEntry);
     }
 }
