@@ -2,6 +2,7 @@ package com.wiadvance.sip;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -62,7 +63,7 @@ public class ContactHolder extends RecyclerView.ViewHolder {
         TextView callMsgTextView = (TextView) mRootItemView.findViewById(R.id.call_msg);
 
         TextView callTimeTextView = (TextView) mRootItemView.findViewById(R.id.call_time);
-        String callTime = String.format(mContext.getResources().getString(R.string.call_time), log.getCallTimeString());
+        String callTime = String.format(mContext.getResources().getString(R.string.call_time), DateUtils.getRelativeTimeSpanString(log.getCallTime().getTime()));
         callTimeTextView.setText(callTime);
 
         String callDurationTime = mContext.getResources().getQuantityString(R.plurals.call_duration_time, log.getCallDurationInSeconds(), log.getCallDurationInSeconds());
