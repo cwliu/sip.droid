@@ -1,11 +1,13 @@
 package com.wiadvance.sip;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 
 import com.google.common.collect.HashBiMap;
+import com.wiadvance.sip.db.AppDbSchema;
+import com.wiadvance.sip.db.AppSQLiteOpenHelper;
 import com.wiadvance.sip.db.CallLogTableHelper;
-import com.wiadvance.sip.db.ContactTableHelper;
 import com.wiadvance.sip.model.CallLogEntry;
 
 import java.util.Date;
@@ -66,11 +68,15 @@ public class UserData {
         sEmailToSipBiMap.clear();
         sEmailToPhoneBiMap.clear();
 
-        ContactTableHelper.getInstance(context).removeAllContacts();
+        SQLiteDatabase database = new AppSQLiteOpenHelper(context).getWritableDatabase();
+        database.delete(AppDbSchema.FavoriteContactTable.NAME, null, null);
+        database.delete(AppDbSchema.ContactTable.NAME, null, null);
+        database.delete(AppDbSchema.RegularContactTable.NAME, null, null);
+        database.delete(AppDbSchema.CallLogTable.NAME, null, null);
     }
 
     public static void recordCallLog(Context context) {
-        long seconds = (new Date().getTime() - sCurrentLogEntry.getCallTime().getTime())/1000;
+        long seconds = (new Date().getTime() - sCurrentLogEntry.getCallTime().getTime()) / 1000;
         sCurrentLogEntry.setCallDurationInSeconds((int) seconds);
 
         CallLogTableHelper.getInstance(context).addCallLog(sCurrentLogEntry);

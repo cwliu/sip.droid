@@ -106,7 +106,7 @@ public class CallLogTableHelper {
             }
 
             int id = getInt(getColumnIndex(AppDbSchema.CallLogTable.Cols.ID));
-            int callTime = getInt(getColumnIndex(AppDbSchema.CallLogTable.Cols.CALL_TIME));
+            long callTime = getLong(getColumnIndex(AppDbSchema.CallLogTable.Cols.CALL_TIME));
             int callDuration = getInt(getColumnIndex(AppDbSchema.CallLogTable.Cols.CALL_DURATION));
             int callType = getInt(getColumnIndex(AppDbSchema.CallLogTable.Cols.CALL_TYPE));
             int contact_id = getInt(getColumnIndex(AppDbSchema.CallLogTable.Cols.CONTACT));
