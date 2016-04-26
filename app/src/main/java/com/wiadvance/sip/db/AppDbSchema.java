@@ -41,4 +41,13 @@ public class AppDbSchema {
             public static final String UPDATED_TIME = "updated_time";
         }
     }
+
+    public static final class FavoriteContactTable {
+        public static final String NAME = "favorite_contacts";
+
+        public static final class Cols {
+            public static final String ID = "_id";
+            public static final String CONTACT = "contact";
+        }
+    }
 }

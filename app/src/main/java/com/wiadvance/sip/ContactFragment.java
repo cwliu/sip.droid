@@ -25,7 +25,7 @@ import android.widget.ListView;
 
 import com.google.gson.Gson;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
-import com.wiadvance.sip.db.ContactTableHelper;
+import com.wiadvance.sip.db.FavoriteContactTableHelper;
 import com.wiadvance.sip.linphone.LinphoneCoreHelper;
 import com.wiadvance.sip.linphone.LinphoneSipManager;
 import com.wiadvance.sip.office365.AuthenticationManager;
@@ -167,7 +167,7 @@ public class ContactFragment extends Fragment {
         TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.contacts_tab_layout);
         tabLayout.setupWithViewPager(viewPager);
 
-        if (ContactTableHelper.getInstance(getContext()).getFavoriteContacts().size() == 0) {
+        if (FavoriteContactTableHelper.getInstance(getContext()).getAll().size() == 0) {
             TabLayout.Tab tab = tabLayout.getTabAt(2); // go to phone contact
             if (tab != null) {
                 tab.select();

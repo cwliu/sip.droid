@@ -4,7 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.wiadvance.sip.PhoneUtils;
-import com.wiadvance.sip.db.ContactTableHelper;
+import com.wiadvance.sip.db.FavoriteContactTableHelper;
 
 public class Contact {
 
@@ -108,7 +108,7 @@ public class Contact {
     }
 
     public boolean isFavorite(Context context) {
-        return ContactTableHelper.getInstance(context).isFavoriteContact(this);
+        return FavoriteContactTableHelper.getInstance(context).isFavoriteContact(this);
     }
 
     public int getType() {

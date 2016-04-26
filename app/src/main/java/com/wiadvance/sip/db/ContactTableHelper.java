@@ -6,15 +6,12 @@ import android.database.Cursor;
 import android.database.CursorWrapper;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
-import android.widget.Toast;
 
-import com.wiadvance.sip.NotificationUtil;
 import com.wiadvance.sip.db.AppDbSchema.ContactTable;
 import com.wiadvance.sip.db.AppDbSchema.ContactTable.Cols;
 import com.wiadvance.sip.model.Contact;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class ContactTableHelper {
@@ -169,57 +166,8 @@ public class ContactTableHelper {
         return getContacts(contactCursorWrapper);
     }
 
-//    public List<Contact> getRecentContacts() {
-//        String whereClause = Cols.TYPE + " = ?";
-//        String[] whereArgs = new String[]{String.valueOf(Contact.TYPE_RECENT)};
-//        String orderBy = "datetime(" + Cols.CREATED_TIME + ") DESC";
-//
-//        ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, orderBy);
-//        return getContacts(contactCursorWrapper);
-//    }
-
-    public List<Contact> getFavoriteContacts() {
-        String whereClause = Cols.TYPE + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(Contact.TYPE_FAVORITE)};
-        String orderBy = Cols.NAME + " ASC";
-
-        ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, orderBy);
-        return getContacts(contactCursorWrapper);
-    }
-
-//    public void addRecentContact(Contact contact) {
-//        List<Contact> list = getRecentContacts();
-//
-//        // FIX ME
-//        Iterator<Contact> i = list.iterator();
-//        while (i.hasNext()) {
-//            Contact dbContact = i.next();
-//            if (dbContact.equals(contact)) {
-//                removeContactById(dbContact.getId());
-//            }
-//        }
-//
-//        contact.setType(Contact.TYPE_RECENT);
-//        addContact(contact);
-//    }
-
-//    private void removeContactById(int id) {
-//        String dbId = String.valueOf(id);
-//        mDatabase.delete(ContactTable.NAME, Cols.ID + " = ?", new String[]{dbId});
-//    }
-
     public void removeAllContacts() {
         mDatabase.delete(ContactTable.NAME, null, null);
-    }
-
-    public void removePhoneContacts() {
-        mDatabase.delete(ContactTable.NAME,
-                Cols.TYPE + " = ?", new String[]{String.valueOf(Contact.TYPE_PHONE)});
-    }
-
-    public void removeCompanyContacts() {
-        mDatabase.delete(ContactTable.NAME,
-                Cols.TYPE + " = ?", new String[]{String.valueOf(Contact.TYPE_COMPANY)});
     }
 
     @NonNull
@@ -240,48 +188,6 @@ public class ContactTableHelper {
     }
 
 
-    public void addFavoriteContact(Contact contact) {
-
-        List<Contact> list = getFavoriteContacts();
-        boolean isExist = false;
-        contact.setType(Contact.TYPE_FAVORITE);
-
-        Iterator<Contact> i = list.iterator();
-        while (i.hasNext()) {
-            Contact c = i.next(); // must be called before you can call i.remove()
-            if (c.equals(contact)) {
-                isExist = true;
-                break;
-            }
-        }
-
-        if (!isExist) {
-            addContact(contact);
-        }
-
-        NotificationUtil.favoriteUpdate(mContext);
-        Toast.makeText(mContext, "已將 " + contact.getName() + " 加入我的最愛", Toast.LENGTH_SHORT).show();
-
-    }
-
-    public void removeFavoriteContact(Contact contact) {
-
-        String whereClause = Cols.NAME + " = ? AND " + Cols.TYPE + " = ?";
-        String[] whereArgs = new String[]{contact.getName(), String.valueOf(Contact.TYPE_FAVORITE)};
-        mDatabase.delete(ContactTable.NAME, whereClause, whereArgs);
-
-        NotificationUtil.favoriteUpdate(mContext);
-        Toast.makeText(mContext, "已將 " + contact.getName() + " 移出我的最愛", Toast.LENGTH_SHORT).show();
-    }
-
-    public boolean isFavoriteContact(Contact contact) {
-        for (Contact c : getFavoriteContacts()) {
-            if (c.equals(contact)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     public void updateCompanyContactByEmail(Contact c) {
         String whereClause = Cols.EMAIL + " = ? AND " + Cols.TYPE + " = ?";
