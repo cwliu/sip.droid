@@ -1,5 +1,6 @@
 package com.wiadvance.sip;
 
+import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -50,6 +51,7 @@ import okhttp3.Request;
 public class ContactFragment extends Fragment {
 
     private static final String TAG = "ContactFragment";
+    public static boolean is_fab_open = false;
 
     private LinphoneSipManager mWiSipManager;
     private DrawerItemAdapter mDrawerAdapter;
@@ -177,29 +179,44 @@ public class ContactFragment extends Fragment {
 
     private void setupFloatingActionButton(View rootView) {
         final FloatingActionButton fab_open = (FloatingActionButton) rootView.findViewById(R.id.fab_open);
-        final FloatingActionButton fab_close = (FloatingActionButton) rootView.findViewById(R.id.fab_close);
+//        final FloatingActionButton fab_close = (FloatingActionButton) rootView.findViewById(R.id.fab_close);
         final FloatingActionButton addContactFab = (FloatingActionButton) rootView.findViewById(R.id.add_contact_fab);
         final FloatingActionButton scanAddContactFab = (FloatingActionButton) rootView.findViewById(R.id.scan_contact_fab);
 
         fab_open.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fab_open.setVisibility(View.GONE);
-                fab_close.setVisibility(View.VISIBLE);
+//                fab_open.setVisibility(View.GONE);
+//                fab_close.setVisibility(View.VISIBLE);
                 addContactFab.setVisibility(View.VISIBLE);
                 scanAddContactFab.setVisibility(View.VISIBLE);
-            }
-        });
 
-        fab_close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fab_open.setVisibility(View.VISIBLE);
-                fab_close.setVisibility(View.GONE);
-                addContactFab.setVisibility(View.GONE);
-                scanAddContactFab.setVisibility(View.GONE);
+
+                if(!is_fab_open){
+                    ObjectAnimator rotateAnimator = ObjectAnimator.ofFloat(fab_open, "rotation", 0f, -45f);
+                    rotateAnimator.setDuration(1000);
+                    rotateAnimator.start();
+
+                    is_fab_open = true;
+                }else{
+                    ObjectAnimator rotateAnimator = ObjectAnimator.ofFloat(fab_open, "rotation", -45f, 0f);
+                    rotateAnimator.setDuration(1000);
+                    rotateAnimator.start();
+
+                    is_fab_open = false;
+                }
             }
         });
+//
+//        fab_close.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                fab_open.setVisibility(View.VISIBLE);
+//                fab_close.setVisibility(View.GONE);
+//                addContactFab.setVisibility(View.GONE);
+//                scanAddContactFab.setVisibility(View.GONE);
+//            }
+//        });
 
         addContactFab.setOnClickListener(new View.OnClickListener() {
             @Override
