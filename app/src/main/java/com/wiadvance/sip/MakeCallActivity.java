@@ -136,6 +136,7 @@ public class MakeCallActivity extends AppCompatActivity implements SensorEventLi
 
         mSensorManager.registerListener(this, mProximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
 
+        UserData.sCurrentContact = mCallee;
         mWiSipManager.makeCall(mCallee);
     }
 

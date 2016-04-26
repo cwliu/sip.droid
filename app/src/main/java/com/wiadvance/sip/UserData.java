@@ -9,6 +9,7 @@ import com.wiadvance.sip.db.AppDbSchema;
 import com.wiadvance.sip.db.AppSQLiteOpenHelper;
 import com.wiadvance.sip.db.CallLogTableHelper;
 import com.wiadvance.sip.model.CallLogEntry;
+import com.wiadvance.sip.model.Contact;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -26,6 +27,7 @@ public class UserData {
     public static HashSet<String> sAvatar404Cache = new HashSet<>();
 
     public static CallLogEntry sCurrentLogEntry = new CallLogEntry();
+    public static Contact sCurrentContact;
 
     public static String getName(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_NAME, null);

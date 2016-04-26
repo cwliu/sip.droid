@@ -93,11 +93,7 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
         if(state.equals(LinphoneCall.State.OutgoingInit)){
             UserData.sCurrentLogEntry = new CallLogEntry();
             UserData.sCurrentLogEntry.setCallType(CallLogEntry.TYPE_OUTGOING_CALL_NO_ANSWER);
-
-            Contact contact = PhoneUtils.getCompanyContactByAccount(mContext, targetUsername);
-            if(contact != null){
-                UserData.sCurrentLogEntry.setContact(contact);
-            }
+            UserData.sCurrentLogEntry.setContact(UserData.sCurrentContact);
 
             NotificationUtil.notifyCallStatus(mContext, true, null, true);
         }
