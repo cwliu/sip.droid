@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -179,44 +180,35 @@ public class ContactFragment extends Fragment {
 
     private void setupFloatingActionButton(View rootView) {
         final FloatingActionButton fab_open = (FloatingActionButton) rootView.findViewById(R.id.fab_open);
-//        final FloatingActionButton fab_close = (FloatingActionButton) rootView.findViewById(R.id.fab_close);
         final FloatingActionButton addContactFab = (FloatingActionButton) rootView.findViewById(R.id.add_contact_fab);
         final FloatingActionButton scanAddContactFab = (FloatingActionButton) rootView.findViewById(R.id.scan_contact_fab);
 
         fab_open.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                fab_open.setVisibility(View.GONE);
-//                fab_close.setVisibility(View.VISIBLE);
-                addContactFab.setVisibility(View.VISIBLE);
-                scanAddContactFab.setVisibility(View.VISIBLE);
 
-
-                if(!is_fab_open){
+                if (!is_fab_open) {
                     ObjectAnimator rotateAnimator = ObjectAnimator.ofFloat(fab_open, "rotation", 0f, -45f);
-                    rotateAnimator.setDuration(1000);
+                    rotateAnimator.setDuration(600);
                     rotateAnimator.start();
+
+
+                    viewVisibilityDelayed(addContactFab, View.VISIBLE, 50);
+                    viewVisibilityDelayed(scanAddContactFab, View.VISIBLE, 100);
 
                     is_fab_open = true;
-                }else{
+                } else {
                     ObjectAnimator rotateAnimator = ObjectAnimator.ofFloat(fab_open, "rotation", -45f, 0f);
-                    rotateAnimator.setDuration(1000);
+                    rotateAnimator.setDuration(600);
                     rotateAnimator.start();
+
+                    viewVisibilityDelayed(scanAddContactFab, View.GONE, 50);
+                    viewVisibilityDelayed(addContactFab, View.GONE, 100);
 
                     is_fab_open = false;
                 }
             }
         });
-//
-//        fab_close.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                fab_open.setVisibility(View.VISIBLE);
-//                fab_close.setVisibility(View.GONE);
-//                addContactFab.setVisibility(View.GONE);
-//                scanAddContactFab.setVisibility(View.GONE);
-//            }
-//        });
 
         addContactFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -226,14 +218,14 @@ public class ContactFragment extends Fragment {
             }
         });
 
-        scanAddContactFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = ScanActivity.newIntent(getContext());
-                startActivity(intent);
-            }
-        });
+//        scanAddContactFab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                Intent intent = ScanActivity.newIntent(getContext());
+//                startActivity(intent);
+//            }
+//        });
     }
 
     private void setupNavigationDrawer(View rootView) {
@@ -360,6 +352,16 @@ public class ContactFragment extends Fragment {
         Intent intent = LoginActivity.newIntent(getContext());
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+    }
+
+
+    private void viewVisibilityDelayed(final View view, final int visibility, long delayMillis){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                view.setVisibility(visibility);
+            }
+        }, delayMillis);
     }
 
     private AdapterView.OnItemClickListener mDrawerItemClickListener = new AdapterView.OnItemClickListener() {

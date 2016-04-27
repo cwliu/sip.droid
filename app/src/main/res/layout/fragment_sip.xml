@@ -53,28 +53,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
-            android:layout_marginBottom="140dp"
-            android:layout_marginEnd="24dp"
             android:layout_marginRight="24dp"
-            android:src="@drawable/camera_white_green_48dp"
-            app:backgroundTint="@color/white"
-            app:fabSize="mini"
+            android:layout_marginBottom="144dp"
+            android:src="@drawable/camera_green_24dp"
             android:visibility="gone"
-            app:borderWidth="0dp"/>
+            app:backgroundTint="@color/white"
+            app:fabSize="mini"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/add_contact_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
-            android:layout_marginBottom="88dp"
-            android:layout_marginEnd="24dp"
             android:layout_marginRight="24dp"
-            android:scaleType="centerCrop"
-            app:fabSize="mini"
-            android:src="@drawable/edit_white_green_48dp"
+            android:layout_marginBottom="88dp"
+            android:src="@drawable/edit_green_24dp"
             android:visibility="gone"
-            app:backgroundTint="@color/white"/>
+            app:backgroundTint="@color/white"
+            app:fabSize="mini"/>
 
 
         <android.support.design.widget.FloatingActionButton
@@ -82,22 +78,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
-            android:layout_margin="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp"
             android:src="@drawable/ic_add_white_24dp"
             android:visibility="visible"
             app:backgroundTint="@color/green"/>
-
-        <!--<android.support.design.widget.FloatingActionButton-->
-            <!--android:id="@+id/fab_close"-->
-            <!--android:layout_width="56dp"-->
-            <!--android:layout_height="56dp"-->
-            <!--android:layout_gravity="bottom|right"-->
-            <!--android:layout_margin="16dp"-->
-            <!--android:scaleType="centerCrop"-->
-            <!--android:src="@android:drawable/ic_menu_close_clear_cancel"-->
-            <!--android:visibility="gone"-->
-            <!--app:backgroundTint="@color/green"/>-->
-
+        
 
     </FrameLayout>
 
