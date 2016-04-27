@@ -218,7 +218,7 @@ public class ContactFragment extends Fragment {
     private void toggleFab(FloatingActionButton fab_open, View mask, LinearLayout addContactRelativeLayout, LinearLayout scanAddContactFab) {
         if (!is_fab_open) {
             ObjectAnimator rotateAnimator = ObjectAnimator.ofFloat(fab_open, "rotation", 0f, -45f);
-            rotateAnimator.setDuration(600);
+            rotateAnimator.setDuration(400);
             rotateAnimator.start();
             mask.setVisibility(View.VISIBLE);
 
@@ -231,7 +231,7 @@ public class ContactFragment extends Fragment {
             mask.setVisibility(View.GONE);
 
             ObjectAnimator rotateAnimator = ObjectAnimator.ofFloat(fab_open, "rotation", -45f, 0f);
-            rotateAnimator.setDuration(600);
+            rotateAnimator.setDuration(400);
             rotateAnimator.start();
 
             viewVisibilityDelayed(scanAddContactFab, View.GONE, 50);
