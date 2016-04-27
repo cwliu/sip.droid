@@ -48,29 +48,71 @@
 
         </LinearLayout>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/scan_contact_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:layout_marginRight="24dp"
-            android:layout_marginBottom="144dp"
-            android:src="@drawable/camera_green_24dp"
+        <View
+            android:id="@+id/fullscreen_black_mask_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.7"
             android:visibility="gone"
-            app:backgroundTint="@color/white"
-            app:fabSize="mini"/>
+            android:background="#000000">
+        </View>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/add_contact_fab"
+        <LinearLayout
+            android:id="@+id/scan_contact_linear_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
+            android:layout_marginBottom="144dp"
             android:layout_marginRight="24dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="16dp"
+                android:text="名片掃描"
+                android:textColor="@color/white"/>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/scan_contact_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/camera_green_24dp"
+                app:backgroundTint="@color/white"
+                app:fabSize="mini"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/add_contact_linear_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
             android:layout_marginBottom="88dp"
-            android:src="@drawable/edit_green_24dp"
-            android:visibility="gone"
-            app:backgroundTint="@color/white"
-            app:fabSize="mini"/>
+            android:layout_marginRight="24dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="16dp"
+                android:text="手動輸入"
+                android:textColor="@color/white"
+                />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/add_contact_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/edit_green_24dp"
+                app:backgroundTint="@color/white"
+                app:fabSize="mini"/>
+
+        </LinearLayout>
 
 
         <android.support.design.widget.FloatingActionButton
@@ -83,7 +125,7 @@
             android:src="@drawable/ic_add_white_24dp"
             android:visibility="visible"
             app:backgroundTint="@color/green"/>
-        
+
 
     </FrameLayout>
 

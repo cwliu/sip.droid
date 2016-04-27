@@ -18,4 +18,5 @@
         <item quantity="other">, %d seconds</item>
     </plurals>
     <string name="no_answer_msg">, no answer</string>
+    <string name="manual_add_contact">手動輸入</string>
 </resources>

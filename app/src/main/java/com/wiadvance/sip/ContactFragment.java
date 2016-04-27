@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
@@ -179,38 +180,25 @@ public class ContactFragment extends Fragment {
     }
 
     private void setupFloatingActionButton(View rootView) {
+        final View mask = rootView.findViewById(R.id.fullscreen_black_mask_view);
         final FloatingActionButton fab_open = (FloatingActionButton) rootView.findViewById(R.id.fab_open);
-        final FloatingActionButton addContactFab = (FloatingActionButton) rootView.findViewById(R.id.add_contact_fab);
-        final FloatingActionButton scanAddContactFab = (FloatingActionButton) rootView.findViewById(R.id.scan_contact_fab);
+        final LinearLayout addContactRelativeLayout = (LinearLayout) rootView.findViewById(R.id.add_contact_linear_layout);
+        final LinearLayout scanAddContactFab = (LinearLayout) rootView.findViewById(R.id.scan_contact_linear_layout);
 
+        mask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleFab(fab_open, mask, addContactRelativeLayout, scanAddContactFab);
+            }
+        });
         fab_open.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if (!is_fab_open) {
-                    ObjectAnimator rotateAnimator = ObjectAnimator.ofFloat(fab_open, "rotation", 0f, -45f);
-                    rotateAnimator.setDuration(600);
-                    rotateAnimator.start();
-
-
-                    viewVisibilityDelayed(addContactFab, View.VISIBLE, 50);
-                    viewVisibilityDelayed(scanAddContactFab, View.VISIBLE, 100);
-
-                    is_fab_open = true;
-                } else {
-                    ObjectAnimator rotateAnimator = ObjectAnimator.ofFloat(fab_open, "rotation", -45f, 0f);
-                    rotateAnimator.setDuration(600);
-                    rotateAnimator.start();
-
-                    viewVisibilityDelayed(scanAddContactFab, View.GONE, 50);
-                    viewVisibilityDelayed(addContactFab, View.GONE, 100);
-
-                    is_fab_open = false;
-                }
+                toggleFab(fab_open, mask, addContactRelativeLayout, scanAddContactFab);
             }
         });
 
-        addContactFab.setOnClickListener(new View.OnClickListener() {
+        addContactRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = AddContactActivity.newIntent(getContext());
@@ -218,14 +206,39 @@ public class ContactFragment extends Fragment {
             }
         });
 
-//        scanAddContactFab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                Intent intent = ScanActivity.newIntent(getContext());
-//                startActivity(intent);
-//            }
-//        });
+        scanAddContactFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = ScanActivity.newIntent(getContext());
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void toggleFab(FloatingActionButton fab_open, View mask, LinearLayout addContactRelativeLayout, LinearLayout scanAddContactFab) {
+        if (!is_fab_open) {
+            ObjectAnimator rotateAnimator = ObjectAnimator.ofFloat(fab_open, "rotation", 0f, -45f);
+            rotateAnimator.setDuration(600);
+            rotateAnimator.start();
+            mask.setVisibility(View.VISIBLE);
+
+
+            viewVisibilityDelayed(addContactRelativeLayout, View.VISIBLE, 50);
+            viewVisibilityDelayed(scanAddContactFab, View.VISIBLE, 100);
+
+            is_fab_open = true;
+        } else {
+            mask.setVisibility(View.GONE);
+
+            ObjectAnimator rotateAnimator = ObjectAnimator.ofFloat(fab_open, "rotation", -45f, 0f);
+            rotateAnimator.setDuration(600);
+            rotateAnimator.start();
+
+            viewVisibilityDelayed(scanAddContactFab, View.GONE, 50);
+            viewVisibilityDelayed(addContactRelativeLayout, View.GONE, 100);
+
+            is_fab_open = false;
+        }
     }
 
     private void setupNavigationDrawer(View rootView) {
@@ -355,7 +368,7 @@ public class ContactFragment extends Fragment {
     }
 
 
-    private void viewVisibilityDelayed(final View view, final int visibility, long delayMillis){
+    private void viewVisibilityDelayed(final View view, final int visibility, long delayMillis) {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
