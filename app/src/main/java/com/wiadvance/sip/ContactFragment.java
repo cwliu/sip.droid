@@ -327,8 +327,8 @@ public class ContactFragment extends Fragment {
                     UserData.setSip(getContext(), sip_data.sip_account);
 
                     for (SipApiResponse.SipAccount acc : sip_data.sip_list) {
-                        UserData.sEmailToSipBiMap.forcePut(acc.email, acc.sip_account);
-                        UserData.sEmailToPhoneBiMap.forcePut(acc.email, acc.phone);
+                        UserData.sEmailToSipHashMap.put(acc.email, acc.sip_account);
+                        UserData.sEmailToPhoneHashMap.put(acc.email, acc.phone);
                     }
 
                     mWiSipManager.register(sip_data.sip_account, sip_data.sip_password, sip_domain);

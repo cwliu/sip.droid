@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 
-import com.google.common.collect.HashBiMap;
 import com.wiadvance.sip.db.AppDbSchema;
 import com.wiadvance.sip.db.AppSQLiteOpenHelper;
 import com.wiadvance.sip.db.CallLogTableHelper;
@@ -12,6 +11,7 @@ import com.wiadvance.sip.model.CallLogEntry;
 import com.wiadvance.sip.model.Contact;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class UserData {
@@ -21,8 +21,8 @@ public class UserData {
     private static final String PREF_SIP = "sip";
     private static final String PREF_REGISTRATION_OK = "registration_ok";
 
-    public static HashBiMap<String, String> sEmailToSipBiMap = HashBiMap.create();
-    public static HashBiMap<String, String> sEmailToPhoneBiMap = HashBiMap.create();
+    public static HashMap<String, String> sEmailToSipHashMap = new HashMap<>();
+    public static HashMap<String, String> sEmailToPhoneHashMap = new HashMap<>();
 
     public static HashSet<String> sAvatar404Cache = new HashSet<>();
 
@@ -67,8 +67,8 @@ public class UserData {
         setSip(context, null);
         setRegistrationStatus(context, false);
 
-        sEmailToSipBiMap.clear();
-        sEmailToPhoneBiMap.clear();
+        sEmailToSipHashMap.clear();
+        sEmailToPhoneHashMap.clear();
 
         SQLiteDatabase database = new AppSQLiteOpenHelper(context).getWritableDatabase();
         database.delete(AppDbSchema.FavoriteContactTable.NAME, null, null);
