@@ -19,6 +19,7 @@ public class UserData {
     private static final String PREF_NAME = "name";
     private static final String PREF_EMAIL = "email";
     private static final String PREF_SIP = "sip";
+    private static final String PREF_UNCHECKED_MISSED_CALL = "missed_call";
     private static final String PREF_REGISTRATION_OK = "registration_ok";
 
     public static HashMap<String, String> sEmailToSipHashMap = new HashMap<>();
@@ -45,6 +46,10 @@ public class UserData {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_REGISTRATION_OK, false);
     }
 
+    public static boolean getUncheckedMissCall(Context context){
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_UNCHECKED_MISSED_CALL, false);
+    }
+
     public static void setName(Context context, String name) {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_NAME, name).apply();
     }
@@ -60,6 +65,11 @@ public class UserData {
     public static void setRegistrationStatus(Context context, boolean isOk) {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_REGISTRATION_OK, isOk).apply();
     }
+
+    public static void setUncheckedMissCall(Context context, boolean isChecked) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_UNCHECKED_MISSED_CALL, isChecked).apply();
+    }
+
 
     public static void clean(Context context) {
         setName(context, null);

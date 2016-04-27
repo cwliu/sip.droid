@@ -67,6 +67,10 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
         if(s.contains("Call answered by")){
             UserData.sCurrentLogEntry.setCallType(CallLogEntry.TYPE_OUTGOING_CALL_ANSWERED);
         }
+
+        if(s.contains("You have missed")){
+            UserData.setUncheckedMissCall(mContext, true);
+        }
     }
     
     @Override

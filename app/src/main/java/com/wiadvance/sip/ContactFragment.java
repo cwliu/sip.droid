@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
@@ -58,6 +59,7 @@ public class ContactFragment extends Fragment {
     private LinphoneSipManager mWiSipManager;
     private DrawerItemAdapter mDrawerAdapter;
     private LinphoneCoreListenerBase mLinPhoneListener;
+    private View mRootView;
 
     public static ContactFragment newInstance() {
 
@@ -79,13 +81,13 @@ public class ContactFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_sip, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_sip, container, false);
 
-        setupNavigationDrawer(rootView);
-        setupFloatingActionButton(rootView);
-        setupViewPager(rootView);
+        setupNavigationDrawer(mRootView);
+        setupFloatingActionButton(mRootView);
+        setupViewPager(mRootView);
 
-        return rootView;
+        return mRootView;
     }
 
     @Override
@@ -129,6 +131,13 @@ public class ContactFragment extends Fragment {
         }
 
         getSipAccounts();
+
+        ImageView missedCallIndicator = (ImageView) mRootView.findViewById(R.id.missed_call_indicator);
+        if (UserData.getUncheckedMissCall(getContext())) {
+            missedCallIndicator.setVisibility(View.VISIBLE);
+        } else {
+            missedCallIndicator.setVisibility(View.GONE);
+        }
 
     }
 
@@ -267,6 +276,12 @@ public class ContactFragment extends Fragment {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+
+                if (UserData.getUncheckedMissCall(getContext())) {
+                    UserData.setUncheckedMissCall(getContext(), false);
+                    ImageView missedCallIndicator = (ImageView) mRootView.findViewById(R.id.missed_call_indicator);
+                    missedCallIndicator.setVisibility(View.GONE);
+                }
             }
 
             @Override
