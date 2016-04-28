@@ -56,7 +56,11 @@ public class ContactHolder extends RecyclerView.ViewHolder {
     public void bindCallLogContactViewHolder(CallLogEntry log) {
         if (log.getContact() != null) {
             bindContact(log.getContact());
+        }else{
+            Contact unknown = new Contact("Unknown");
+            bindContact(unknown);
         }
+
 
         ImageView callStatusImageView = (ImageView) mRootItemView.findViewById
                 (R.id.call_status_image_view);

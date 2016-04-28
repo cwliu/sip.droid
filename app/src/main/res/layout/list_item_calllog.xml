@@ -72,7 +72,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/avatar_2_120dp"
+                    android:src="@drawable/avatar_120dp"
                     />
                 
                <ImageView

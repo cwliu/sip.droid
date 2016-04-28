@@ -81,7 +81,7 @@ public class CallReceiverActivity extends AppCompatActivity implements SensorEve
 
         String callerUsername = LinphoneUtils.getUsernameFromAddress(callerAddress);
         Contact matchContact = PhoneUtils.getCompanyContactByAccount(this, callerUsername);
-        if(matchContact != null){
+        if(matchContact != null) {
             // Set Office 365 Avatar
             if (matchContact.getEmail() != null) {
                 ImageView avatar = (ImageView) findViewById(R.id.call_receiver_avatar);
@@ -92,6 +92,7 @@ public class CallReceiverActivity extends AppCompatActivity implements SensorEve
                 name.setText(matchContact.getName());
             }
             RegularContactTableHelper.getInstance(this).addContactCountByOne(matchContact);
+            UserData.sCurrentContact = matchContact;
         }
 
         MixpanelAPI mixpanel = MixpanelAPI.getInstance(this, BuildConfig.MIXPANL_TOKEN);

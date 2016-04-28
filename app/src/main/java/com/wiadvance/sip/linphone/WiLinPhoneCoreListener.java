@@ -79,8 +79,7 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
             UserData.sCurrentLogEntry = new CallLogEntry();
             UserData.sCurrentLogEntry.setCallType(CallLogEntry.TYPE_INCOMING_CALL_NO_ANSWER);
 
-            Intent intent = CallReceiverActivity.newIntent(mContext,
-                    call.getRemoteAddress().toString());
+            Intent intent = CallReceiverActivity.newIntent(mContext, call.getRemoteAddress().toString());
 
             mContext.startActivity(intent);
         }

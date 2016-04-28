@@ -63,7 +63,9 @@ public class MakeCallActivity extends AppCompatActivity implements SensorEventLi
         String json = getIntent().getStringExtra(ARG_CONTACT);
         mCallee = new Gson().fromJson(json, Contact.class);
 
-        RegularContactTableHelper.getInstance(this).addContactCountByOne(mCallee);
+        if(mCallee.getId() != 0){ // Make sure it's existed contact in database;
+            RegularContactTableHelper.getInstance(this).addContactCountByOne(mCallee);
+        }
 
         initView();
 
