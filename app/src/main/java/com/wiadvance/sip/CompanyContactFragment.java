@@ -1,9 +1,14 @@
 package com.wiadvance.sip;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,6 +20,7 @@ import android.widget.ProgressBar;
 import com.microsoft.aad.adal.AuthenticationCallback;
 import com.microsoft.aad.adal.AuthenticationResult;
 import com.wiadvance.sip.db.ContactTableHelper;
+import com.wiadvance.sip.db.FavoriteContactTableHelper;
 import com.wiadvance.sip.model.Contact;
 import com.wiadvance.sip.model.UserRaw;
 import com.wiadvance.sip.office365.AuthenticationManager;
@@ -34,9 +40,17 @@ public class CompanyContactFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private ProgressBar mLoadingProgress;
     private CompanyContactAdapter mAdapter;
+    private NotificationReceiver mNotificationReceiver;
+
 
     public static Fragment newInstance() {
         return new CompanyContactFragment();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
     }
 
     @Nullable
@@ -76,6 +90,27 @@ public class CompanyContactFragment extends Fragment {
         AuthenticationManager.getInstance().connect(mAuthenticationCallback);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        mNotificationReceiver = new NotificationReceiver();
+        LocalBroadcastManager manager = LocalBroadcastManager.getInstance(getContext());
+
+        IntentFilter notify_filter = new IntentFilter(NotificationUtil.ACTION_COMPANY_UPDATE_NOTIFICATION);
+        manager.registerReceiver(mNotificationReceiver, notify_filter);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        if(mNotificationReceiver != null){
+            LocalBroadcastManager manager = LocalBroadcastManager.getInstance(getContext());
+            manager.unregisterReceiver(mNotificationReceiver);
+        }
+    }
+
     private void updateContactsSipPhone(List<Contact> list) {
 
         ContactTableHelper dbHelper = ContactTableHelper.getInstance(getContext());
@@ -97,6 +132,10 @@ public class CompanyContactFragment extends Fragment {
             dbHelper.updateCompanyContactByEmail(c);
         }
 
+        refreshRecyclerView();
+    }
+
+    private void refreshRecyclerView() {
         if (getActivity() != null) {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
@@ -121,7 +160,7 @@ public class CompanyContactFragment extends Fragment {
 
                     List<Contact> list = new ArrayList<>();
                     for (UserRaw.InnerDict user : userRaw.value) {
-                        if(getContext() == null){
+                        if (getContext() == null) {
                             break;
                         }
 
@@ -141,6 +180,7 @@ public class CompanyContactFragment extends Fragment {
                     }
 
                     updateContactsSipPhone(list);
+                    UserData.updateCompanyAccountData(getContext());
                     showLoading(false);
                 }
 
@@ -157,4 +197,15 @@ public class CompanyContactFragment extends Fragment {
             Log.e(TAG, "onConnectButtonClick onError() - " + e.getMessage());
         }
     };
+
+    class NotificationReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (mAdapter != null) {
+                mAdapter.setContactList(FavoriteContactTableHelper.getInstance(getContext()).getAll());
+                mAdapter.notifyDataSetChanged();
+            }
+        }
+    }
 }

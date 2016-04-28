@@ -7,12 +7,15 @@ import android.preference.PreferenceManager;
 import com.wiadvance.sip.db.AppDbSchema;
 import com.wiadvance.sip.db.AppSQLiteOpenHelper;
 import com.wiadvance.sip.db.CallLogTableHelper;
+import com.wiadvance.sip.db.ContactTableHelper;
+import com.wiadvance.sip.db.PhoneTableHelper;
 import com.wiadvance.sip.model.CallLogEntry;
 import com.wiadvance.sip.model.Contact;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 public class UserData {
 
@@ -46,7 +49,7 @@ public class UserData {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_REGISTRATION_OK, false);
     }
 
-    public static boolean getUncheckedMissCall(Context context){
+    public static boolean getUncheckedMissCall(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_UNCHECKED_MISSED_CALL, false);
     }
 
@@ -93,5 +96,24 @@ public class UserData {
         sCurrentLogEntry.setCallDurationInSeconds((int) seconds);
 
         CallLogTableHelper.getInstance(context).addCallLog(sCurrentLogEntry);
+    }
+
+    public static void updateCompanyAccountData(Context context) {
+
+        List<Contact> contacts = ContactTableHelper.getInstance(context).getCompanyContacts();
+
+        for (Contact c : contacts) {
+            String email = c.getEmail();
+
+            String sipAccount = sEmailToSipHashMap.get(email);
+            if (sipAccount != null) {
+                ContactTableHelper.getInstance(context).updateCompanyContactSipByEmail(email, sipAccount);
+            }
+
+            String phone = sEmailToPhoneHashMap.get(email);
+            if (phone != null) {
+                PhoneTableHelper.getInstance(context).setCompanyContactPhoneByEmail(email, phone);
+            }
+        }
     }
 }

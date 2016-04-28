@@ -11,7 +11,18 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.wiadvance.sip.linphone.LinphoneSipManager;
+import com.wiadvance.sip.office365.AuthenticationManager;
+
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.Call;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 
 public class ContactActivity extends SingleFragmentActivity {
@@ -19,7 +30,7 @@ public class ContactActivity extends SingleFragmentActivity {
     private String TAG = "ContactActivity";
     private BroadcastReceiver mNotificationReceiver;
 
-    public static Intent newIntent(Context context){
+    public static Intent newIntent(Context context) {
         Intent intent = new Intent(context, ContactActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         return intent;
@@ -31,6 +42,7 @@ public class ContactActivity extends SingleFragmentActivity {
 
         MixpanelAPI mixpanel = MixpanelAPI.getInstance(this, BuildConfig.MIXPANL_TOKEN);
         mixpanel.track(TAG, null);
+
     }
 
     @Override
@@ -38,6 +50,13 @@ public class ContactActivity extends SingleFragmentActivity {
 
         ContactFragment sipFragment = ContactFragment.newInstance();
         return sipFragment;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        getSipAccounts();
     }
 
     @Override
@@ -55,13 +74,70 @@ public class ContactActivity extends SingleFragmentActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if(mNotificationReceiver != null){
+        if (mNotificationReceiver != null) {
             LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
             manager.unregisterReceiver(mNotificationReceiver);
         }
     }
 
-    class NotificationReceiver extends BroadcastReceiver{
+    private void getSipAccounts() {
+        OkHttpClient client = new OkHttpClient();
+        OkHttpClient clientWith60sTimeout = client.newBuilder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .build();
+
+        FormBody body = new FormBody.Builder()
+                .add("email", UserData.getEmail(this))
+                .add("access_token", AuthenticationManager.getInstance().getAccessToken())
+                .build();
+
+        Request request = new Request.Builder()
+                .url(BuildConfig.BACKEND_SIP_API_SERVER)
+                .post(body)
+                .build();
+
+        clientWith60sTimeout.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(TAG, "onFailure() called with: " + "call = [" + call + "], e = [" + e + "]");
+                NotificationUtil.displayStatus(ContactActivity.this,
+                        "Backend error: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                Log.d(TAG, "onResponse() called with: " + "call = [" + call + "], response = [" + response + "]");
+
+                if (!response.isSuccessful()) {
+                    NotificationUtil.displayStatus(ContactActivity.this, "Backend error: " + response.body().string());
+                    return;
+                }
+
+                String rawBodyString = response.body().string();
+                SipApiResponse sip_data = new Gson().fromJson(rawBodyString, SipApiResponse.class);
+
+                String sip_domain = sip_data.proxy_address + ":" + sip_data.proxy_port;
+
+                LinphoneSipManager mWiSipManager = new LinphoneSipManager(ContactActivity.this);
+
+                mWiSipManager.register(sip_data.sip_account, sip_data.sip_password, sip_domain);
+
+
+                UserData.setSip(ContactActivity.this, sip_data.sip_account);
+
+                for (SipApiResponse.SipAccount acc : sip_data.sip_list) {
+                    UserData.sEmailToPhoneHashMap.put(acc.email, acc.phone);
+                    UserData.sEmailToSipHashMap.put(acc.email, acc.sip_account);
+                }
+
+                UserData.updateCompanyAccountData(ContactActivity.this);
+                Intent intent = new Intent(NotificationUtil.ACTION_COMPANY_UPDATE_NOTIFICATION);
+                sendBroadcast(intent);
+            }
+        });
+    }
+
+    class NotificationReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {

@@ -9,10 +9,11 @@ public class NotificationUtil {
 
     private static final String TAG = "NotificationUtil";
 
-    public static String ACTION_NOTIFICATION = "com.wiadvance.sipdemo.notification";
-    public static String ACTION_FAVORITE_NOTIFICATION = "com.wiadvance.sipdemo.favorite_notification";
-    public static String ACTION_PHONE_CONTACT_LOAD_COMPLETE = "com.wiadvance.sip.phone_contact_load_complete";
-    public static String ACTION_CALL_STATUS_CHANGED = "com.wiadvance.sipdemo.call";
+    public static final String ACTION_NOTIFICATION = "com.wiadvance.sipdemo.notification";
+    public static final String ACTION_FAVORITE_NOTIFICATION = "com.wiadvance.sipdemo.favorite_notification";
+    public static final String ACTION_PHONE_CONTACT_LOAD_COMPLETE = "com.wiadvance.sip.phone_contact_load_complete";
+    public static final String ACTION_CALL_STATUS_CHANGED = "com.wiadvance.sipdemo.call";
+    public static final String ACTION_COMPANY_UPDATE_NOTIFICATION = "com.wiadvance.sipdemo.company.update";
 
     public static final String GLOBAL_NOTIFY_MESSAGE = "notify_message";
 

@@ -15,7 +15,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,11 +26,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-import com.google.gson.Gson;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
-import com.wiadvance.sip.db.ContactTableHelper;
 import com.wiadvance.sip.db.FavoriteContactTableHelper;
-import com.wiadvance.sip.db.PhoneTableHelper;
 import com.wiadvance.sip.linphone.LinphoneCoreHelper;
 import com.wiadvance.sip.linphone.LinphoneSipManager;
 import com.wiadvance.sip.office365.AuthenticationManager;
@@ -43,15 +39,8 @@ import org.linphone.core.LinphoneCoreException;
 import org.linphone.core.LinphoneCoreListenerBase;
 import org.linphone.core.LinphoneProxyConfig;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.Call;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 
 public class ContactFragment extends Fragment {
 
@@ -132,8 +121,6 @@ public class ContactFragment extends Fragment {
             e.printStackTrace();
         }
 
-        getSipAccounts();
-
         ImageView missedCallIndicator = (ImageView) mRootView.findViewById(R.id.missed_call_indicator);
         if (UserData.getUncheckedMissCall(getContext())) {
             missedCallIndicator.setVisibility(View.VISIBLE);
@@ -178,7 +165,6 @@ public class ContactFragment extends Fragment {
     private void setupViewPager(View rootView) {
         ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.contacts_view_pager);
         viewPager.setAdapter(new ContactPagerAdapter(getFragmentManager()));
-
         TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.contacts_tab_layout);
         tabLayout.setupWithViewPager(viewPager);
 
@@ -298,60 +284,6 @@ public class ContactFragment extends Fragment {
         drawerList.setAdapter(mDrawerAdapter);
         drawerList.setBackgroundColor(getResources().getColor(R.color.beige));
         drawerList.setOnItemClickListener(mDrawerItemClickListener);
-    }
-
-
-    private void getSipAccounts() {
-        OkHttpClient client = new OkHttpClient();
-        OkHttpClient clientWith60sTimeout = client.newBuilder()
-                .readTimeout(60, TimeUnit.SECONDS)
-                .build();
-
-        FormBody body = new FormBody.Builder()
-                .add("email", UserData.getEmail(getContext()))
-                .add("access_token", AuthenticationManager.getInstance().getAccessToken())
-                .build();
-
-        Request request = new Request.Builder()
-                .url(BuildConfig.BACKEND_SIP_API_SERVER)
-                .post(body)
-                .build();
-
-        clientWith60sTimeout.newCall(request).enqueue(new okhttp3.Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.d(TAG, "onFailure() called with: " + "call = [" + call + "], e = [" + e + "]");
-                NotificationUtil.displayStatus(getContext(),
-                        "Backend error: " + e.getMessage());
-            }
-
-            @Override
-            public void onResponse(Call call, okhttp3.Response response) throws IOException {
-                Log.d(TAG, "onResponse() called with: " + "call = [" + call + "], response = [" + response + "]");
-
-                if (!response.isSuccessful()) {
-                    NotificationUtil.displayStatus(getContext(),
-                            "Backend error: " + response.body().string());
-                    return;
-                }
-
-                String rawBodyString = response.body().string();
-
-                SipApiResponse sip_data = new Gson().fromJson(rawBodyString, SipApiResponse.class);
-
-                String sip_domain = sip_data.proxy_address + ":" + sip_data.proxy_port;
-                if (getContext() != null) {
-                    UserData.setSip(getContext(), sip_data.sip_account);
-
-                    for (SipApiResponse.SipAccount acc : sip_data.sip_list) {
-                        PhoneTableHelper.getInstance(getContext()).setCompanyContactPhoneByEmail(acc.email, acc.phone);
-                        ContactTableHelper.getInstance(getContext()).updateCompanyContactSipByEmail(acc.email, acc.sip_account);
-                    }
-
-                    mWiSipManager.register(sip_data.sip_account, sip_data.sip_password, sip_domain);
-                }
-            }
-        });
     }
 
     private void logout() {

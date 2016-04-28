@@ -165,10 +165,6 @@ public class ContactTableHelper {
         return getContacts(contactCursorWrapper);
     }
 
-    public void removeAllContacts() {
-        mDatabase.delete(ContactTable.NAME, null, null);
-    }
-
     @NonNull
     private List<Contact> getContacts(ContactCursorWrapper contactCursorWrapper) {
         List<Contact> contacts = new ArrayList<>();
@@ -185,7 +181,6 @@ public class ContactTableHelper {
         }
         return contacts;
     }
-
 
 
     public void updateCompanyContactByEmail(Contact c) {
@@ -212,11 +207,13 @@ public class ContactTableHelper {
         }
 
         queriedContact = getContactByAndroidContactId(newContact.getAndroidContactId());
-        PhoneTableHelper.getInstance(mContext).delete(queriedContact.getId());
-        PhoneTableHelper.getInstance(mContext).add(queriedContact.getId(), newContact.getPhoneList());
+        if (queriedContact != null) {
+            PhoneTableHelper.getInstance(mContext).delete(queriedContact.getId());
+            PhoneTableHelper.getInstance(mContext).add(queriedContact.getId(), newContact.getPhoneList());
+        }
     }
 
-    public void updateCompanyContactSipByEmail(String email, String sipAccount){
+    public void updateCompanyContactSipByEmail(String email, String sipAccount) {
         String whereClause = Cols.EMAIL + " = ? AND " + Cols.TYPE + " = ?";
         String[] whereArgs = new String[]{email, String.valueOf(Contact.TYPE_COMPANY)};
 
