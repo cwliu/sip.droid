@@ -33,6 +33,7 @@ public class PhoneUtils {
                             public void onClick(DialogInterface dialog, int which) {
                                 String phone = adapter.getItem(which);
                                 contact.setPreferredPhone(phone);
+                                Intent intent = MakeCallActivity.newIntent(context, contact);
                                 context.startActivity(intent);
                             }
                         });

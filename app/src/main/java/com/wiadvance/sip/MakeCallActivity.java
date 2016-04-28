@@ -33,7 +33,6 @@ public class MakeCallActivity extends AppCompatActivity implements SensorEventLi
     private static final String TAG = "MakeCallActivity";
 
     private static final String ARG_CONTACT = "ARG_CONTACT";
-    private static final String ARG_PREFERRED_PHONE = "ARG_PREFERRED_PHONE";
 
     private LinphoneSipManager mWiSipManager;
     private Contact mCallee;
