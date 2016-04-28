@@ -311,7 +311,7 @@ public class ContactFragment extends Fragment {
                 .build();
 
         Request request = new Request.Builder()
-                .url(BuildConfig.HTTPS_SIP_API_SERVER)
+                .url(BuildConfig.BACKEND_SIP_API_SERVER)
                 .post(body)
                 .build();
 

@@ -36,8 +36,8 @@ import okhttp3.RequestBody;
 public class ScanActivity extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static String BCR_SERVICE_URL = "http://bcr1.intsig.net/BCRService/BCR_VCF2?user=liu@codylab.com&pass=YNW8DX3Q9YTAD94X&lang=7";
-
+    private static String BCR_SERVICE_URL_FORMAT = "http://bcr1.intsig.net/BCRService/BCR_VCF2?user=%sm&pass=123%s&lang=7";
+    private static String BCR_SERVICE_URL = String.format(BCR_SERVICE_URL_FORMAT, BuildConfig.CAMCARD_API_EMAIL, BuildConfig.CAMCARD_API_KEY);
 
     private String mFullImagePath;
     private String mFullImageFileName = "image.jpg";
@@ -155,7 +155,7 @@ public class ScanActivity extends AppCompatActivity {
         progress_bar.setVisibility(View.VISIBLE);
         progress_bar.bringToFront();
 
-        RequestBody requestBody = null;
+        RequestBody requestBody;
         try {
             requestBody = RequestBody.create(MediaType.parse("image/jpg"), createImageFile(mResizeImageFileName));
         } catch (IOException e) {
@@ -178,9 +178,7 @@ public class ScanActivity extends AppCompatActivity {
             public void onFailure(Call call, IOException e) {
                 Log.d(TAG, "onFailure() called with: " + "call = [" + call + "], e = [" + e + "]");
                 progress_bar.setVisibility(View.GONE);
-                NotificationUtil.displayStatus(ScanActivity.this,
-                        getString(R.string.bcr_error) + e);
-                return;
+                NotificationUtil.displayStatus(ScanActivity.this, getString(R.string.bcr_error) + ":" + e);
             }
 
             @SuppressLint("SetTextI18n")
@@ -192,7 +190,8 @@ public class ScanActivity extends AppCompatActivity {
 
                 if (!response.isSuccessful()) {
                     NotificationUtil.displayStatus(ScanActivity.this,
-                            getString(R.string.bcr_error) + response.body().string());
+                            getString(R.string.bcr_error) + ": " + response.message());
+                    finish();
                     return;
                 }
 
@@ -217,6 +216,7 @@ public class ScanActivity extends AppCompatActivity {
                         }
                         NotificationUtil.displayStatus(ScanActivity.this, listString);
                         TextView view = (TextView) findViewById(R.id.scan_result_textview);
+                        //noinspection ConstantConditions
                         view.setText(listString);
 
                         if (name == null && phone == null) {
