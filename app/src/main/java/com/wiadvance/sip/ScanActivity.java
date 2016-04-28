@@ -36,7 +36,7 @@ import okhttp3.RequestBody;
 public class ScanActivity extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static String BCR_SERVICE_URL_FORMAT = "http://bcr1.intsig.net/BCRService/BCR_VCF2?user=%sm&pass=123%s&lang=7";
+    private static String BCR_SERVICE_URL_FORMAT = "http://bcr1.intsig.net/BCRService/BCR_VCF2?user=%sm&pass=%s&lang=7";
     private static String BCR_SERVICE_URL = String.format(BCR_SERVICE_URL_FORMAT, BuildConfig.CAMCARD_API_EMAIL, BuildConfig.CAMCARD_API_KEY);
 
     private String mFullImagePath;
