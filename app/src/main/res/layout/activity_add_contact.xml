@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:columnCount="2"
-    tools:context="com.wiadvance.sip.AddContactActivity">
+    android:orientation="vertical"
+    >
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/add_contact_toolbar"
@@ -16,53 +16,129 @@
         android:background="@color/colorPrimary"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
-    <TextView
-        android:id="@+id/add_contact_name_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Name:"
-        />
 
-    <EditText
-        android:id="@+id/add_contact_name_edittext"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        />
-
-    <TextView
-        android:id="@+id/add_contact_phone_textview"
-        android:layout_height="wrap_content"
-        android:text="Phone:"
-        />
-
-    <EditText
-        android:id="@+id/add_contact_phone_edittext"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:inputType="phone"
-        />
-
-    <!--<TextView-->
-        <!--android:id="@+id/add_contact_email_textview"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="Email:"-->
-        <!--/>-->
-
-    <!--<EditText-->
-        <!--android:id="@+id/add_contact_email_edittext"-->
-        <!--android:layout_width="250dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:inputType="textEmailAddress"-->
-        <!--/>-->
-
-    <Button
-        android:id="@+id/add_contact_create_button"
+    <GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_columnSpan="2"
-        android:layout_gravity="bottom"
-        android:text="新增"
-        />
+        android:layout_margin="16dp"
+        android:columnCount="3"
+        tools:context="com.wiadvance.sip.AddContactActivity">
 
-</GridLayout>
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="26dp"
+            android:src="@drawable/camera_circle_gray_64dp"
+            />
+
+        <EditText
+            android:id="@+id/add_contact_name_edittext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center_vertical"
+            android:hint="Name"
+            android:textSize="14sp"
+            />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:layout_columnSpan="3"
+            />
+
+        <TextView
+            android:id="@+id/add_contact_phone_textview"
+            style="@style/textMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_columnSpan="2"
+            android:layout_columnWeight="1"
+            android:text="PHONE"
+            android:textColor="@color/blue"
+            android:textSize="12sp"
+            />
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_column="2"
+            android:layout_columnWeight="0"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="16dp"
+            android:src="@drawable/add_green_16dp"/>
+
+        <EditText
+            android:id="@+id/add_contact_phone_edittext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_columnSpan="2"
+            android:layout_columnWeight="1"
+            android:hint="Phone numbers"
+            android:inputType="phone"
+            android:textSize="14sp"
+            />
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="16dp"
+            android:src="@drawable/cross_red_16dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:layout_columnSpan="3"
+            />
+
+
+        <TextView
+            style="@style/textMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_columnSpan="2"
+            android:layout_columnWeight="1"
+            android:layout_gravity="top"
+            android:text="ACTION"
+            android:textColor="@color/blue"
+            android:textSize="12sp"
+            />
+
+    </GridLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="16dp">
+
+        <Button
+            android:id="@+id/add_contact_create_button"
+            android:layout_width="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@color/blue"
+            android:text="@string/save"
+            android:textColor="@color/white"
+            android:layout_marginRight="16dp"
+            android:textSize="14sp"
+            />
+
+        <Button
+            android:id="@+id/add_contact_delete_button"
+            android:layout_width="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@color/red"
+            android:text="@string/delete"
+            android:layout_marginRight="16dp"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            />
+    </LinearLayout>
+
+</LinearLayout>

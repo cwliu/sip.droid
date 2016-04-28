@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GOODWOX COMM.</string>
+    <string name="app_name">GOODWOX comm.</string>
 
     <string name="warning_clientid_redirecturi_incorrect">The client ID or redirect URI is not valid. Enter a valid client ID and redirect URI in the Constants.java file and run again</string>
     <string name="connect_toast_text_error">Sorry, can\'t connect to Office 365: %1$s</string>
@@ -19,4 +19,6 @@
     </plurals>
     <string name="no_answer_msg">, no answer</string>
     <string name="manual_add_contact">手動輸入</string>
+    <string name="save">SAVE</string>
+    <string name="delete">delete</string>
 </resources>

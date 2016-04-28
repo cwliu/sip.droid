@@ -88,7 +88,7 @@ public class ContactHolder extends RecyclerView.ViewHolder {
     }
 
     private void bindContact(final Contact contact) {
-        mNameTextView.setText(contact.getId() + "/" + contact.getName() + contact.getType());
+        mNameTextView.setText(contact.getName());
 
         int scale = Utils.getDeviceScale(mContext);
         if (!UserData.sAvatar404Cache.contains(contact.getPhotoUri())) {
