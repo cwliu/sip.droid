@@ -212,13 +212,10 @@ public class ContactFragment extends Fragment {
         });
     }
 
-    private void toggleFab(FloatingActionButton fab_open, View mask, LinearLayout addContactRelativeLayout, LinearLayout scanAddContactFab) {
+    private void toggleFab(FloatingActionButton fab, View mask, LinearLayout addContactRelativeLayout, LinearLayout scanAddContactFab) {
         if (!is_fab_open) {
-            ObjectAnimator rotateAnimator = ObjectAnimator.ofFloat(fab_open, "rotation", 0f, -45f);
-            rotateAnimator.setDuration(400);
-            rotateAnimator.start();
+            fab.setImageResource(R.drawable.ic_clear_white_24dp);
             mask.setVisibility(View.VISIBLE);
-
 
             viewVisibilityDelayed(addContactRelativeLayout, View.VISIBLE, 50);
             viewVisibilityDelayed(scanAddContactFab, View.VISIBLE, 100);
@@ -226,8 +223,9 @@ public class ContactFragment extends Fragment {
             is_fab_open = true;
         } else {
             mask.setVisibility(View.GONE);
+            fab.setImageResource(R.drawable.ic_person_add_white_24dp);
 
-            ObjectAnimator rotateAnimator = ObjectAnimator.ofFloat(fab_open, "rotation", -45f, 0f);
+            ObjectAnimator rotateAnimator = ObjectAnimator.ofFloat(fab, "rotation", -45f, 0f);
             rotateAnimator.setDuration(400);
             rotateAnimator.start();
 
