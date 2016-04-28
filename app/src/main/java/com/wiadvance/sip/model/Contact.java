@@ -24,6 +24,8 @@ public class Contact {
     public static int TYPE_COMPANY = 1;
     public static int TYPE_PHONE = 2;
     public static int TYPE_PHONE_MANUAL = 3;
+    public static int TYPE_EXTERNAL = 4;
+
 
     public Contact(){
         this(null, null);

@@ -29,16 +29,18 @@ public class PhoneUtils {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle(context.getString(R.string.msg_please_choose_phone))
                         .setAdapter(adapter, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String phone = adapter.getItem(which);
-                        contact.setPreferredPhone(phone);
-                        context.startActivity(intent);
-                    }
-                });
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String phone = adapter.getItem(which);
+                                contact.setPreferredPhone(phone);
+                                context.startActivity(intent);
+                            }
+                        });
                 builder.create().show();
+            } else {
+                context.startActivity(intent);
             }
-        }else{
+        } else {
             context.startActivity(intent);
         }
     }

@@ -21,7 +21,7 @@ public class CallLogTableHelper {
     private static CallLogTableHelper sDbHelper;
 
     private static SQLiteDatabase mDatabase;
-    private Context mContext;
+    private static Context mContext;
 
     private CallLogTableHelper(Context context) {
         mDatabase = new AppSQLiteOpenHelper(context).getWritableDatabase();
@@ -47,8 +47,16 @@ public class CallLogTableHelper {
         cv.put(Cols.CALL_DURATION, log.getCallDurationInSeconds());
         cv.put(Cols.CALL_TYPE, log.getCallType());
 
-        if (log.getContact() != null) {
-            cv.put(Cols.CONTACT, log.getContact().getId());
+        Contact contact = log.getContact();
+        if (contact != null) {
+
+            if(contact.getId() != 0){
+                cv.put(Cols.CONTACT, contact.getId());
+            }else{
+                contact.setType(Contact.TYPE_EXTERNAL);
+                long id = ContactTableHelper.getInstance(mContext).addContact(contact);
+                cv.put(Cols.CONTACT, id);
+            }
         }
 
         return cv;

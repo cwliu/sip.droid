@@ -93,6 +93,11 @@ public class CallReceiverActivity extends AppCompatActivity implements SensorEve
             }
             RegularContactTableHelper.getInstance(this).addContactCountByOne(matchContact);
             UserData.sCurrentContact = matchContact;
+        }else{
+            Contact c = new Contact(callerUsername);
+            c.setType(Contact.TYPE_EXTERNAL);
+            c.setSip(callerUsername);
+            UserData.sCurrentContact = c;
         }
 
         MixpanelAPI mixpanel = MixpanelAPI.getInstance(this, BuildConfig.MIXPANL_TOKEN);

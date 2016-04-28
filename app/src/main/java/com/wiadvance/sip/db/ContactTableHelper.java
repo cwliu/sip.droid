@@ -66,10 +66,10 @@ public class ContactTableHelper {
         return new ContactCursorWrapper(cursor);
     }
 
-    public void addContact(Contact contact) {
+    public long addContact(Contact contact) {
         ContentValues cv = getContentsValue(contact);
-
-        mDatabase.insert(ContactTable.NAME, null, cv);
+        long id = mDatabase.insert(ContactTable.NAME, null, cv);
+        return id;
     }
 
     public void addContactList(List<Contact> contactList) {
