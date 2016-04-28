@@ -18,11 +18,11 @@ public class Utils {
      * @param context Context to get resources and device specific display metrics
      * @return A float value to represent px equivalent to dp depending on device density
      */
-    public static float convertDpToPixel(Context context, float dp){
+    public static int convertDpToPixel(Context context, float dp){
         Resources resources = context.getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
         float px = dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-        return px;
+        return (int) px;
     }
 
     /**

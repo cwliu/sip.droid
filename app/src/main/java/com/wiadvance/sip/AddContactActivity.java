@@ -5,9 +5,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridLayout;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.wiadvance.sip.db.ContactTableHelper;
@@ -44,6 +50,15 @@ public class AddContactActivity extends AppCompatActivity {
 
         final EditText nameEditText = (EditText) findViewById(R.id.add_contact_name_edittext);
         final EditText phoneEditText = (EditText) findViewById(R.id.add_contact_phone_edittext);
+        final ImageButton addPhoneImageButton = (ImageButton) findViewById(R.id.add_contact_add_phone_image_button);
+        final GridLayout contactGridLayout = (GridLayout) findViewById(R.id.add_contact_gridlayout);
+        final LinearLayout phonePoolLinearLayout = (LinearLayout) findViewById(R.id.phone_number_pool_linear_layout);
+
+        if (contactGridLayout == null || phonePoolLinearLayout == null) {
+            return;
+        }
+
+        Button saveButton = (Button) findViewById(R.id.add_contact_create_button);
 
         String name = getIntent().getStringExtra(ARG_NAME);
         if (nameEditText != null) {
@@ -54,14 +69,13 @@ public class AddContactActivity extends AppCompatActivity {
             phoneEditText.setText(phone);
         }
 
-        Button button = (Button) findViewById(R.id.add_contact_create_button);
-        if (button != null) {
-            button.setOnClickListener(new View.OnClickListener() {
+        if (saveButton != null) {
+            saveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
-                    String name = nameEditText != null ? nameEditText.getText().toString() : null;
-                    String phone = phoneEditText != null ? phoneEditText.getText().toString() : null;
+                    String name = nameEditText != null ? nameEditText.getText().toString() : "";
+                    String phone = phoneEditText != null ? phoneEditText.getText().toString() : "";
 
                     if (name.equals("") || phone.equals("")) {
                         Toast.makeText(getApplicationContext(), "請輸入名稱與電話", LENGTH_LONG).show();
@@ -80,6 +94,31 @@ public class AddContactActivity extends AppCompatActivity {
                 }
             });
         }
+
+
+        //noinspection ConstantConditions
+        addPhoneImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                View phoneEditView = LayoutInflater.from(AddContactActivity.this).inflate(R.layout.list_item_phone_field, phonePoolLinearLayout, true);
+            }
+        });
+    }
+
+    private void addPhoneField(GridLayout contactGridLayout) {
+        GridLayout.Spec rowSpan1 = GridLayout.spec(GridLayout.UNDEFINED, 1);
+        GridLayout.Spec colspan1 = GridLayout.spec(GridLayout.UNDEFINED, 1);
+        GridLayout.Spec colspan2 = GridLayout.spec(GridLayout.UNDEFINED, 2);
+        GridLayout.Spec colspan3 = GridLayout.spec(GridLayout.UNDEFINED, 3);
+
+        EditText et = new EditText(AddContactActivity.this);
+        GridLayout.LayoutParams gridParam = new GridLayout.LayoutParams(rowSpan1, colspan3);
+        et.setLayoutParams(gridParam);
+        et.setHint(R.string.hint_phone_numbers);
+        et.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        et.setInputType(EditorInfo.TYPE_CLASS_PHONE);
+        contactGridLayout.addView(et);
     }
 
     private void setupToolbar() {

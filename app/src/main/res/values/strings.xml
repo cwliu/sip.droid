@@ -21,4 +21,5 @@
     <string name="manual_add_contact">手動輸入</string>
     <string name="save">SAVE</string>
     <string name="delete">delete</string>
+    <string name="hint_phone_numbers">Phone numbers</string>
 </resources>
