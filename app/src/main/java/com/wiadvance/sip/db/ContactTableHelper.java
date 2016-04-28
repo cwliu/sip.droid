@@ -126,12 +126,14 @@ public class ContactTableHelper {
                 Cols.TYPE + " = ? OR " +
                 Cols.TYPE + " = ?";
 
+        String orderBy = Cols.NAME + " ASC";
+
         String[] whereArgs = new String[]{
                 String.valueOf(Contact.TYPE_COMPANY),
                 String.valueOf(Contact.TYPE_PHONE),
                 String.valueOf(Contact.TYPE_PHONE_MANUAL)
         };
-        ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, null);
+        ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, orderBy);
         return getContacts(contactCursorWrapper);
     }
 

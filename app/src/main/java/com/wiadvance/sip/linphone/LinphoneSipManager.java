@@ -129,7 +129,14 @@ public class LinphoneSipManager extends WiSipManager {
                     }
 
                     List<String> phoneList = contact.getPhoneList();
-                    String phone = phoneList.size() > 0 ? phoneList.get(0) : null;
+
+                    String phone;
+                    if (contact.getPreferredPhone() != null) {
+                        phone = contact.getPreferredPhone();
+                    } else {
+                        phone = phoneList.size() > 0 ? phoneList.get(0) : null;
+                    }
+
                     if (phone == null) {
                         NotificationUtil.displayStatus(mContext, "This user has no phone number");
                     } else if (!mHasConnected) {

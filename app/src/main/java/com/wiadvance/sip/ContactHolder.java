@@ -70,7 +70,6 @@ public class ContactHolder extends RecyclerView.ViewHolder {
 
         if (log.getCallType() == CallLogEntry.TYPE_INCOMING_CALL_ANSWERED) {
             callStatusImageView.setImageResource(R.drawable.call_received_blue_16dp);
-            callMsgTextView.setText(log.getCallDurationInSeconds());
             callMsgTextView.setText(callDurationTime);
 
         } else if (log.getCallType() == CallLogEntry.TYPE_INCOMING_CALL_NO_ANSWER) {

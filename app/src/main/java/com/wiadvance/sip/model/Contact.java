@@ -13,6 +13,7 @@ public class Contact {
     private String mName;
     private String mSip;
     private List<String> mPhoneList = new ArrayList<>();
+    private String mPreferredPhone;
     private String mEmail;
     private String mPhotoUri;
 
@@ -139,5 +140,11 @@ public class Contact {
         return isEqual;
     }
 
+    public String getPreferredPhone() {
+        return mPreferredPhone;
+    }
 
+    public void setPreferredPhone(String preferredPhone) {
+        mPreferredPhone = preferredPhone;
+    }
 }

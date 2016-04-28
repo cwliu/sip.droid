@@ -27,4 +27,5 @@
     <string name="phone_empty_error">電話不得為空</string>
     <string name="name_empty_error">姓名不得為空</string>
     <string name="no_phone_input_error">請至少輸入一筆電話</string>
+    <string name="msg_please_choose_phone">請選擇電話</string>
 </resources>
