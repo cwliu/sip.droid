@@ -4,45 +4,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/blue"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.wiadvance.sip.ScanActivity">
 
-    <ImageView
-        android:id="@+id/scan_image_imageview"
-        android:layout_width="300dp"
-        android:layout_height="300dp"/>
-
-    <Button
-        android:id="@+id/scan_take_photo_button"
+    <RelativeLayout
+        android:id="@+id/add_contact_progress_relative_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:layout_below="@id/scan_image_imageview"
-        android:layout_centerHorizontal="true"
-        android:text="@string/take_namecard_photo"
-        />
+        android:visibility="gone"
+        android:layout_centerInParent="true">
 
-    <ScrollView
-        android:layout_below="@id/scan_take_photo_button"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        <ProgressBar
+            android:id="@+id/add_contact_progress_bar"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            />
 
         <TextView
-            android:id="@+id/scan_result_textview"
-            android:layout_width="match_parent"
-            android:textIsSelectable="true"
-            android:layout_height="match_parent"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/add_contact_progress_bar"
+            android:layout_centerHorizontal="true"
+            android:text="名片辨識中"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            />
 
-    </ScrollView>
 
-    <ProgressBar
-        android:id="@+id/add_contact_progress_bar"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_centerInParent="true"
-        android:visibility="gone"
-        />
+    </RelativeLayout>
 </RelativeLayout>

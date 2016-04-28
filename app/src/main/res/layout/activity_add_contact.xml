@@ -15,6 +15,14 @@
         android:background="@color/colorPrimary"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
+    <ImageView
+        android:id="@+id/namecard_thumbnail_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="144dp"
+        android:scaleType="centerInside"
+        android:visibility="gone"
+        />
+
     <GridLayout
         android:id="@+id/add_contact_gridlayout"
         android:layout_width="match_parent"

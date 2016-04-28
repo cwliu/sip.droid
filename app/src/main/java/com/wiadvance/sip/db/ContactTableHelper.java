@@ -69,6 +69,13 @@ public class ContactTableHelper {
     public long addContact(Contact contact) {
         ContentValues cv = getContentsValue(contact);
         long id = mDatabase.insert(ContactTable.NAME, null, cv);
+
+        List<String> list = contact.getPhoneList();
+        if (list.size() != 0) {
+            PhoneTableHelper.getInstance(mContext).delete((int)id);
+            PhoneTableHelper.getInstance(mContext).add((int)id, list);
+        }
+
         return id;
     }
 

@@ -13,14 +13,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import ezvcard.Ezvcard;
@@ -44,6 +45,7 @@ public class ScanActivity extends AppCompatActivity {
     private String mResizeImageFileName = "image_resize.jpg";
 
     private String TAG = "ScanActivity";
+    private boolean isOnActivityResult = false;
 
     public static Intent newIntent(Context context) {
         return new Intent(context, ScanActivity.class);
@@ -53,24 +55,25 @@ public class ScanActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
-
-        Button button = (Button) findViewById(R.id.scan_take_photo_button);
-        if (button != null) {
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dispatchTakePictureIntent();
-                }
-            });
-        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            setImage();
+            isOnActivityResult = true;
             resizeImage();
             namecardRecognition();
+        } else {
+            finish();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (!isOnActivityResult) {
+            dispatchTakePictureIntent();
         }
     }
 
@@ -94,21 +97,6 @@ public class ScanActivity extends AppCompatActivity {
             intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
             startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
         }
-    }
-
-    private void setImage() {
-        ImageView imageView = (ImageView) findViewById(R.id.scan_image_imageview);
-        if (imageView == null) {
-            return;
-        }
-
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        bmOptions.inJustDecodeBounds = true;
-        bmOptions.inJustDecodeBounds = false;
-        bmOptions.inSampleSize = 5;
-
-        Bitmap bitmap = BitmapFactory.decodeFile(mFullImagePath, bmOptions);
-        imageView.setImageBitmap(bitmap);
     }
 
     private void resizeImage() {
@@ -148,7 +136,7 @@ public class ScanActivity extends AppCompatActivity {
                 .build();
 
 
-        final View progress_bar = findViewById(R.id.add_contact_progress_bar);
+        final View progress_bar = findViewById(R.id.add_contact_progress_relative_layout);
         if (progress_bar == null) {
             return;
         }
@@ -206,28 +194,33 @@ public class ScanActivity extends AppCompatActivity {
                             name = vcard.getFormattedName().getValue();
                         }
 
-                        String phone = null;
+                        List<String> phoneList = new ArrayList<>();
                         String listString = "辨識到的\n姓名:\n" + name + "\n電話:\n";
-                        if (vcard.getTelephoneNumbers().size() != 0) {
-                            phone = vcard.getTelephoneNumbers().get(0).getText();
-                            for (Telephone s : vcard.getTelephoneNumbers()) {
-                                listString += s.getText() + " " + TextUtils.join(", ", s.getTypes()) + "\n";
-                            }
-                        }
-                        NotificationUtil.displayStatus(ScanActivity.this, listString);
-                        TextView view = (TextView) findViewById(R.id.scan_result_textview);
-                        //noinspection ConstantConditions
-                        view.setText(listString);
 
-                        if (name == null && phone == null) {
-                            NotificationUtil.displayStatus(ScanActivity.this, "名片辨識失敗");
+                        for (Telephone telephone : vcard.getTelephoneNumbers()) {
+                            String phone = telephone.getText();
+                            phoneList.add(PhoneUtils.normalizedPhone(phone));
+                            listString += telephone.getText() + " " + TextUtils.join(", ", telephone.getTypes()) + "\n";
+                        }
+
+                        Log.d(TAG, "BCR: " + listString);
+
+                        if (name == null && phoneList.size() == 0) {
+                            NotificationUtil.displayStatus(ScanActivity.this, getString(R.string.bcr_fail));
+                            dispatchTakePictureIntent();
                         } else {
-                            Intent intent = AddContactActivity.newIntent(ScanActivity.this, name, phone);
+                            String phoneGson = new Gson().toJson(phoneList);
+                            Intent intent = AddContactActivity.newIntent(ScanActivity.this, name, phoneGson, mFullImagePath);
+                            resetActivityState();
                             startActivity(intent);
                         }
                     }
                 });
             }
         });
+    }
+
+    private void resetActivityState() {
+        isOnActivityResult = false;
     }
 }

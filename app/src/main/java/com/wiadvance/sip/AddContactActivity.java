@@ -2,6 +2,8 @@ package com.wiadvance.sip;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -11,12 +13,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.wiadvance.sip.db.ContactTableHelper;
 import com.wiadvance.sip.model.Contact;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +32,8 @@ import static android.widget.Toast.LENGTH_SHORT;
 public class AddContactActivity extends AppCompatActivity {
 
     private static final String ARG_NAME = "ARG_NAME";
-    private static final String ARG_PHONE = "ARG_PHONE";
+    private static final String ARG_PHONE_LIST = "ARG_PHONE_LIST";
+    private static final String ARG_THUMBNAIL = "ARG_THUMBNAIL";
 
     private static final List<EditText> phoneEditTextList = new ArrayList<>();
 
@@ -34,10 +41,11 @@ public class AddContactActivity extends AppCompatActivity {
         return new Intent(context, AddContactActivity.class);
     }
 
-    public static Intent newIntent(Context context, String name, String phone) {
+    public static Intent newIntent(Context context, String name, String phoneGson, String thumbnail) {
         Intent intent = new Intent(context, AddContactActivity.class);
         intent.putExtra(ARG_NAME, name);
-        intent.putExtra(ARG_PHONE, phone);
+        intent.putExtra(ARG_PHONE_LIST, phoneGson);
+        intent.putExtra(ARG_THUMBNAIL, thumbnail);
         return intent;
     }
 
@@ -56,8 +64,17 @@ public class AddContactActivity extends AppCompatActivity {
 
         phoneEditTextList.clear();
 
-        String phone = getIntent().getStringExtra(ARG_PHONE);
-        addPhoneField(phone);
+        String phoneGson = getIntent().getStringExtra(ARG_PHONE_LIST);
+        Type type = new TypeToken<ArrayList<String>>() {
+        }.getType();
+        List<String> phoneList = new Gson().fromJson(phoneGson, type);
+        if (phoneList != null) {
+            for (String phone : phoneList) {
+                addPhoneField(phone);
+            }
+        }else{
+            addPhoneField("");
+        }
     }
 
     private void setupViewEvents() {
@@ -72,6 +89,8 @@ public class AddContactActivity extends AppCompatActivity {
         if (contactGridLayout == null || saveButton == null || deleteButton == null) {
             return;
         }
+
+        setThumbnail();
 
         String name = getIntent().getStringExtra(ARG_NAME);
         if (nameEditText != null) {
@@ -93,8 +112,8 @@ public class AddContactActivity extends AppCompatActivity {
                     return;
                 }
 
-                String phone = null;
-                List<String> phoneList = new ArrayList<String>();
+                String phone;
+                List<String> phoneList = new ArrayList<>();
                 for (EditText et : phoneEditTextList) {
                     if (et.getText().toString().equals("")) {
                         Toast.makeText(getApplicationContext(), R.string.phone_empty_error, LENGTH_SHORT).show();
@@ -170,5 +189,27 @@ public class AddContactActivity extends AppCompatActivity {
             //noinspection ConstantConditions
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+    }
+
+    private void setThumbnail() {
+        String imagePath = getIntent().getStringExtra(ARG_THUMBNAIL);
+        if (imagePath == null) {
+            return;
+        }
+
+        ImageView imageView = (ImageView) findViewById(R.id.namecard_thumbnail_image_view);
+        if (imageView == null) {
+            return;
+        } else {
+            imageView.setVisibility(View.VISIBLE);
+        }
+
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = 5;
+
+        Bitmap bitmap = BitmapFactory.decodeFile(imagePath, bmOptions);
+        imageView.setImageBitmap(bitmap);
     }
 }
