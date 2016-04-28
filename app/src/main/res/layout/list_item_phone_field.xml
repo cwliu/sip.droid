@@ -9,7 +9,7 @@
               tools:showIn="@layout/activity_add_contact">
 
     <EditText
-        android:id="@+id/add_contact_phone_edittext"
+        android:id="@+id/list_item_phone_field_edittext"
         style="@style/textRegular"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -18,11 +18,12 @@
         android:inputType="phone"
         android:textSize="14sp"/>
 
-    <ImageView
+    <ImageButton
+        android:id="@+id/list_item_phone_field_remove"
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="16dp"
-        android:src="@drawable/cross_red_16dp"/>
+        android:background="@drawable/cross_red_16dp"/>
 
 </LinearLayout>

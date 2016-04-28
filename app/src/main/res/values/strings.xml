@@ -22,4 +22,6 @@
     <string name="save">SAVE</string>
     <string name="delete">delete</string>
     <string name="hint_phone_numbers">Phone numbers</string>
+    <string type="id" name="tag_viewgroup">1</string>
+    <string type="id" name="tag_edittext">2</string>
 </resources>
