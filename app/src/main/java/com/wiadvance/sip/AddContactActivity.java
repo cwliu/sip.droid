@@ -67,55 +67,59 @@ public class AddContactActivity extends AppCompatActivity {
         final ImageButton addPhoneImageButton = (ImageButton) findViewById(R.id.add_contact_add_phone_image_button);
         final GridLayout contactGridLayout = (GridLayout) findViewById(R.id.add_contact_gridlayout);
         final Button saveButton = (Button) findViewById(R.id.add_contact_create_button);
+        Button deleteButton = (Button) findViewById(R.id.add_contact_delete_button);
 
-        if (contactGridLayout == null || saveButton == null) {
+        if (contactGridLayout == null || saveButton == null || deleteButton == null) {
             return;
         }
-
 
         String name = getIntent().getStringExtra(ARG_NAME);
         if (nameEditText != null) {
             nameEditText.setText(name);
         }
 
-        if (saveButton != null) {
-            saveButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-                    String name = nameEditText != null ? nameEditText.getText().toString() : "";
-                    List<String> phoneList = new ArrayList<String>();
-                    if (name.equals("")) {
-                        Toast.makeText(getApplicationContext(), getString(R.string.name_empty_error), LENGTH_LONG).show();
-                        return;
-                    }
-
-                    if(phoneEditTextList.size() == 0){
-                        Toast.makeText(getApplicationContext(), R.string.no_phone_input_error, LENGTH_LONG).show();
-                        return;
-                    }
-
-                    String phone = null;
-                    for (EditText et : phoneEditTextList) {
-                        if(et.getText().toString().equals("")){
-                            Toast.makeText(getApplicationContext(), R.string.phone_empty_error, LENGTH_SHORT).show();
-                            return;
-                        }
-                        phone = et.getText().toString();
-                    }
-
-                    Contact c = new Contact(name);
-                    c.setPhone(phone);
-                    c.setType(Contact.TYPE_PHONE_MANUAL);
-                    ContactTableHelper.getInstance(getApplicationContext()).addContact(c);
-
-                    Toast.makeText(getApplicationContext(), "已成功將 " + c.getName() + " 加到通訊錄", LENGTH_LONG).show();
-                    NotificationUtil.phoneContactUpdate(getApplicationContext());
-                    finish();
+                String name = nameEditText != null ? nameEditText.getText().toString() : "";
+                List<String> phoneList = new ArrayList<String>();
+                if (name.equals("")) {
+                    Toast.makeText(getApplicationContext(), getString(R.string.name_empty_error), LENGTH_LONG).show();
+                    return;
                 }
-            });
-        }
 
+                if (phoneEditTextList.size() == 0) {
+                    Toast.makeText(getApplicationContext(), R.string.no_phone_input_error, LENGTH_LONG).show();
+                    return;
+                }
+
+                String phone = null;
+                for (EditText et : phoneEditTextList) {
+                    if (et.getText().toString().equals("")) {
+                        Toast.makeText(getApplicationContext(), R.string.phone_empty_error, LENGTH_SHORT).show();
+                        return;
+                    }
+                    phone = et.getText().toString();
+                }
+
+                Contact c = new Contact(name);
+                c.setPhone(phone);
+                c.setType(Contact.TYPE_PHONE_MANUAL);
+                ContactTableHelper.getInstance(getApplicationContext()).addContact(c);
+
+                Toast.makeText(getApplicationContext(), "已成功將 " + c.getName() + " 加到通訊錄", LENGTH_LONG).show();
+                NotificationUtil.phoneContactUpdate(getApplicationContext());
+                finish();
+            }
+        });
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         //noinspection ConstantConditions
         addPhoneImageButton.setOnClickListener(new View.OnClickListener() {
@@ -159,8 +163,9 @@ public class AddContactActivity extends AppCompatActivity {
     private void setupToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.add_contact_toolbar);
         if (toolbar != null) {
-            toolbar.setTitle(R.string.app_name);
+            toolbar.setTitle("編輯聯格人");
             setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
 }
