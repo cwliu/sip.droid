@@ -95,6 +95,8 @@ public class UserData {
         long seconds = (new Date().getTime() - sCurrentLogEntry.getCallTime().getTime()) / 1000;
         sCurrentLogEntry.setCallDurationInSeconds((int) seconds);
 
+        sCurrentLogEntry.setContact(sCurrentContact);
+
         CallLogTableHelper.getInstance(context).addCallLog(sCurrentLogEntry);
     }
 

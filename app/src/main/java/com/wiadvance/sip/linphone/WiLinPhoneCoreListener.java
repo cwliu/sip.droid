@@ -8,14 +8,11 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.wiadvance.sip.BuildConfig;
 import com.wiadvance.sip.CallReceiverActivity;
 import com.wiadvance.sip.NotificationUtil;
-import com.wiadvance.sip.PhoneUtils;
 import com.wiadvance.sip.UserData;
 import com.wiadvance.sip.model.CallLogEntry;
-import com.wiadvance.sip.model.Contact;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.linphone.LinphoneUtils;
 import org.linphone.core.LinphoneAddress;
 import org.linphone.core.LinphoneCall;
 import org.linphone.core.LinphoneCallStats;
@@ -76,17 +73,11 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
     @Override
     public void callState(LinphoneCore core, LinphoneCall call, LinphoneCall.State state, String s) {
         Log.d(TAG, "callState() called with: " + "core = [" + core + "], call = [" + call + "], state = [" + state + "], s = [" + s + "]");
-        String targetUsername = LinphoneUtils.getUsernameFromAddress(call.getRemoteAddress().toString());
 
         if(state.equals(LinphoneCall.State.IncomingReceived)) {
 
             UserData.sCurrentLogEntry = new CallLogEntry();
             UserData.sCurrentLogEntry.setCallType(CallLogEntry.TYPE_INCOMING_CALL_NO_ANSWER);
-
-            Contact contact = PhoneUtils.getCompanyContactByAccount(mContext, targetUsername);
-            if(contact != null){
-                UserData.sCurrentLogEntry.setContact(contact);
-            }
 
             Intent intent = CallReceiverActivity.newIntent(mContext,
                     call.getRemoteAddress().toString());
@@ -97,7 +88,6 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
         if(state.equals(LinphoneCall.State.OutgoingInit)){
             UserData.sCurrentLogEntry = new CallLogEntry();
             UserData.sCurrentLogEntry.setCallType(CallLogEntry.TYPE_OUTGOING_CALL_NO_ANSWER);
-            UserData.sCurrentLogEntry.setContact(UserData.sCurrentContact);
 
             NotificationUtil.notifyCallStatus(mContext, true, null, true);
         }
