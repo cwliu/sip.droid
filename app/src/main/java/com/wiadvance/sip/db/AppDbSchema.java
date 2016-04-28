@@ -54,7 +54,6 @@ public class AppDbSchema {
         public static final String NAME = "phones";
 
         public static final class Cols {
-            public static final String ID = "_id";
             public static final String CONTACT = "contact";
             public static final String PHONE = "phone";
             public static final String TYPE = "type";

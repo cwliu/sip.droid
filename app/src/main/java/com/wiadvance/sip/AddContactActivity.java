@@ -83,7 +83,6 @@ public class AddContactActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 String name = nameEditText != null ? nameEditText.getText().toString() : "";
-                List<String> phoneList = new ArrayList<String>();
                 if (name.equals("")) {
                     Toast.makeText(getApplicationContext(), getString(R.string.name_empty_error), LENGTH_LONG).show();
                     return;
@@ -95,16 +94,18 @@ public class AddContactActivity extends AppCompatActivity {
                 }
 
                 String phone = null;
+                List<String> phoneList = new ArrayList<String>();
                 for (EditText et : phoneEditTextList) {
                     if (et.getText().toString().equals("")) {
                         Toast.makeText(getApplicationContext(), R.string.phone_empty_error, LENGTH_SHORT).show();
                         return;
                     }
                     phone = et.getText().toString();
+                    phoneList.add(phone);
                 }
 
                 Contact c = new Contact(name);
-                c.setPhone(phone);
+                c.setPhoneList(phoneList);
                 c.setType(Contact.TYPE_PHONE_MANUAL);
                 ContactTableHelper.getInstance(getApplicationContext()).addContact(c);
 
@@ -138,6 +139,7 @@ public class AddContactActivity extends AppCompatActivity {
         final LinearLayout phoneListLinearLayout = (LinearLayout) findViewById(R.id.phone_list_linear_layout);
 
         View phoneViewGroup = LayoutInflater.from(AddContactActivity.this).inflate(R.layout.list_item_phone_field, phoneListLinearLayout, false);
+        //noinspection ConstantConditions
         phoneListLinearLayout.addView(phoneViewGroup);
 
         EditText phoneEditText = (EditText) phoneViewGroup.findViewById(R.id.list_item_phone_field_edittext);
@@ -165,6 +167,7 @@ public class AddContactActivity extends AppCompatActivity {
         if (toolbar != null) {
             toolbar.setTitle("編輯聯格人");
             setSupportActionBar(toolbar);
+            //noinspection ConstantConditions
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }

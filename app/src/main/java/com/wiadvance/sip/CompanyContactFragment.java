@@ -85,7 +85,9 @@ public class CompanyContactFragment extends Fragment {
             String sip = UserData.sEmailToSipHashMap.get(email);
 
             if (phone != null) {
-                c.setPhone(phone);
+                List<String> phoneList = new ArrayList<>();
+                phoneList.add(phone);
+                c.setPhoneList(phoneList);
             }
 
             if (sip != null) {

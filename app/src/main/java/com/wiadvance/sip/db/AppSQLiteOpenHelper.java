@@ -13,7 +13,7 @@ import com.wiadvance.sip.db.AppDbSchema.RegularContactTable;
 public class AppSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static String DB_NAME = "sip";
-    private static int DB_VERSION = 9;
+    private static int DB_VERSION = 10;
 
     public AppSQLiteOpenHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -35,7 +35,6 @@ public class AppSQLiteOpenHelper extends SQLiteOpenHelper {
                 ContactTable.Cols.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 ContactTable.Cols.NAME + "," +
                 ContactTable.Cols.SIP + "," +
-                ContactTable.Cols.PHONE + "," +
                 ContactTable.Cols.EMAIL + "," +
                 ContactTable.Cols.PHOTO + "," +
                 ContactTable.Cols.TYPE + " INTEGER DEFAULT 0," +
@@ -70,12 +69,13 @@ public class AppSQLiteOpenHelper extends SQLiteOpenHelper {
         );
 
         db.execSQL("CREATE TABLE " + PhoneTable.NAME + "(" +
-                PhoneTable.Cols.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 PhoneTable.Cols.CONTACT + " INTEGER NOT NULL," +
-                PhoneTable.Cols.PHONE + "," +
+                PhoneTable.Cols.PHONE + " NOT NULL," +
                 PhoneTable.Cols.TYPE + " INTEGER DEFAULT 0," +
                 "FOREIGN KEY(" + PhoneTable.Cols.CONTACT + ") REFERENCES " +
-                ContactTable.NAME + "(" + ContactTable.Cols.ID + ") ON DELETE CASCADE )"
+                ContactTable.NAME + "(" + ContactTable.Cols.ID + ") ON DELETE CASCADE," +
+                "PRIMARY KEY ( " + PhoneTable.Cols.CONTACT + ", " +PhoneTable.Cols.PHONE + ")" +
+                ")"
         );
     }
 

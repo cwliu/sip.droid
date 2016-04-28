@@ -2,7 +2,6 @@ package com.wiadvance.sip;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.wiadvance.sip.db.ContactTableHelper;
 import com.wiadvance.sip.model.Contact;
@@ -19,12 +18,6 @@ public class PhoneUtils {
         for (Contact c : ContactTableHelper.getInstance(context).getAllContacts()) {
             String sipUsername = c.getSip();
             if (sipUsername != null && account.equals(sipUsername)) {
-                return c;
-            }
-
-            String phone = c.getPhone();
-            Log.d("PhoneUtils", "account = [" + account + "]" + "phone = [" + phone + "]");
-            if (phone != null && account.equals(phone)) {
                 return c;
             }
         }

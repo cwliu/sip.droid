@@ -3,14 +3,16 @@ package com.wiadvance.sip.model;
 import android.content.Context;
 import android.net.Uri;
 
-import com.wiadvance.sip.PhoneUtils;
 import com.wiadvance.sip.db.FavoriteContactTableHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Contact {
 
     private String mName;
     private String mSip;
-    private String mPhone;
+    private List<String> mPhoneList = new ArrayList<>();
     private String mEmail;
     private String mPhotoUri;
 
@@ -18,11 +20,13 @@ public class Contact {
     private int mType;
     private int mId;
 
-    public static int TYPE_FAVORITE = 1;
-    public static int TYPE_PHONE = 3;
-    public static int TYPE_COMPANY = 4;
-    public static int TYPE_PHONE_MANUAL = 5;
+    public static int TYPE_COMPANY = 1;
+    public static int TYPE_PHONE = 2;
+    public static int TYPE_PHONE_MANUAL = 3;
 
+    public Contact(){
+        this(null, null);
+    }
     public Contact(String name) {
         this(name, null);
     }
@@ -32,13 +36,6 @@ public class Contact {
         mEmail = email;
     }
 
-    public String getName() {
-        return mName;
-    }
-
-    public String getPhone() {
-        return PhoneUtils.normalizedPhone(mPhone);
-    }
 
     public void setName(String name) {
         mName = name;
@@ -52,12 +49,8 @@ public class Contact {
         mSip = sip;
     }
 
-    public void setPhone(String phone) {
-        mPhone = phone;
-    }
-
-    public String getEmail() {
-        return mEmail;
+    public void setPhoneList(List<String> list) {
+        mPhoneList = list;
     }
 
     public void setEmail(String email) {
@@ -72,43 +65,20 @@ public class Contact {
         mPhotoUri = photoUri;
     }
 
+    public String getName() {
+        return mName;
+    }
+
+    public List<String> getPhoneList() {
+        return mPhoneList;
+    }
+
+    public String getEmail() {
+        return mEmail;
+    }
+
     public String getPhotoUri() {
         return mPhotoUri;
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-
-        boolean isEqual = true;
-
-        if (!(o instanceof Contact)) {
-            return false;
-        }
-
-        Contact rhs = (Contact) o;
-
-        if (getName() != null && (rhs.getName() == null || !getName().equals(rhs.getName()))) {
-            isEqual = false;
-        }
-
-        if (getEmail() != null && (rhs.getEmail() == null || !getEmail().equals(rhs.getEmail()))) {
-            isEqual = false;
-        }
-
-        if (getSip() != null && (rhs.getSip() == null || !getSip().equals(rhs.getSip()))) {
-            isEqual = false;
-        }
-
-        if (getPhone() != null && (rhs.getPhone() == null || !getPhone().equals(rhs.getPhone()))) {
-            isEqual = false;
-        }
-
-        return isEqual;
-    }
-
-    public boolean isFavorite(Context context) {
-        return FavoriteContactTableHelper.getInstance(context).isFavoriteContact(this);
     }
 
     public int getType() {
@@ -134,5 +104,40 @@ public class Contact {
     public void setAndroidContactId(String androidContactId) {
         mAndroidContactId = androidContactId;
     }
+
+    public boolean isFavorite(Context context) {
+        return FavoriteContactTableHelper.getInstance(context).isFavoriteContact(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        boolean isEqual = true;
+
+        if (!(o instanceof Contact)) {
+            return false;
+        }
+
+        Contact rhs = (Contact) o;
+
+        if (getName() != null && (rhs.getName() == null || !getName().equals(rhs.getName()))) {
+            isEqual = false;
+        }
+
+        if (getEmail() != null && (rhs.getEmail() == null || !getEmail().equals(rhs.getEmail()))) {
+            isEqual = false;
+        }
+
+        if (getSip() != null && (rhs.getSip() == null || !getSip().equals(rhs.getSip()))) {
+            isEqual = false;
+        }
+
+//        if (getPhone() != null && (rhs.getPhone() == null || !getPhone().equals(rhs.getPhone()))) {
+//            isEqual = false;
+//        }
+
+        return isEqual;
+    }
+
 
 }

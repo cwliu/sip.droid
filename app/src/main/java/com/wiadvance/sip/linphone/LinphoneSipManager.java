@@ -27,6 +27,7 @@ import org.linphone.core.PresenceActivityType;
 import org.linphone.core.PresenceModel;
 
 import java.util.Date;
+import java.util.List;
 
 public class LinphoneSipManager extends WiSipManager {
 
@@ -127,7 +128,8 @@ public class LinphoneSipManager extends WiSipManager {
                         return;
                     }
 
-                    String phone = contact.getPhone();
+                    List<String> phoneList = contact.getPhoneList();
+                    String phone = phoneList.size() > 0 ? phoneList.get(0) : null;
                     if (phone == null) {
                         NotificationUtil.displayStatus(mContext, "This user has no phone number");
                     } else if (!mHasConnected) {

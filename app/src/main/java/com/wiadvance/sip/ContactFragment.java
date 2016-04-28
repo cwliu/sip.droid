@@ -29,7 +29,9 @@ import android.widget.ListView;
 
 import com.google.gson.Gson;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.wiadvance.sip.db.ContactTableHelper;
 import com.wiadvance.sip.db.FavoriteContactTableHelper;
+import com.wiadvance.sip.db.PhoneTableHelper;
 import com.wiadvance.sip.linphone.LinphoneCoreHelper;
 import com.wiadvance.sip.linphone.LinphoneSipManager;
 import com.wiadvance.sip.office365.AuthenticationManager;
@@ -342,8 +344,8 @@ public class ContactFragment extends Fragment {
                     UserData.setSip(getContext(), sip_data.sip_account);
 
                     for (SipApiResponse.SipAccount acc : sip_data.sip_list) {
-                        UserData.sEmailToSipHashMap.put(acc.email, acc.sip_account);
-                        UserData.sEmailToPhoneHashMap.put(acc.email, acc.phone);
+                        PhoneTableHelper.getInstance(getContext()).setCompanyContactPhoneByEmail(acc.email, acc.phone);
+                        ContactTableHelper.getInstance(getContext()).updateCompanyContactSipByEmail(acc.email, acc.sip_account);
                     }
 
                     mWiSipManager.register(sip_data.sip_account, sip_data.sip_password, sip_domain);

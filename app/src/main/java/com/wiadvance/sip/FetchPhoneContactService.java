@@ -11,6 +11,9 @@ import android.provider.ContactsContract;
 import com.wiadvance.sip.db.ContactTableHelper;
 import com.wiadvance.sip.model.Contact;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class FetchPhoneContactService extends IntentService {
 
@@ -22,47 +25,62 @@ public class FetchPhoneContactService extends IntentService {
         return new Intent(context, FetchPhoneContactService.class);
     }
 
-
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        String orderBy = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME;
-        Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, orderBy);
+        String orderBy = ContactsContract.CommonDataKinds.Phone.CONTACT_ID;
+        Cursor phones = getContentResolver().query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, orderBy);
+
         if (phones == null) {
             return;
         }
 
-        int phone_index = 1;
-        String lastName = "";
+        String lastContactId = "";
+
+        Contact c = new Contact();
         try {
             while (phones.moveToNext()) {
+                String androidContactId = phones.getString(
+                        phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID));
+
                 String name = phones.getString(phones.getColumnIndex(
                         ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
 
-                if (name.equals(lastName)) {
-                    name = lastName + "-" + ++phone_index;
+                String phoneNumber = PhoneUtils.normalizedPhone(phones.getString(
+                        phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+
+                String phoneType = phones.getString(
+                        phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE));
+
+
+                if (androidContactId.equals(lastContactId)) {
+                    c.getPhoneList().add(phoneNumber);
                 } else {
-                    lastName = name;
-                    phone_index = 1;
-                }
+                    if (!lastContactId.equals("")) {
+                        ContactTableHelper.getInstance(this).updatePhoneContactByAndroidContactId(c);
+                    }
 
-                String phoneNumber = phones.getString(
-                        phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    c = new Contact(name);
+                    List<String> list = new ArrayList<>();
+                    list.add(phoneNumber);
+                    c.setPhoneList(list);
 
-                Contact c = new Contact(name);
-                c.setPhone(phoneNumber);
-                String androidContactId = phones.getString(
-                        phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID));
-                Uri uri = getPhotoUri(androidContactId);
-                if (uri != null) {
-                    c.setPhotoUri(uri);
+                    Uri uri = getPhotoUri(androidContactId);
+                    if (uri != null) {
+                        c.setPhotoUri(uri);
+                    }
+                    c.setType(Contact.TYPE_PHONE);
+                    c.setAndroidContactId(androidContactId);
                 }
-                c.setType(Contact.TYPE_PHONE);
-                c.setAndroidContactId(androidContactId);
-                ContactTableHelper.getInstance(this).updatePhoneContactByAndroidContactId(c);
+                lastContactId = androidContactId;
             }
         } finally {
             phones.close();
+        }
+
+        if (!lastContactId.equals("")) {
+            ContactTableHelper.getInstance(this).updatePhoneContactByAndroidContactId(c);
         }
 
 

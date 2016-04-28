@@ -44,7 +44,6 @@ public class ContactTableHelper {
         ContentValues cv = new ContentValues();
         cv.put(Cols.NAME, contact.getName());
         cv.put(Cols.SIP, contact.getSip());
-        cv.put(Cols.PHONE, contact.getPhone());
         cv.put(Cols.EMAIL, contact.getEmail());
         cv.put(Cols.PHOTO, contact.getPhotoUri());
         cv.put(Cols.TYPE, contact.getType());
@@ -201,16 +200,29 @@ public class ContactTableHelper {
         }
     }
 
-    public void updatePhoneContactByAndroidContactId(Contact c) {
+    public void updatePhoneContactByAndroidContactId(Contact newContact) {
         String whereClause = Cols.ANDROID_CONTACT_ID + " = ? AND " + Cols.TYPE + " = ?";
-        String[] whereArgs = new String[]{c.getAndroidContactId(), String.valueOf(Contact.TYPE_PHONE)};
+        String[] whereArgs = new String[]{newContact.getAndroidContactId(), String.valueOf(Contact.TYPE_PHONE)};
 
-        Contact contact = getContactByAndroidContactId(c.getAndroidContactId());
-        if (contact == null) {
-            addContact(c);
+        Contact queriedContact = getContactByAndroidContactId(newContact.getAndroidContactId());
+        if (queriedContact == null) {
+            addContact(newContact);
         } else {
-            mDatabase.update(ContactTable.NAME, getContentsValue(c), whereClause, whereArgs);
+            mDatabase.update(ContactTable.NAME, getContentsValue(newContact), whereClause, whereArgs);
         }
+
+        queriedContact = getContactByAndroidContactId(newContact.getAndroidContactId());
+        PhoneTableHelper.getInstance(mContext).delete(queriedContact.getId());
+        PhoneTableHelper.getInstance(mContext).add(queriedContact.getId(), newContact.getPhoneList());
+    }
+
+    public void updateCompanyContactSipByEmail(String email, String sipAccount){
+        String whereClause = Cols.EMAIL + " = ? AND " + Cols.TYPE + " = ?";
+        String[] whereArgs = new String[]{email, String.valueOf(Contact.TYPE_COMPANY)};
+
+        ContentValues cv = new ContentValues();
+        cv.put(Cols.SIP, sipAccount);
+        mDatabase.update(ContactTable.NAME, cv, whereClause, whereArgs);
     }
 
     class ContactCursorWrapper extends CursorWrapper {
@@ -227,7 +239,6 @@ public class ContactTableHelper {
             int id = getInt(getColumnIndex(Cols.ID));
             String name = getString(getColumnIndex(Cols.NAME));
             String sip = getString(getColumnIndex(Cols.SIP));
-            String phone = getString(getColumnIndex(Cols.PHONE));
             String email = getString(getColumnIndex(Cols.EMAIL));
             String photo = getString(getColumnIndex(Cols.PHOTO));
             Integer type = getInt(getColumnIndex(Cols.TYPE));
@@ -236,7 +247,8 @@ public class ContactTableHelper {
             contact.setId(id);
             contact.setEmail(email);
             contact.setSip(sip);
-            contact.setPhone(phone);
+            List<String> phoneList = PhoneTableHelper.getInstance(mContext).getPhoneList(id);
+            contact.setPhoneList(phoneList);
             contact.setPhotoUri(photo);
             contact.setType(type);
 
