@@ -7,12 +7,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.wiadvance.sip.db.AppDbSchema.CallLogTable;
 import com.wiadvance.sip.db.AppDbSchema.ContactTable;
 import com.wiadvance.sip.db.AppDbSchema.FavoriteContactTable;
+import com.wiadvance.sip.db.AppDbSchema.PhoneTable;
 import com.wiadvance.sip.db.AppDbSchema.RegularContactTable;
 
 public class AppSQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static String DB_NAME = "sip";
-    private static int DB_VERSION = 8;
+    private static int DB_VERSION = 9;
 
     public AppSQLiteOpenHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -67,9 +68,19 @@ public class AppSQLiteOpenHelper extends SQLiteOpenHelper {
                 "FOREIGN KEY(" + FavoriteContactTable.Cols.CONTACT + ") REFERENCES " +
                 ContactTable.NAME + "(" + ContactTable.Cols.ID + ") ON DELETE CASCADE )"
         );
+
+        db.execSQL("CREATE TABLE " + PhoneTable.NAME + "(" +
+                PhoneTable.Cols.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                PhoneTable.Cols.CONTACT + " INTEGER NOT NULL," +
+                PhoneTable.Cols.PHONE + "," +
+                PhoneTable.Cols.TYPE + " INTEGER DEFAULT 0," +
+                "FOREIGN KEY(" + PhoneTable.Cols.CONTACT + ") REFERENCES " +
+                ContactTable.NAME + "(" + ContactTable.Cols.ID + ") ON DELETE CASCADE )"
+        );
     }
 
     private void dropTable(SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + PhoneTable.NAME);
         db.execSQL("DROP TABLE IF EXISTS " + FavoriteContactTable.NAME);
         db.execSQL("DROP TABLE IF EXISTS " + RegularContactTable.NAME);
         db.execSQL("DROP TABLE IF EXISTS " + CallLogTable.NAME);

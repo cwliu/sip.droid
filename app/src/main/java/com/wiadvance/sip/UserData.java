@@ -81,6 +81,7 @@ public class UserData {
         sEmailToPhoneHashMap.clear();
 
         SQLiteDatabase database = new AppSQLiteOpenHelper(context).getWritableDatabase();
+        database.delete(AppDbSchema.PhoneTable.NAME, null, null);
         database.delete(AppDbSchema.FavoriteContactTable.NAME, null, null);
         database.delete(AppDbSchema.ContactTable.NAME, null, null);
         database.delete(AppDbSchema.RegularContactTable.NAME, null, null);

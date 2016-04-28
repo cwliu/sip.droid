@@ -15,7 +15,6 @@ public class AppDbSchema {
             public static final String TYPE = "type";
             public static final String CREATED_TIME = "create_time";
             public static final String ANDROID_CONTACT_ID = "android_contact_id";
-
         }
     }
 
@@ -48,6 +47,17 @@ public class AppDbSchema {
         public static final class Cols {
             public static final String ID = "_id";
             public static final String CONTACT = "contact";
+        }
+    }
+
+    public static final class PhoneTable{
+        public static final String NAME = "phones";
+
+        public static final class Cols {
+            public static final String ID = "_id";
+            public static final String CONTACT = "contact";
+            public static final String PHONE = "phone";
+            public static final String TYPE = "type";
         }
     }
 }
