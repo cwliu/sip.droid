@@ -24,4 +24,7 @@
     <string name="hint_phone_numbers">Phone numbers</string>
     <string type="id" name="tag_viewgroup">1</string>
     <string type="id" name="tag_edittext">2</string>
+    <string name="phone_empty_error">電話不得為空</string>
+    <string name="name_empty_error">姓名不得為空</string>
+    <string name="no_phone_input_error">請至少輸入一筆電話</string>
 </resources>

@@ -40,7 +40,7 @@ public class SearchActivity extends AbstractToolbarContactActivity {
         SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
         searchView.requestFocusFromTouch();
-        
+
 //        // Remove search icon
 //        ImageView searchImage = (ImageView) searchView.findViewById(
 //                android.support.v7.appcompat.R.id.search_mag_icon);
