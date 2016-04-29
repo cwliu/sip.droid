@@ -149,6 +149,19 @@ public class ContactTableHelper {
         return getContacts(contactCursorWrapper);
     }
 
+    public List<Contact> getManualPhoneContacts() {
+        String whereClause = Cols.TYPE + " = ? ";
+        String[] whereArgs = new String[]{
+                String.valueOf(Contact.TYPE_PHONE_MANUAL)
+        };
+
+        String orderBy = Cols.NAME + " ASC";
+
+        ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, orderBy);
+        return getContacts(contactCursorWrapper);
+    }
+
+
     public List<Contact> getCompanyContacts() {
         String whereClause = Cols.TYPE + " = ?";
         String[] whereArgs = new String[]{String.valueOf(Contact.TYPE_COMPANY)};

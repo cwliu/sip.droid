@@ -13,10 +13,18 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.wiadvance.sip.db.ContactTableHelper;
 import com.wiadvance.sip.linphone.LinphoneSipManager;
+import com.wiadvance.sip.model.Contact;
 import com.wiadvance.sip.office365.AuthenticationManager;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -134,6 +142,66 @@ public class ContactActivity extends SingleFragmentActivity {
                 UserData.updateCompanyAccountData(ContactActivity.this);
                 Intent intent = new Intent(NotificationUtil.ACTION_COMPANY_UPDATE_NOTIFICATION);
                 sendBroadcast(intent);
+
+                if(ContactTableHelper.getInstance(ContactActivity.this).getManualPhoneContacts().size() == 0) {
+                    downloadManualContact();
+                }
+            }
+        });
+    }
+
+    private void downloadManualContact() {
+        OkHttpClient client = new OkHttpClient();
+        OkHttpClient clientWith60sTimeout = client.newBuilder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(BuildConfig.BACKEND_CONACT_API_SERVER + "?email=" + UserData.getEmail(this) + "&backend_access_token=" + UserData.getBackendAccessToken(this))
+                .get()
+                .build();
+
+        clientWith60sTimeout.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(TAG, "onFailure() called with: " + "call = [" + call + "], e = [" + e + "]");
+                NotificationUtil.displayStatus(ContactActivity.this, "Backend error: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                Log.d(TAG, "onResponse() called with: " + "call = [" + call + "], response = [" + response + "]");
+                if (!response.isSuccessful()) {
+                    NotificationUtil.displayStatus(ContactActivity.this, "Backend error: " + response.body().string());
+                    return;
+                }
+
+                String rawString = response.body().string();
+
+
+                try {
+                    JSONArray contactList = new JSONArray(rawString);
+                    for (int i = 0; i < contactList.length(); i++) {
+                        JSONObject contact = (JSONObject) contactList.get(i);
+                        String name = contact.getString("name");
+                        JSONArray downloadPhoneList = contact.getJSONArray("phone_list");
+                        List<String> phoneList = new ArrayList<>();
+                        for(int j = 0; j < downloadPhoneList.length(); j++){
+                            String phone = downloadPhoneList.getString(j);
+                            phoneList.add(phone);
+                        }
+
+                        Contact c = new Contact(name);
+                        c.setPhoneList(phoneList);
+                        c.setType(Contact.TYPE_PHONE_MANUAL);
+                        ContactTableHelper.getInstance(getApplicationContext()).addContact(c);
+                    }
+
+                    NotificationUtil.phoneContactUpdate(ContactActivity.this);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

@@ -20,7 +20,6 @@ import android.widget.ProgressBar;
 import com.microsoft.aad.adal.AuthenticationCallback;
 import com.microsoft.aad.adal.AuthenticationResult;
 import com.wiadvance.sip.db.ContactTableHelper;
-import com.wiadvance.sip.db.FavoriteContactTableHelper;
 import com.wiadvance.sip.model.Contact;
 import com.wiadvance.sip.model.UserRaw;
 import com.wiadvance.sip.office365.AuthenticationManager;
@@ -140,9 +139,11 @@ public class CompanyContactFragment extends Fragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mAdapter.setContactList(
-                            ContactTableHelper.getInstance(getContext()).getCompanyContacts());
-                    mAdapter.notifyDataSetChanged();
+                    if(mAdapter != null){
+                        mAdapter.setContactList(
+                                ContactTableHelper.getInstance(getContext()).getCompanyContacts());
+                        mAdapter.notifyDataSetChanged();
+                    }
                 }
             });
         }
@@ -202,10 +203,7 @@ public class CompanyContactFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (mAdapter != null) {
-                mAdapter.setContactList(FavoriteContactTableHelper.getInstance(getContext()).getAll());
-                mAdapter.notifyDataSetChanged();
-            }
+            refreshRecyclerView();
         }
     }
 }
