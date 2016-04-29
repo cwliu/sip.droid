@@ -122,6 +122,7 @@ public class ContactActivity extends SingleFragmentActivity {
 
                 mWiSipManager.register(sip_data.sip_account, sip_data.sip_password, sip_domain);
 
+                UserData.setBackendAccessToken(ContactActivity.this, sip_data.backend_access_token);
 
                 UserData.setSip(ContactActivity.this, sip_data.sip_account);
 
