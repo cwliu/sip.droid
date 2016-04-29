@@ -120,6 +120,8 @@ public class MakeCallActivity extends AppCompatActivity implements SensorEventLi
                 }
                 if (isCalling) {
                     dotAnimationHandler.postDelayed(this, 800);
+                }else{
+                    mCallStatusAnimation.setText("");
                 }
             }
         };
@@ -133,6 +135,7 @@ public class MakeCallActivity extends AppCompatActivity implements SensorEventLi
 
 
         IntentFilter notify_filter = new IntentFilter(NotificationUtil.ACTION_CALL_STATUS_CHANGED);
+        notify_filter.addAction(NotificationUtil.ACTION_CALL_MSG);
         LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
         manager.registerReceiver(mCallStatusReceiver, notify_filter);
 
@@ -188,41 +191,51 @@ public class MakeCallActivity extends AppCompatActivity implements SensorEventLi
 
         @Override
         public void onReceive(final Context context, Intent intent) {
-            boolean on = intent.getBooleanExtra(NotificationUtil.NOTIFY_CALL_ON, false);
-            if (on) {
-                isCalling = true;
-                String status = intent.getStringExtra(NotificationUtil.NOTIFY_CALL_STATUS);
+
+            if(intent.getAction().equals(NotificationUtil.ACTION_CALL_MSG)){
+
+                isCalling = false;
+                String status = intent.getStringExtra(NotificationUtil.NOTIFY_CALL_MSG);
                 if (status != null) {
                     mCallStatus.setText(status);
                 }
 
-                boolean isSip = intent.getBooleanExtra(NotificationUtil.NOTIFY_CALL_IS_SIP, true);
-                if (status != null && !isSip) {
-                    View v = findViewById(R.id.sip_phone_icon_imageView);
-                    if(v != null){
-                        v.setVisibility(View.GONE);
+            }else{
+                boolean on = intent.getBooleanExtra(NotificationUtil.NOTIFY_CALL_ON, false);
+                if (on) {
+                    isCalling = true;
+                    String status = intent.getStringExtra(NotificationUtil.NOTIFY_CALL_STATUS);
+                    if (status != null) {
+                        mCallStatus.setText(status);
                     }
-                }
 
-            } else {
-                isCalling = false;
-                if (mWiSipManager.triedSip()) {
-                    mCallStatus.setText(R.string.call_end);
-
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (mWiSipManager.isHasConnected()) {
-                                Toast.makeText(context, R.string.call_end, Toast.LENGTH_SHORT).show();
-                            } else if (isEndedByCaller) {
-                                //Nothing need to do
-                            } else {
-                                Toast.makeText(context, "No one answered the phone", Toast.LENGTH_SHORT).show();
-                            }
-
-                            finish();
+                    boolean isSip = intent.getBooleanExtra(NotificationUtil.NOTIFY_CALL_IS_SIP, true);
+                    if (status != null && !isSip) {
+                        View v = findViewById(R.id.sip_phone_icon_imageView);
+                        if(v != null){
+                            v.setVisibility(View.GONE);
                         }
-                    }, 1200);
+                    }
+                } else {
+                    isCalling = false;
+                    if (mWiSipManager.triedSip()) {
+                        mCallStatus.setText(R.string.call_end);
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mWiSipManager.isHasConnected()) {
+                                    Toast.makeText(context, R.string.call_end, Toast.LENGTH_SHORT).show();
+                                } else if (isEndedByCaller) {
+                                    //Nothing need to do
+                                } else {
+                                    Toast.makeText(context, "No one answered the phone", Toast.LENGTH_SHORT).show();
+                                }
+
+                                finish();
+                            }
+                        }, 1200);
+                    }
                 }
             }
         }

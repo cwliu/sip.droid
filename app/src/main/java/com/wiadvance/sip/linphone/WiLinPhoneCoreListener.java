@@ -8,6 +8,7 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.wiadvance.sip.BuildConfig;
 import com.wiadvance.sip.CallReceiverActivity;
 import com.wiadvance.sip.NotificationUtil;
+import com.wiadvance.sip.R;
 import com.wiadvance.sip.UserData;
 import com.wiadvance.sip.model.CallLogEntry;
 
@@ -94,9 +95,13 @@ public class WiLinPhoneCoreListener implements LinphoneCoreListener {
         if(state.equals(LinphoneCall.State.Connected)){
             if(UserData.sCurrentLogEntry.getCallType() == CallLogEntry.TYPE_INCOMING_CALL_NO_ANSWER){
                 UserData.sCurrentLogEntry.setCallType(CallLogEntry.TYPE_INCOMING_CALL_ANSWERED);
+
             }else{
                 UserData.sCurrentLogEntry.setCallType(CallLogEntry.TYPE_OUTGOING_CALL_ANSWERED);
             }
+
+            String msg = mContext.getResources().getString(R.string.call_established_msg);
+            NotificationUtil.notifyCallMsg(mContext, msg);
         }
 
         if(state.equals(LinphoneCall.State.CallEnd)){
