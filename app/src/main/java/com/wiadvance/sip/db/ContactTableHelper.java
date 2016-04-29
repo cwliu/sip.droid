@@ -72,19 +72,11 @@ public class ContactTableHelper {
 
         List<String> list = contact.getPhoneList();
         if (list.size() != 0) {
-            PhoneTableHelper.getInstance(mContext).delete((int)id);
-            PhoneTableHelper.getInstance(mContext).add((int)id, list);
+            PhoneTableHelper.getInstance(mContext).delete((int) id);
+            PhoneTableHelper.getInstance(mContext).add((int) id, list);
         }
 
         return id;
-    }
-
-    public void addContactList(List<Contact> contactList) {
-
-        // TODO Bulk insert
-        for (Contact c : contactList) {
-            addContact(c);
-        }
     }
 
     public Contact getContactById(int contact_id) {
@@ -145,20 +137,12 @@ public class ContactTableHelper {
     }
 
     public List<Contact> getPhoneContacts() {
-        String whereClause = Cols.TYPE + " = ? OR " +
-                Cols.TYPE + " = ? ";
-        String[] whereArgs = new String[]{String.valueOf(Contact.TYPE_PHONE),
-                String.valueOf(Contact.TYPE_PHONE_MANUAL)};
+        String whereClause = Cols.TYPE + " = ? OR " + Cols.TYPE + " = ? ";
+        String[] whereArgs = new String[]{
+                String.valueOf(Contact.TYPE_PHONE),
+                String.valueOf(Contact.TYPE_PHONE_MANUAL)
+        };
 
-        String orderBy = Cols.NAME + " ASC";
-
-        ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, orderBy);
-        return getContacts(contactCursorWrapper);
-    }
-
-    public List<Contact> getPhoneManualContacts() {
-        String whereClause = Cols.TYPE + " = ?";
-        String[] whereArgs = new String[]{String.valueOf(Contact.TYPE_PHONE_MANUAL)};
         String orderBy = Cols.NAME + " ASC";
 
         ContactCursorWrapper contactCursorWrapper = queryContacts(whereClause, whereArgs, orderBy);
