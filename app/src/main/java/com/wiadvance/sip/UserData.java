@@ -34,6 +34,8 @@ public class UserData {
     public static CallLogEntry sCurrentLogEntry = new CallLogEntry();
     public static Contact sCurrentContact;
 
+    public static ContactHolder sCurrentContactHolder;
+
     public static String getName(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_NAME, null);
     }

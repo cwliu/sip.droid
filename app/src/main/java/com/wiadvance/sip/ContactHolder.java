@@ -167,13 +167,27 @@ public class ContactHolder extends RecyclerView.ViewHolder {
     }
 
     private void toggleButtonsRelativeLayout() {
-        if (isButtonDisplayed) {
-            mRootItemSwipeLayoutView.close(true);
-            isButtonDisplayed = false;
-        } else {
-            mBottomWrapperView.setVisibility(View.VISIBLE);
-            mRootItemSwipeLayoutView.open(true);
-            isButtonDisplayed = true;
+
+        if(UserData.sCurrentContactHolder != null && UserData.sCurrentContactHolder != this){
+            UserData.sCurrentContactHolder.closeButton();
         }
+        UserData.sCurrentContactHolder = this;
+
+        if (isButtonDisplayed) {
+            closeButton();
+        } else {
+            displayButton();
+        }
+    }
+
+    private void displayButton() {
+        mBottomWrapperView.setVisibility(View.VISIBLE);
+        mRootItemSwipeLayoutView.open(true);
+        isButtonDisplayed = true;
+    }
+
+    private void closeButton() {
+        mRootItemSwipeLayoutView.close(true);
+        isButtonDisplayed = false;
     }
 }
