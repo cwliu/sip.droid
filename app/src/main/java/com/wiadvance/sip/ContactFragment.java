@@ -1,6 +1,5 @@
 package com.wiadvance.sip;
 
-import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -224,10 +223,6 @@ public class ContactFragment extends Fragment {
         } else {
             mask.setVisibility(View.GONE);
             fab.setImageResource(R.drawable.ic_person_add_white_24dp);
-
-            ObjectAnimator rotateAnimator = ObjectAnimator.ofFloat(fab, "rotation", -45f, 0f);
-            rotateAnimator.setDuration(400);
-            rotateAnimator.start();
 
             viewVisibilityDelayed(scanAddContactFab, View.GONE, 50);
             viewVisibilityDelayed(addContactRelativeLayout, View.GONE, 100);
