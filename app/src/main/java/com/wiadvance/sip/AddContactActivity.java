@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -123,10 +124,7 @@ public class AddContactActivity extends AppCompatActivity {
                     phoneList.add(phone);
                 }
 
-                Contact c = new Contact(name);
-                c.setPhoneList(phoneList);
-                c.setType(Contact.TYPE_PHONE_MANUAL);
-                ContactTableHelper.getInstance(getApplicationContext()).addContact(c);
+                Contact c = addContact(name, phoneList);
 
                 Toast.makeText(getApplicationContext(), "已成功將 " + c.getName() + " 加到通訊錄", LENGTH_LONG).show();
                 NotificationUtil.phoneContactUpdate(getApplicationContext());
@@ -154,6 +152,15 @@ public class AddContactActivity extends AppCompatActivity {
         });
     }
 
+    @NonNull
+    private Contact addContact(String name, List<String> phoneList) {
+        Contact c = new Contact(name);
+        c.setPhoneList(phoneList);
+        c.setType(Contact.TYPE_PHONE_MANUAL);
+        ContactTableHelper.getInstance(getApplicationContext()).addContact(c);
+        return c;
+    }
+
     private void addPhoneField(String phone) {
         final LinearLayout phoneListLinearLayout = (LinearLayout) findViewById(R.id.phone_list_linear_layout);
 
@@ -179,7 +186,6 @@ public class AddContactActivity extends AppCompatActivity {
             }
         });
     }
-
 
     private void setupToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.add_contact_toolbar);
