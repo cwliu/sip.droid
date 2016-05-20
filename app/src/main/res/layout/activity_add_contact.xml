@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/add_contact_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/colorPrimary"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <ImageView
+        android:id="@+id/namecard_thumbnail_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="144dp"
+        android:scaleType="centerInside"
+        android:visibility="gone"
+        />
+
+    <GridLayout
+        android:id="@+id/add_contact_gridlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:columnCount="3"
+        tools:context="com.wiadvance.sip.AddContactActivity">
+
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="26dp"
+            android:src="@drawable/camera_circle_gray_64dp"
+            />
+
+        <EditText
+            android:id="@+id/add_contact_name_edittext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center_vertical"
+            android:hint="Name"
+            android:textSize="14sp"
+            />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:layout_columnSpan="3"
+            />
+
+        <TextView
+            android:id="@+id/add_contact_phone_textview"
+            style="@style/textMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_columnSpan="2"
+            android:layout_marginBottom="16dp"
+            android:text="PHONE"
+            android:textColor="@color/blue"
+            android:textSize="12sp"
+            />
+
+        <ImageButton
+            android:id="@+id/add_contact_add_phone_image_button"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_column="2"
+            android:layout_marginLeft="16dp"
+            android:background="@drawable/add_green_16dp"/>
+    </GridLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/phone_list_linear_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:layout_columnSpan="3"
+                />
+
+            <TextView
+                style="@style/textMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="16dp"
+                android:text="ACTION"
+                android:textColor="@color/blue"
+                android:textSize="12sp"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="16dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/add_contact_create_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginRight="16dp"
+                    android:layout_weight="0.5"
+                    android:background="@color/blue"
+                    android:text="@string/save"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    />
+
+                <Button
+                    android:id="@+id/add_contact_delete_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginRight="16dp"
+                    android:layout_weight="0.5"
+                    android:background="@color/red"
+                    android:text="@string/delete"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

@@ -4,18 +4,80 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.wiadvance.sipdemo.CallReceiverActivity">
+    android:background="@color/blue"
+    tools:context="com.wiadvance.sip.CallReceiverActivity">
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/call_receiver_avatar"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp"
+        android:src="@drawable/avatar_120dp"
+        />
 
-    <Button
+    <TextView
+        android:id="@+id/call_receiver_sip"
+        style="@style/textMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:onClick="onEndCallButtonClick"
-        android:text="End Call"
+        android:layout_below="@id/call_receiver_avatar"
+        android:layout_centerHorizontal="true"
+        android:maxWidth="200dp"
+        android:layout_marginTop="24dp"
+        android:text="1234"
+        android:textColor="@color/white"
+        android:textSize="16sp"
         />
+
+    <TextView
+        android:id="@+id/call_status"
+        style="@style/textRegular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/call_receiver_sip"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:text="Incoming Call"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        />
+
+
+
+    <ImageButton
+        android:id="@+id/answer_call_button"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="96dp"
+        android:layout_marginLeft="56dp"
+        android:background="@drawable/phone_green_96dp"
+        android:onClick="onAnswerButtonClick"
+        />
+
+    <ImageButton
+        android:id="@+id/deny_call_button"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="96dp"
+        android:layout_marginRight="56dp"
+        android:background="@drawable/call_end_green_96dp"
+        android:onClick="onDenyCallButtonClick"
+        />
+
+    <ImageButton
+        android:id="@+id/end_call_button"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="96dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/call_end_green_96dp"
+        android:onClick="onEndCallButtonClick"
+        android:visibility="gone"
+        />
+
 </RelativeLayout>

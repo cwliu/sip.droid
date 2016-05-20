@@ -1,6 +1,32 @@
 <resources>
-    <string name="app_name">WiAdvance O365 with SIP Demo</string>
+    <string name="app_name">GOODWOX comm.</string>
 
     <string name="warning_clientid_redirecturi_incorrect">The client ID or redirect URI is not valid. Enter a valid client ID and redirect URI in the Constants.java file and run again</string>
     <string name="connect_toast_text_error">Sorry, can\'t connect to Office 365: %1$s</string>
+    <string name="navigation_drawer_open">open</string>
+    <string name="navigation_drawer_close">close</string>
+    <string name="search_hint">Search contact</string>
+    <string name="call_end">Call Ended</string>
+    <string name="no_camera_app">無可拍照的應用程式</string>
+    <string name="create_image_failed">建立檔案錯誤</string>
+    <string name="bcr_error">名片辨識發生錯誤</string>
+    <string name="take_namecard_photo">對準名片拍照</string>
+    <string name="call_established_msg">Established</string>
+    <string name="call_time">%1$s</string>
+    <plurals name="call_duration_time">
+        <item quantity="one">, %d second</item>
+        <item quantity="other">, %d seconds</item>
+    </plurals>
+    <string name="no_answer_msg">, no answer</string>
+    <string name="manual_add_contact">手動輸入</string>
+    <string name="save">SAVE</string>
+    <string name="delete">delete</string>
+    <string name="hint_phone_numbers">Phone numbers</string>
+    <string type="id" name="tag_viewgroup">1</string>
+    <string type="id" name="tag_edittext">2</string>
+    <string name="phone_empty_error">電話不得為空</string>
+    <string name="name_empty_error">姓名不得為空</string>
+    <string name="no_phone_input_error">請至少輸入一筆電話</string>
+    <string name="msg_please_choose_phone">請選擇電話</string>
+    <string name="bcr_fail">名片辨識失敗</string>
 </resources>

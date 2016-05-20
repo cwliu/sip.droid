@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.+'
+        classpath 'io.fabric.tools:gradle:1.21.6'
     }
 }
 apply plugin: 'com.android.application'
@@ -16,20 +16,40 @@ repositories {
 
 
 android {
+    signingConfigs {
+        Release {
+            keyAlias 'ReleaseKey'
+            keyPassword 'Office365'
+            storeFile file('dev-goodwox.jks')
+            storePassword 'Office365'
+        }
+    }
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
-
     defaultConfig {
-        applicationId "com.wiadvance.sipdemo"
+        applicationId "com.wiadvance.sip"
         minSdkVersion 16
-        targetSdkVersion 23
+        //noinspection OldTargetApi
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
+
+        buildConfigField "String", "MIXPANL_TOKEN", "\"5984645805656c4310c8a8f45f96cb44\""
+
+        buildConfigField "String", "BACKEND_SIP_API_SERVER", "\"https://sipphone-web-staging.azurewebsites.net/api/v1/sips/\""
+        buildConfigField "String", "BACKEND_CONACT_API_SERVER", "\"https://sipphone-web-staging.azurewebsites.net/api/v1/contacts/\""
+
+        buildConfigField "String", "CAMCARD_API_EMAIL", "\"liu@codylab.com\""
+        buildConfigField "String", "CAMCARD_API_KEY", "\"YNW8DX3Q9YTAD94X\""
+
     }
     buildTypes {
         release {
             minifyEnabled false
+
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            signingConfig signingConfigs.Release
         }
     }
 }
@@ -37,17 +57,37 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.2.0'
+    compile 'com.android.support:appcompat-v7:23.2.1'
+
     // Azure Active Directory Library
     compile 'com.microsoft.aad:adal:1.1.7'
-    compile 'com.android.support:recyclerview-v7:23.2.0'
+    compile 'com.android.support:recyclerview-v7:23.2.1'
 
     // Retrofit + custom HTTP
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
-    compile 'com.squareup.okhttp:okhttp:2.0.0'
+    compile 'com.squareup.okhttp:okhttp:2.4.0'
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'com.google.code.gson:gson:2.6.2'
+
+    // Crashlytics
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
+
+    // Mixpanel
+    compile 'com.mixpanel.android:mixpanel-android:4.8.0'
+
+    // Circular image view
+    compile 'de.hdodenhof:circleimageview:2.0.0'
+
+    // Image cache
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
+    // For swipelayout
+    compile 'com.android.support:support-v4:23.2.1'
+    compile 'com.daimajia.swipelayout:library:1.2.0@aar'
+
+    // For snackbar
+    compile 'com.android.support:design:23.2.1'
 }

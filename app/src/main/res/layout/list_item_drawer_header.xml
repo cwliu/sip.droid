@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="256dp"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:background="@color/blue"
+                android:orientation="horizontal">
+
+
+    <RelativeLayout
+        android:id="@+id/drawer_profile_relativelayout"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="40dp"
+        android:layout_centerHorizontal="true">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/drawer_user_photo"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/avatar_120dp"
+            />
+
+        <ImageView
+            android:id="@+id/drawer_header_register_ok"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="4dp"
+            android:layout_marginBottom="4dp"
+            android:src="@drawable/check_green_24dp"
+            android:visibility="gone"
+            />
+
+        <ImageView
+            android:id="@+id/drawer_header_register_fail"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="4dp"
+            android:layout_marginBottom="4dp"
+            android:src="@drawable/cross_red_24dp"
+            android:visibility="gone"
+            />
+
+    </RelativeLayout>
+
+        <TextView
+            android:id="@+id/drawer_nameTextView"
+            style="@style/textMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/drawer_profile_relativelayout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="24dp"
+            android:text="Alice Wang"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            />
+</RelativeLayout>

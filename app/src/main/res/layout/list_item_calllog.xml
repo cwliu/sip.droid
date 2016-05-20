@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+
+    <com.daimajia.swipe.SwipeLayout
+        android:id="@+id/swipe_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/beige"
+        android:orientation="horizontal">
+
+        <!-- Bottom View Start-->
+        <RelativeLayout
+            android:id="@+id/bottom_wrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="right">
+
+            <ImageView
+                android:id="@+id/phone_icon_image_view"
+                android:layout_width="64dp"
+                android:layout_height="48dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_toLeftOf="@+id/im_icon_image_view"
+                android:src="@drawable/phone_green_40dp"
+                />
+
+            <ImageView
+                android:id="@+id/im_icon_image_view"
+                android:layout_width="64dp"
+                android:layout_height="48dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_toLeftOf="@+id/sms_icon_image_view"
+                android:alpha="0.38"
+                android:src="@drawable/im_black_40dp"/>
+
+            <ImageView
+                android:id="@+id/sms_icon_image_view"
+                android:layout_width="72dp"
+                android:layout_height="48dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
+                android:alpha="0.38"
+                android:paddingRight="16dp"
+                android:src="@drawable/sms_black_40dp"/>
+
+        </RelativeLayout>
+        <!-- Bottom View End-->
+
+        <!-- Surface View Start -->
+        <LinearLayout
+            android:id="@+id/surview_view"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="16dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/list_item_avatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/avatar_120dp"
+                    />
+                
+               <ImageView
+                   android:id="@+id/call_status_image_view"
+                   android:layout_width="16dp"
+                   android:layout_height="16dp"
+                   android:src="@drawable/call_missed_red_16dp"
+                   android:layout_alignParentLeft="true"
+                   android:layout_alignParentBottom="true"
+                   />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/contact_name_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="marquee"
+                    android:gravity="center_vertical"
+                    android:singleLine="true"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="16sp"
+                    tools:text="David David David David David David David"
+                    />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/call_time"
+                        style="@style/textSub"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="25 mins ago call"
+                        />
+                    <TextView
+                        android:id="@+id/call_msg"
+                        android:layout_toRightOf="@id/call_time"
+                        style="@style/textSub"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""/>
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/favorite_frame_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:padding="4dp">
+
+                <ImageView
+                    android:id="@+id/is_favorite_image_view"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/star_red_16dp"
+                    android:visibility="gone"
+                    />
+
+                <ImageView
+                    android:id="@+id/not_favorite_image_view"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="center_vertical"
+
+                    android:alpha="0.54"
+                    android:src="@drawable/star_border_black_16dp"
+                    />
+
+            </FrameLayout>
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:layout_margin="16dp"
+                android:alpha="0.12"
+                android:src="@drawable/right_outline_black_20dp"
+                />
+
+        </LinearLayout>
+
+
+        <!-- Surface View End -->
+
+    </com.daimajia.swipe.SwipeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:alpha="0.12"
+        android:background="#000000"/>
+
+</LinearLayout>
