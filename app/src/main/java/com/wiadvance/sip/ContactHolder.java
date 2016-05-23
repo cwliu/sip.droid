@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -91,13 +92,31 @@ public class ContactHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    public void bindRecommendContactViewHolder(RecommendContact contact) {
+    public void bindRecommendContactViewHolder(final RecommendContact contact) {
 
         TextView nameTv = (TextView) mRootItemView.findViewById(R.id.recommend_contact_name_text_view);
         nameTv.setText(contact.getName());
 
         TextView percentTv = (TextView) mRootItemView.findViewById(R.id.recommend_contact_name_percent_text_view);
         percentTv.setText(String.format(mContext.getString(R.string.percent_has_this_contact_message), contact.getPercent()));
+
+        final Button button = (Button) mRootItemView.findViewById(R.id.recommend_add_contact_button);
+        button.setTag(null);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(button.getTag() == null){
+                    ContactUtils.addManualContact(mContext, contact.getName(), contact.getPhoneList());
+                    NotificationUtil.displayStatus(mContext, String.format(mContext.getString(R.string.add_contact_ok), contact.getName()));
+                }
+
+                button.setText(R.string.already_added);
+                button.setBackgroundColor(0x61000000);
+                button.setTag(true);
+            }
+        });
     }
 
     private void bindContact(final Contact contact) {

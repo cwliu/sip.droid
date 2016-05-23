@@ -46,7 +46,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/add_contact_create_button"
+            android:id="@+id/recommend_add_contact_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"

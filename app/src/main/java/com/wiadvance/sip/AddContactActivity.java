@@ -21,7 +21,6 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.wiadvance.sip.db.ContactTableHelper;
 import com.wiadvance.sip.model.Contact;
 
 import org.json.JSONException;
@@ -34,7 +33,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
-import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
@@ -167,13 +165,7 @@ public class AddContactActivity extends AppCompatActivity {
 
     @NonNull
     private Contact addContact(String name, List<String> phoneList) {
-        Contact c = new Contact(name);
-        c.setPhoneList(phoneList);
-        c.setType(Contact.TYPE_PHONE_MANUAL);
-        ContactTableHelper.getInstance(getApplicationContext()).addContact(c);
-
-
-        addContactToBackend(phoneList, c);
+        Contact c = ContactUtils.addManualContact(this, name, phoneList);
 
         getBizSocialRecommendation(phoneList, c.getName());
 
@@ -230,47 +222,6 @@ public class AddContactActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    @NonNull
-    private FormBody addContactToBackend(List<String> phoneList, Contact c) {
-        // Add this contact to backend
-        OkHttpClient client = new OkHttpClient();
-        OkHttpClient clientWith60sTimeout = client.newBuilder()
-                .readTimeout(60, TimeUnit.SECONDS)
-                .build();
-
-        FormBody body = new FormBody.Builder()
-                .add("email", UserData.getEmail(this))
-                .add("backend_access_token", UserData.getBackendAccessToken(this))
-                .add("contact_name", c.getName())
-                .add("contact_phone_list", new Gson().toJson(phoneList))
-                .build();
-
-        Request request = new Request.Builder()
-                .url(BuildConfig.BACKEND_API_SERVER_CONACT)
-                .post(body)
-                .build();
-
-        clientWith60sTimeout.newCall(request).enqueue(new okhttp3.Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.d(TAG, "onFailure() called with: " + "call = [" + call + "], e = [" + e + "]");
-                NotificationUtil.displayStatus(AddContactActivity.this,
-                        "Backend error: " + e.getMessage());
-            }
-
-            @Override
-            public void onResponse(Call call, okhttp3.Response response) throws IOException {
-                Log.d(TAG, "onResponse() called with: " + "call = [" + call + "], response = [" + response + "]");
-
-                if (!response.isSuccessful()) {
-                    NotificationUtil.displayStatus(AddContactActivity.this, "Backend error: " + response.body().string());
-                    return;
-                }
-            }
-        });
-        return body;
     }
 
     private void addPhoneField(String phone) {

@@ -35,4 +35,6 @@
     <string name="already_add">已加入</string>
     <string name="recommend_contact_title">推薦連絡人</string>
     <string name="percent_has_this_contact_message">%.0f%%</string>
+    <string name="add_contact_ok">%s 已加入通訊錄</string>
+    <string name="already_added">已加入</string>
 </resources>
