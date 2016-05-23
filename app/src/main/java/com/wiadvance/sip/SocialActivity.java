@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.wiadvance.sip.model.Contact;
+import com.wiadvance.sip.model.RecommendContact;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,7 +21,7 @@ import java.util.List;
 
 public class SocialActivity extends AbstractToolbarContactActivity {
 
-    private List<Contact> mSocialContactList = new ArrayList<>();
+    private List<RecommendContact> mSocialContactList = new ArrayList<>();
 
     private static final String ARG_RECOMMEND_JSON_STRING = "ARG_RECOMMEND_JSON_STRING";
     private static final String ARG_CONTACT_NAME = "ARG_CONTACT_NAME";
@@ -38,7 +39,7 @@ public class SocialActivity extends AbstractToolbarContactActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
-            toolbar.setTitle("推薦連絡人");
+            toolbar.setTitle(R.string.recommend_contact_title);
         }
 
         if (getSupportActionBar() != null) {
@@ -67,10 +68,8 @@ public class SocialActivity extends AbstractToolbarContactActivity {
                     phoneList.add(phone);
                 }
 
-                c.setName(name);
-                c.setPhoneList(phoneList);
-
-                mSocialContactList.add(c);
+                RecommendContact rc = new RecommendContact(name, percent, phoneList);
+                mSocialContactList.add(rc);
             }
 
         } catch (JSONException exception){
@@ -111,8 +110,6 @@ public class SocialActivity extends AbstractToolbarContactActivity {
 
         public SocialContactAdapter(Context context) {
             super(context);
-
-            setContactList(mSocialContactList);
         }
 
         @Override
@@ -121,8 +118,13 @@ public class SocialActivity extends AbstractToolbarContactActivity {
         }
 
         @Override
+        public int getLayout() {
+            return R.layout.list_item_recommend;
+        }
+
+        @Override
         public void onBindViewHolder(ContactHolder holder, int position) {
-            holder.bindContactViewHolder(mSocialContactList.get(position));
+            holder.bindRecommendContactViewHolder(mSocialContactList.get(position));
         }
     }
 }

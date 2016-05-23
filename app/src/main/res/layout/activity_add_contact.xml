@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_columnWeight="1"
             android:layout_gravity="center_vertical"
-            android:hint="Name"
+            android:hint="@string/name"
             android:textSize="14sp"
             />
 

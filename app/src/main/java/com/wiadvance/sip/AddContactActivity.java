@@ -189,7 +189,7 @@ public class AddContactActivity extends AppCompatActivity {
 
         String phoneListString = phoneList.get(0);
         for (int i = 1; i < phoneList.size(); i++) {
-            phoneListString = "," + phoneList.get(i);
+            phoneListString += "," + phoneList.get(i);
         }
 
         Request request = new Request.Builder()

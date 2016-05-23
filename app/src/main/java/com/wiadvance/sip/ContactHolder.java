@@ -13,6 +13,7 @@ import com.squareup.picasso.Picasso;
 import com.wiadvance.sip.db.FavoriteContactTableHelper;
 import com.wiadvance.sip.model.CallLogEntry;
 import com.wiadvance.sip.model.Contact;
+import com.wiadvance.sip.model.RecommendContact;
 
 public class ContactHolder extends RecyclerView.ViewHolder {
 
@@ -56,7 +57,7 @@ public class ContactHolder extends RecyclerView.ViewHolder {
     public void bindCallLogContactViewHolder(CallLogEntry log) {
         if (log.getContact() != null) {
             bindContact(log.getContact());
-        }else{
+        } else {
             Contact unknown = new Contact("Unknown");
             bindContact(unknown);
         }
@@ -88,6 +89,15 @@ public class ContactHolder extends RecyclerView.ViewHolder {
             callMsgTextView.setText(R.string.no_answer_msg);
             callStatusImageView.setImageResource(R.drawable.call_made_green_16dp);
         }
+    }
+
+    public void bindRecommendContactViewHolder(RecommendContact contact) {
+
+        TextView nameTv = (TextView) mRootItemView.findViewById(R.id.recommend_contact_name_text_view);
+        nameTv.setText(contact.getName());
+
+        TextView percentTv = (TextView) mRootItemView.findViewById(R.id.recommend_contact_name_percent_text_view);
+        percentTv.setText(String.format(mContext.getString(R.string.percent_has_this_contact_message), contact.getPercent()));
     }
 
     private void bindContact(final Contact contact) {
@@ -168,7 +178,7 @@ public class ContactHolder extends RecyclerView.ViewHolder {
 
     private void toggleButtonsRelativeLayout() {
 
-        if(UserData.sCurrentContactHolder != null && UserData.sCurrentContactHolder != this){
+        if (UserData.sCurrentContactHolder != null && UserData.sCurrentContactHolder != this) {
             UserData.sCurrentContactHolder.closeButton();
         }
         UserData.sCurrentContactHolder = this;

@@ -5,7 +5,7 @@
     <string name="connect_toast_text_error">Sorry, can\'t connect to Office 365: %1$s</string>
     <string name="navigation_drawer_open">open</string>
     <string name="navigation_drawer_close">close</string>
-    <string name="search_hint">Search contact</string>
+    <string name="search_hint">搜尋聯絡人</string>
     <string name="call_end">Call Ended</string>
     <string name="no_camera_app">無可拍照的應用程式</string>
     <string name="create_image_failed">建立檔案錯誤</string>
@@ -17,11 +17,11 @@
         <item quantity="one">, %d second</item>
         <item quantity="other">, %d seconds</item>
     </plurals>
-    <string name="no_answer_msg">, no answer</string>
+    <string name="no_answer_msg">, 無人回應</string>
     <string name="manual_add_contact">手動輸入</string>
-    <string name="save">SAVE</string>
-    <string name="delete">delete</string>
-    <string name="hint_phone_numbers">Phone numbers</string>
+    <string name="save">儲存</string>
+    <string name="delete">刪除</string>
+    <string name="hint_phone_numbers">電話號碼</string>
     <string name="tag_viewgroup" type="id">1</string>
     <string name="tag_edittext" type="id">2</string>
     <string name="phone_empty_error">電話不得為空</string>
@@ -30,4 +30,9 @@
     <string name="msg_please_choose_phone">請選擇電話</string>
     <string name="bcr_fail">名片辨識失敗</string>
     <string name="contact_social_message">持有 %s 名片的人，同時也擁有以下名片：</string>
+    <string name="name">姓名</string>
+    <string name="add">加入</string>
+    <string name="already_add">已加入</string>
+    <string name="recommend_contact_title">推薦連絡人</string>
+    <string name="percent_has_this_contact_message">%.0f%%</string>
 </resources>
