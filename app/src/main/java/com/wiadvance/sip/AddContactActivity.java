@@ -183,7 +183,7 @@ public class AddContactActivity extends AppCompatActivity {
                 .build();
 
         Request request = new Request.Builder()
-                .url(BuildConfig.BACKEND_CONACT_API_SERVER)
+                .url(BuildConfig.BACKEND_API_SERVER_CONACT)
                 .post(body)
                 .build();
 
@@ -206,6 +206,7 @@ public class AddContactActivity extends AppCompatActivity {
             }
         });
 
+        // Get BizSocial Recommendation
 
         return c;
     }

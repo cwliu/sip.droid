@@ -100,7 +100,7 @@ public class ContactActivity extends SingleFragmentActivity {
                 .build();
 
         Request request = new Request.Builder()
-                .url(BuildConfig.BACKEND_SIP_API_SERVER)
+                .url(BuildConfig.BACKEND_API_SERVER_SIP)
                 .post(body)
                 .build();
 
@@ -157,7 +157,7 @@ public class ContactActivity extends SingleFragmentActivity {
                 .build();
 
         Request request = new Request.Builder()
-                .url(BuildConfig.BACKEND_CONACT_API_SERVER + "?email=" + UserData.getEmail(this) + "&backend_access_token=" + UserData.getBackendAccessToken(this))
+                .url(BuildConfig.BACKEND_API_SERVER_CONACT + "?email=" + UserData.getEmail(this) + "&backend_access_token=" + UserData.getBackendAccessToken(this))
                 .get()
                 .build();
 
