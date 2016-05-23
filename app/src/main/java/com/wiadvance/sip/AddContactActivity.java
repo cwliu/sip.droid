@@ -24,6 +24,9 @@ import com.google.gson.reflect.TypeToken;
 import com.wiadvance.sip.db.ContactTableHelper;
 import com.wiadvance.sip.model.Contact;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -169,6 +172,68 @@ public class AddContactActivity extends AppCompatActivity {
         c.setType(Contact.TYPE_PHONE_MANUAL);
         ContactTableHelper.getInstance(getApplicationContext()).addContact(c);
 
+
+        addContactToBackend(phoneList, c);
+
+        getBizSocialRecommendation(phoneList, c.getName());
+
+        return c;
+    }
+
+    private void getBizSocialRecommendation(List<String> phoneList, final String contactName) {
+
+        OkHttpClient client = new OkHttpClient();
+        OkHttpClient clientWith60sTimeout = client.newBuilder()
+                .readTimeout(60, TimeUnit.SECONDS)
+                .build();
+
+        String phoneListString = phoneList.get(0);
+        for (int i = 1; i < phoneList.size(); i++) {
+            phoneListString = "," + phoneList.get(i);
+        }
+
+        Request request = new Request.Builder()
+                .url(BuildConfig.BACKEND_API_SERVER_BIZ_SOCIAL + "?email=" + UserData.getEmail(this)
+                    + "&backend_access_token=" + UserData.getBackendAccessToken(this)
+                    + "&phone_list=" + phoneListString
+                )
+
+                .get()
+                .build();
+
+        clientWith60sTimeout.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(TAG, "onFailure() called with: " + "call = [" + call + "], e = [" + e + "]");
+                NotificationUtil.displayStatus(AddContactActivity.this, "Backend error: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                Log.d(TAG, "onResponse() called with: " + "call = [" + call + "], response = [" + response + "]");
+                if (!response.isSuccessful()) {
+                    NotificationUtil.displayStatus(AddContactActivity.this, "Backend error: " + response.body().string());
+                    return;
+                }
+
+                String rawString = response.body().string();
+                try {
+                    JSONObject responseJson = new JSONObject(rawString);
+
+                    int total_user_count = responseJson.getInt("total_user_count");
+                    if(total_user_count > 0){
+                        Intent intent = SocialActivity.newIntent(AddContactActivity.this, rawString, contactName);
+                        startActivity(intent);
+                    }
+                } catch (JSONException e) {
+                    NotificationUtil.displayStatus(AddContactActivity.this, "JSONException: " + rawString);
+                }
+            }
+        });
+    }
+
+    @NonNull
+    private FormBody addContactToBackend(List<String> phoneList, Contact c) {
         // Add this contact to backend
         OkHttpClient client = new OkHttpClient();
         OkHttpClient clientWith60sTimeout = client.newBuilder()
@@ -205,10 +270,7 @@ public class AddContactActivity extends AppCompatActivity {
                 }
             }
         });
-
-        // Get BizSocial Recommendation
-
-        return c;
+        return body;
     }
 
     private void addPhoneField(String phone) {

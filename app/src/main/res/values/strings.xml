@@ -22,11 +22,12 @@
     <string name="save">SAVE</string>
     <string name="delete">delete</string>
     <string name="hint_phone_numbers">Phone numbers</string>
-    <string type="id" name="tag_viewgroup">1</string>
-    <string type="id" name="tag_edittext">2</string>
+    <string name="tag_viewgroup" type="id">1</string>
+    <string name="tag_edittext" type="id">2</string>
     <string name="phone_empty_error">電話不得為空</string>
     <string name="name_empty_error">姓名不得為空</string>
     <string name="no_phone_input_error">請至少輸入一筆電話</string>
     <string name="msg_please_choose_phone">請選擇電話</string>
     <string name="bcr_fail">名片辨識失敗</string>
+    <string name="contact_social_message">持有 %s 名片的人，同時也擁有以下名片：</string>
 </resources>

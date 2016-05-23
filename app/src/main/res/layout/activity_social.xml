@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/beige"
+    tools:context="com.wiadvance.sip.SocialActivity">
+
+    <include layout="@layout/view_toolbar"/>
+
+    <TextView
+        android:layout_margin="16dp"
+        android:id="@+id/contact_name_message"
+        android:textSize="12sp"
+        android:alpha="0.54"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        tools:text="持有 Mario 名片的人，同時有擁有以下名片:"
+        />
+
+    <include layout="@layout/view_contacts_recyclerview"/>
+
+</LinearLayout>

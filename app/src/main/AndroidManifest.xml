@@ -37,7 +37,6 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="2c5de1ba077edd775560b40be6ae292a31ca855b"/>
@@ -70,15 +69,17 @@
             android:name=".FetchPhoneContactService"
             android:exported="false"/>
 
-        <activity android:name=".AddContactActivity"
+        <activity
+            android:name=".AddContactActivity"
             android:parentActivityName=".ContactActivity"/>
-
         <activity
             android:name=".ScanActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".CallLogActivity"
             android:parentActivityName=".ContactActivity"/>
-
+        <activity android:name=".SocialActivity">
+        </activity>
     </application>
+
 </manifest>
