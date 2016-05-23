@@ -51,6 +51,8 @@ public class ContactUtils {
                 .post(body)
                 .build();
 
+
+        Log.d(TAG, "addContactToBackend start");
         clientWith60sTimeout.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -60,6 +62,7 @@ public class ContactUtils {
 
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                Log.d(TAG, "addContactToBackend finished");
                 Log.d(TAG, "onResponse() called with: " + "call = [" + call + "], response = [" + response + "]");
 
                 if (!response.isSuccessful()) {

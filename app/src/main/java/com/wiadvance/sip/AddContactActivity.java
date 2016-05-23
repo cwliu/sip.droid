@@ -165,11 +165,8 @@ public class AddContactActivity extends AppCompatActivity {
 
     @NonNull
     private Contact addContact(String name, List<String> phoneList) {
-        Contact c = ContactUtils.addManualContact(this, name, phoneList);
-
-        getBizSocialRecommendation(phoneList, c.getName());
-
-        return c;
+        getBizSocialRecommendation(phoneList, name);
+        return ContactUtils.addManualContact(this, name, phoneList);
     }
 
     private void getBizSocialRecommendation(List<String> phoneList, final String contactName) {
@@ -193,6 +190,8 @@ public class AddContactActivity extends AppCompatActivity {
                 .get()
                 .build();
 
+        Log.d(TAG, "getBizSocialRecommendation start");
+
         clientWith60sTimeout.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -202,6 +201,8 @@ public class AddContactActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                Log.d(TAG, "getBizSocialRecommendation finished");
+
                 Log.d(TAG, "onResponse() called with: " + "call = [" + call + "], response = [" + response + "]");
                 if (!response.isSuccessful()) {
                     NotificationUtil.displayStatus(AddContactActivity.this, "Backend error: " + response.body().string());

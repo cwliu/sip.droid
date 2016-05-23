@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.daimajia.swipe.SwipeLayout;
 import com.squareup.picasso.Picasso;
@@ -109,7 +110,8 @@ public class ContactHolder extends RecyclerView.ViewHolder {
 
                 if(button.getTag() == null){
                     ContactUtils.addManualContact(mContext, contact.getName(), contact.getPhoneList());
-                    NotificationUtil.displayStatus(mContext, String.format(mContext.getString(R.string.add_contact_ok), contact.getName()));
+
+                    Toast.makeText(mContext, String.format(mContext.getString(R.string.add_contact_ok), contact.getName()), Toast.LENGTH_SHORT).show();
                 }
 
                 button.setText(R.string.already_added);
