@@ -23,16 +23,15 @@
         android:visibility="gone"
         />
 
-    <GridLayout
-        android:id="@+id/add_contact_gridlayout"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
-        android:columnCount="3"
-        tools:context="com.wiadvance.sip.AddContactActivity">
 
+        >
         <ImageView
             android:layout_width="64dp"
             android:layout_height="64dp"
@@ -43,40 +42,52 @@
 
         <EditText
             android:id="@+id/add_contact_name_edittext"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
             android:layout_gravity="center_vertical"
             android:hint="@string/name"
             android:textSize="14sp"
             />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="24dp"
-            android:layout_columnSpan="3"
-            />
+
+    </LinearLayout>
+
+    <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="24dp"-->
+        <!--android:layout_columnSpan="3"-->
+        <!--/>-->
+
+    <RelativeLayout
+        android:id="@+id/add_contact_gridlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        tools:context="com.wiadvance.sip.AddContactActivity">
 
         <TextView
             android:id="@+id/add_contact_phone_textview"
             style="@style/textMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_columnSpan="2"
             android:layout_marginBottom="16dp"
             android:text="PHONE"
             android:textColor="@color/blue"
             android:textSize="12sp"
+            android:layout_centerVertical="true"
             />
 
         <ImageButton
             android:id="@+id/add_contact_add_phone_image_button"
             android:layout_width="16dp"
             android:layout_height="16dp"
-            android:layout_column="2"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="16dp"
+            android:layout_alignParentRight="true"
             android:background="@drawable/add_green_16dp"/>
-    </GridLayout>
+    </RelativeLayout>
 
     <ScrollView
         android:layout_width="match_parent"

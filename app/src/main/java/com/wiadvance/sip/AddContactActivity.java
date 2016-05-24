@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -68,12 +67,17 @@ public class AddContactActivity extends AppCompatActivity {
 
         setupToolbar();
         setupViewEvents();
+        setupPhoneField();
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
+    }
+
+    private void setupPhoneField() {
         phoneEditTextList.clear();
 
         String phoneGson = getIntent().getStringExtra(ARG_PHONE_LIST);
@@ -94,11 +98,11 @@ public class AddContactActivity extends AppCompatActivity {
         final EditText nameEditText = (EditText) findViewById(R.id.add_contact_name_edittext);
 //        final EditText phoneEditText = (EditText) findViewById(R.id.add_contact_phone_edittext);
         final ImageButton addPhoneImageButton = (ImageButton) findViewById(R.id.add_contact_add_phone_image_button);
-        final GridLayout contactGridLayout = (GridLayout) findViewById(R.id.add_contact_gridlayout);
+//        final GridLayout contactGridLayout = (GridLayout) findViewById(R.id.add_contact_gridlayout);
         final Button saveButton = (Button) findViewById(R.id.add_contact_create_button);
         Button deleteButton = (Button) findViewById(R.id.add_contact_delete_button);
 
-        if (contactGridLayout == null || saveButton == null || deleteButton == null) {
+        if (saveButton == null || deleteButton == null) {
             return;
         }
 

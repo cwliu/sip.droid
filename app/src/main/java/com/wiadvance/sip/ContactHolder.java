@@ -3,7 +3,10 @@ package com.wiadvance.sip;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -110,8 +113,7 @@ public class ContactHolder extends RecyclerView.ViewHolder {
 
                 if(button.getTag() == null){
                     ContactUtils.addManualContact(mContext, contact.getName(), contact.getPhoneList());
-
-                    Toast.makeText(mContext, String.format(mContext.getString(R.string.add_contact_ok), contact.getName()), Toast.LENGTH_SHORT).show();
+                    showAddToast(contact.getName());
                 }
 
                 button.setText(R.string.already_added);
@@ -119,6 +121,22 @@ public class ContactHolder extends RecyclerView.ViewHolder {
                 button.setTag(true);
             }
         });
+    }
+
+    private void showAddToast(String name) {
+        View toastLayout = LayoutInflater.from(mContext).inflate(
+                R.layout.toast,
+                (ViewGroup) mRootItemView.getRootView(),
+                false
+        );
+        TextView message = (TextView) toastLayout.findViewById(R.id.toast_message_text_view);
+        message.setText(String.format(mContext.getString(R.string.add_contact_ok), name));
+        Toast toast = new Toast(mContext);
+//        toast.setGravity(Gravity.BOTTOM, 0, Utils.convertDpToPixel(mContext, 16));
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.FILL_HORIZONTAL | Gravity.BOTTOM, 1, 0);
+        toast.setView(toastLayout);
+        toast.show();
     }
 
     private void bindContact(final Contact contact) {

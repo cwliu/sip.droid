@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/toast_layout_root"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="horizontal"
+              android:padding="16dp">
+
+    <TextView
+        android:id="@+id/toast_message_text_view"
+        style="@style/textRegular"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#323232"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        android:padding="22dp"
+        tools:text="Klack James 已加入通訊錄"
+        />
+
+</LinearLayout>
