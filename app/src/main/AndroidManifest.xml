@@ -71,6 +71,7 @@
 
         <activity
             android:name=".AddContactActivity"
+            android:windowSoftInputMode="adjustPan"
             android:parentActivityName=".ContactActivity"/>
         <activity
             android:name=".ScanActivity"
