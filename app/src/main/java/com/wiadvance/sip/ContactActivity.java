@@ -108,8 +108,6 @@ public class ContactActivity extends SingleFragmentActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.d(TAG, "onFailure() called with: " + "call = [" + call + "], e = [" + e + "]");
-                NotificationUtil.displayStatus(ContactActivity.this,
-                        "Backend error: " + e.getMessage());
             }
 
             @Override
